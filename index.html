@@ -321,6 +321,24 @@ html.mobile .fico-leg{grid-template-columns:repeat(2,minmax(0,1fr))}
 .mm{padding:4px 12px 14px}
 .mm svg{display:block;width:100%;max-width:1180px;margin:0 auto}
 .mm text{font-family:'Figtree',sans-serif}
+.fs-kpi{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+html.mobile .fs-kpi{grid-template-columns:repeat(2,minmax(0,1fr))}
+.fs-kpi > div{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px}
+.fs-kpi .l{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-tertiary)}
+.fs-kpi .v{font-size:24px;font-weight:700;letter-spacing:-.02em;margin:4px 0 2px}
+.fs-kpi .s{font-size:12px;color:var(--text-secondary)}
+.fs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;padding:14px 20px 18px}
+.fs-p{border:1px solid var(--border);border-radius:10px;padding:12px 14px;background:var(--main-bg);display:flex;flex-direction:column;gap:6px}
+.fs-p .h{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:700}
+.fs-p .h i{width:10px;height:10px;border-radius:3px;flex:none}
+.fs-p .n{display:flex;align-items:baseline;gap:8px}
+.fs-p .n b{font-size:20px;letter-spacing:-.02em}
+.fs-p .d{font-size:12px;line-height:1.45;color:var(--text-secondary)}
+.fs-p svg{width:100%;height:34px;display:block}
+.fs-new{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;padding:14px 20px 18px}
+.fs-new div{border-left:3px solid var(--accent);background:var(--main-bg);border-radius:0 8px 8px 0;padding:10px 12px}
+.fs-new b{display:block;font-size:13px} .fs-new span{display:block;font-size:10.5px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.05em;margin:2px 0 4px}
+.fs-new p{margin:0;font-size:12px;line-height:1.45;color:var(--text-secondary)}
 .ave-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .ave-cards{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
 .ave-cards .chart{height:230px}
@@ -571,6 +589,7 @@ html.mobile .xl-wrap{max-height:calc(100vh - 190px)}
       <button class="tab active" data-tab="crecimiento">Members &amp; products</button>
       <button class="tab" data-tab="segmentos">Segments</button>
       <button class="tab" data-tab="lending">Originations &amp; credit</button>
+      <button class="tab" data-tab="fs">Financial Services</button>
       <button class="tab" data-tab="flywheel">Flywheel</button>
       <button class="tab" data-tab="lpb">LPB</button>
       <button class="tab" data-tab="credit">Client Credit Quality</button>
@@ -655,6 +674,7 @@ html.mobile .xl-wrap{max-height:calc(100vh - 190px)}
     </section>
 
     <!-- ============ FLYWHEEL / LPB / CLIENT CREDIT QUALITY ============ -->
+    <section class="view" id="v-fs"></section>
     <section class="view" id="v-flywheel"></section>
     <section class="view" id="v-lpb"></section>
     <section class="view" id="v-credit"></section>
@@ -2518,6 +2538,108 @@ const THESIS = {"flywheel":{"title":"Financial Services Productivity Loop (FSPL)
 const thEsc = t => String(t??'').replace(/&/g,'&amp;').replace(/</g,'&lt;');
 const thUl = a => a && a.length ? `<ul>${a.map(x=>`<li>${thEsc(typeof x==='string'?x:(x.text||x.label||''))}${x.quote&&x.quote!==x.text?`<q style="display:block;font-style:italic;color:var(--text-secondary);margin-top:3px">${thEsc(x.quote)}</q>`:''}${x.src?` <span class="card-sub">(${thEsc(x.src)})</span>`:''}</li>`).join('')}</ul>` : '';
 
+/* =====================================================================
+   FINANCIAL SERVICES — product detail (Q3'26 investor presentation, "Revenue Per Product")
+   ===================================================================== */
+const FS = {
+  q: ["Q1'24","Q2'24","Q3'24","Q4'24","Q1'25","Q2'25","Q3'25","Q4'25","Q1'26","Q2'26","Q3'26"],
+  // products in thousands
+  prod: {
+    'Money':         [3880.0,4298.6,4720.3,5094.8,5477.5,5887.7,6336.7,6791.1,7319.9,7888.4,8501.8],
+    'Relay':         [3613.7,3933.7,4199.6,4636.8,5094.5,5526.3,6033.8,6687.3,7320.7,7993.8,8729.7],
+    'Invest':        [2224.7,2332.0,2394.4,2525.1,2684.7,2853.4,3045.1,3244.1,3672.9,3931.7,4181.0],
+    'Credit Card':   [254.6,260.6,264.9,279.4,306.1,344.5,392.0,435.7,436.2,509.8,656.1],
+    'Crypto':        [null,null,null,null,null,null,null,63.4,239.5,388.3,503.1],
+    'SoFi Plus':     [null,null,null,null,null,null,null,null,null,206.0,272.8],
+    'At Work':       [92.4,99.6,107.7,113.9,119.9,127.2,147.3,163.4,176.1,189.1,202.6],
+    'Referred loans':[59.6,65.3,73.1,85.2,103.0,122.6,135.5,149.9,162.5,180.4,194.5],
+  },
+  total: [10125.0,10989.9,11760.0,12735.1,13785.6,14861.7,16090.5,17535.0,19327.8,21287.6,23241.5],
+  rev:   [150.6,176.1,238.3,256.5,303.1,362.5,419.6,456.7,428.5,466.3,525.1],          // FS net revenue, US$M
+  rpp:   [59,64,81,81,88,98,104,104,89,88,90],                                           // annualized revenue per product, US$
+  desc: {
+    'Money':'Checking and savings: high APY, up to $3M of FDIC insurance, early paychecks, no account fees and easy money movement.',
+    'Relay':'Free money-management tool (now with the AI-driven Coach): connects external accounts, tracks spending, credit score and net worth.',
+    'Invest':'Active investing, robo-advisory and options with tailored insights and access to offerings usually reserved for the very wealthy.',
+    'Credit Card':'A suite of credit cards with cashback rewards, zero fraud liability, no surprise fees and automatic credit-line reviews.',
+    'Crypto':'First nationally chartered bank to offer consumer crypto: buy, sell and hold dozens of tokens, including SoFiUSD and SoFi Earn.',
+    'SoFi Plus':'Premium membership tier with benefits that span the whole SoFi offering.',
+    'At Work':'Workplace benefits through employers (student loan and financial-wellness programs).',
+    'Referred loans':'Loans SoFi refers to partners when they fall outside its own lending products or criteria.',
+  },
+  launches: [
+    ['SoFi Crypto','Q4’25','First nationally chartered bank to launch consumer crypto trading, directly from FDIC-insured deposit accounts.'],
+    ['SoFi Pay','Q4’25','Blockchain-based money movement to more than 30 countries, fast and low-cost.'],
+    ['SoFiUSD','Q4’25','First nationally chartered bank to issue a stablecoin on a public blockchain, backed by cash at the Federal Reserve.'],
+    ['Big Business Banking','Q1’26','Fiat and crypto banking on one regulated platform, with real-time, API-driven 24/7 money movement.'],
+    ['SoFi Coach','Q2’26','AI coach across all financial activity: answers questions, suggests investment and lending options, tracks goals.'],
+    ['SoFi Tech Solutions','Q2’26 (relaunch)','Enterprise go-to-market: processing, core ledgers, payment hub, risk and fraud platforms.'],
+    ['Small Business Loans','Q2’26','Fast, transparent small business financing through the digital platform.'],
+    ['SoFi Earn','Q4’26','First national bank-issued tokenized deposit for consumers: earn interest on digital dollars.'],
+  ],
+};
+const FS_COL = {'Money':'#2E75B6','Relay':'#5B9BD5','Invest':'#1B1446','Credit Card':'#ED7D31','Crypto':'#7030A0','SoFi Plus':'#00A2C7','At Work':'#70AD47','Referred loans':'#9AACBE'};
+function spark(a, col){
+  const v=a.map((x,i)=>[i,x]).filter(([,x])=>isN(x)); if(v.length<2) return '';
+  const xs=v.map(p=>p[0]), ys=v.map(p=>p[1]), mn=Math.min(...ys), mx=Math.max(...ys), W=240, H=34;
+  const X=i=>(i-xs[0])/(xs[xs.length-1]-xs[0]||1)*(W-6)+3, Y=y=>H-3-(y-mn)/((mx-mn)||1)*(H-8);
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><polyline points="${v.map(([i,y])=>X(i).toFixed(1)+','+Y(y).toFixed(1)).join(' ')}" fill="none" stroke="${col}" stroke-width="2"/><circle cx="${X(v[v.length-1][0])}" cy="${Y(v[v.length-1][1])}" r="3" fill="${col}"/></svg>`;
+}
+function fsView(){
+  const c=C(), L_=FS.q.length-1, g=(a,i,lag=4)=>i>=lag&&isN(a[i])&&isN(a[i-lag])&&a[i-lag]>0?a[i]/a[i-lag]-1:null;
+  const pct=v=>isN(v)?`<span class="g ${v>=0?'pos':'neg'}">${v>=0?'+':'−'}${Math.abs(v*100).toFixed(0)}%</span>`:'<span class="na">new</span>';
+  // segment revenue split and contribution margin from the Model / Thesis series
+  const mq = q => MODEL.Q.find(o=>o.lab===q) || {};
+  const nii = FS.q.map(q=>mq(q).sF_nii??null), non = FS.q.map(q=>mq(q).sF_non??null);
+  const qi = q => QQ.indexOf(q), cp = FS.q.map(q=>DQ.fsCp[qi(q)]??null), cm = FS.q.map((q,i)=>isN(cp[i])?cp[i]/FS.rev[i]:null);
+  const fee = k => FS.q.map(q=>mq(q)[k]??null);
+  const inter = fee('fInterch'), brok = fee('fBrok'), refO = fee('fRefOth');
+  const names = Object.keys(FS.prod);
+  const qs = Object.keys(EARN_DATA.quarters).sort((a,b)=>(+b.slice(3,5)*10+ +b[1])-(+a.slice(3,5)*10+ +a[1])).slice(0,2);
+  document.getElementById('v-fs').innerHTML = `
+    <div class="fs-kpi">
+      <div><div class="l">Financial Services products</div><div class="v">${(FS.total[L_]/1000).toFixed(1)}M</div><div class="s">${pct(g(FS.total,L_))} YoY · +${nf0.format(FS.total[L_]-FS.total[L_-1])}k in the quarter</div></div>
+      <div><div class="l">Segment net revenue</div><div class="v">$${nf0.format(FS.rev[L_])}M</div><div class="s">${pct(g(FS.rev,L_))} YoY · ${FS.q[L_]}</div></div>
+      <div><div class="l">Contribution profit</div><div class="v">$${nf0.format(cp[L_])}M</div><div class="s">${(cm[L_]*100).toFixed(0)}% contribution margin</div></div>
+      <div><div class="l">Revenue per product</div><div class="v">$${FS.rpp[L_]}</div><div class="s">annualized · $${FS.rpp[L_-4]} a year ago</div></div>
+    </div>
+    <div class="card"><div class="card-h"><span class="card-t">Products by type</span><span class="card-sub">thousands · ${FS.q[0]}–${FS.q[L_]}</span></div>
+      <div class="card-b"><div class="chart"><canvas id="c-fsprod"></canvas></div></div><div class="tbl-wrap" id="t-fsprod"></div></div>
+    <div class="card"><div class="card-h"><span class="card-t">How each product is doing</span><span class="card-sub">${FS.q[L_]} · YoY growth · trend since ${FS.q[0]}</span></div>
+      <div class="fs-grid">${names.map(n=>{ const a=FS.prod[n], v=a[L_], add=isN(a[L_-1])?v-a[L_-1]:null;
+        return `<div class="fs-p"><div class="h"><i style="background:${FS_COL[n]}"></i>${n}</div>
+          <div class="n"><b>${v>=1000?(v/1000).toFixed(2)+'M':nf0.format(v)+'k'}</b>${pct(g(a,L_))}<span class="card-sub">${isN(add)?'+'+nf0.format(add)+'k QoQ':''}</span></div>
+          ${spark(a,FS_COL[n])}<div class="d">${FS.desc[n]}</div></div>`; }).join('')}</div></div>
+    <div class="th-grid">
+      <div class="card"><div class="card-h"><span class="card-t">Segment revenue and contribution margin</span><span class="card-sub">US$M · %</span></div>
+        <div class="card-b"><div class="chart"><canvas id="c-fsrev"></canvas></div></div><div class="tbl-wrap" id="t-fsrev"></div></div>
+      <div class="card"><div class="card-h"><span class="card-t">Fee drivers</span><span class="card-sub">US$M · interchange, brokerage and referrals (Table 7)</span></div>
+        <div class="card-b"><div class="chart"><canvas id="c-fsfee"></canvas></div></div><div class="tbl-wrap" id="t-fsfee"></div></div>
+    </div>
+    <div class="card"><div class="card-h"><span class="card-t">What management said</span><span class="card-sub">Financial Services points from the last two calls</span></div>
+      <div class="ec-sec">${qs.map(q=>`<h4>${q}</h4><ul>${(EARN_DATA.quarters[q].points||[]).filter(p=>p.topic==='Financial Services'||p.topic==='New products, crypto & AI').map(p=>`<li>${thEsc(p.text)}</li>`).join('')}</ul>`).join('')}</div></div>
+    <div class="card"><div class="card-h"><span class="card-t">New products and initiatives</span><span class="card-sub">launch quarter</span></div>
+      <div class="fs-new">${FS.launches.map(([n,d,t])=>`<div><b>${n}</b><span>${d}</span><p>${t}</p></div>`).join('')}</div></div>
+    <div class="src">Source: SoFi Q3'26 investor presentation ("Revenue Per Product", "Everything App for Digital Financial Services", "Initiatives to Fuel Continued Durable Growth", "Financial Services Segment"); revenue split and fee detail from the Model (10-Q segment notes and releases, Table 7); call points from the Earnings tab.</div>`;
+  mk('c-fsprod',{type:'bar',data:{labels:FS.q,datasets:names.map(n=>({label:n,data:FS.prod[n],backgroundColor:FS_COL[n],stack:'p',tip:v=>isN(v)?nf0.format(v)+'k':'–'}))},
+    options:baseOpts({stacked:true,yTick:v=>(v/1000).toFixed(0)+'M',yMin:0})});
+  renderTable('t-fsprod',FS.q,[...names.map(n=>[{label:n,data:FS.prod[n],fmt:'k',color:FS_COL[n]},{label:'YoY growth',data:FS.prod[n].map((_,i)=>g(FS.prod[n],i)),fmt:'g',cls:'sub'}]).flat(),
+    {label:'Total Financial Services products',data:FS.total,fmt:'k',cls:'total'},{label:'YoY growth',data:FS.total.map((_,i)=>g(FS.total,i)),fmt:'g',cls:'sub'}]);
+  mk('c-fsrev',{data:{labels:FS.q,datasets:[
+      {type:'line',label:'Contribution margin',data:cm,borderColor:c.s5,backgroundColor:c.s5,yAxisID:'y1',pointRadius:3,tip:v=>isN(v)?(v*100).toFixed(1)+'%':'–',order:0},
+      {type:'bar',label:'Net interest income',data:nii,backgroundColor:c.s2,stack:'r',order:1},
+      {type:'bar',label:'Noninterest income',data:non,backgroundColor:c.s3,stack:'r',order:1}]},
+    options:baseOpts({stacked:true,yTick:axM,yMin:0,y1:true,y1Tick:v=>(v*100).toFixed(0)+'%',y1Min:0,y1Max:0.7})});
+  renderTable('t-fsrev',FS.q,[{label:'Net interest income',data:nii,fmt:'m',color:c.s2},{label:'Noninterest income',data:non,fmt:'m',color:c.s3},
+    {label:'Segment net revenue',data:FS.rev,fmt:'m',cls:'total'},{label:'YoY growth',data:FS.rev.map((_,i)=>g(FS.rev,i)),fmt:'g',cls:'sub'},
+    {label:'Contribution profit',data:cp,fmt:'m'},{label:'Contribution margin',data:cm,fmt:'p',color:c.s5},{label:'Revenue per product (US$, annualized)',data:FS.rpp,fmt:'m'}]);
+  mk('c-fsfee',{type:'bar',data:{labels:FS.q,datasets:[
+      {label:'Interchange',data:inter,backgroundColor:c.s2,stack:'f'},{label:'Brokerage',data:brok,backgroundColor:c.s1,stack:'f'},{label:'Referrals (other)',data:refO,backgroundColor:c.grey,stack:'f'}]},
+    options:baseOpts({stacked:true,yTick:axM,yMin:0})});
+  renderTable('t-fsfee',FS.q,[{label:'Interchange',data:inter,fmt:'m',color:c.s2},{label:'YoY growth',data:inter.map((_,i)=>g(inter,i)),fmt:'g',cls:'sub'},
+    {label:'Brokerage',data:brok,fmt:'m',color:c.s1},{label:'YoY growth',data:brok.map((_,i)=>g(brok,i)),fmt:'g',cls:'sub'},{label:'Referrals (other)',data:refO,fmt:'m',color:c.grey}]);
+}
+
 function flywheel(){
   const F_ = THESIS.flywheel||{}, steps = F_.steps||[], n = steps.length, c = C();
   // circular loop: nodes around a circle, arrows between consecutive nodes
@@ -2781,6 +2903,7 @@ const VIEWS={
   crecimiento:[mem,prod,tech],
   segmentos:[seg,cp,fee],
   lending:[orig,nco,nim,cap],
+  fs:[fsView],
   flywheel:[flywheel],
   lpb:[lpbView],
   credit:[creditView],
