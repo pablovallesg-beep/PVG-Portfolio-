@@ -141,7 +141,17 @@ html.mobile .nav-item .ic-desk{display:block}
 .xl tr.sub td.c-lab{padding-left:36px;font-style:italic;color:var(--text-tertiary)}
 .xl tr.sub td.c-unit{font-style:normal}
 .xl tbody tr:not(.sec):not(.spacer):hover td:not(.gap){box-shadow:inset 0 0 0 999px rgba(46,117,182,0.07)}
-.no-subs tr.sub{display:none}
+.xl .ol{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;padding:0;margin-right:7px;vertical-align:-2px;border:1px solid var(--text-tertiary);border-radius:2px;background:var(--card-bg);color:var(--text-secondary);font:700 11px/1 'Figtree',sans-serif;cursor:pointer}
+.xl .ol:hover{border-color:var(--accent);color:var(--accent)}
+.xl .ol-sp{display:inline-block;width:14px;margin-right:7px}
+.xl th.band .ol{background:transparent;color:#fff;border-color:rgba(255,255,255,0.7);margin-right:8px}
+.xl th.band .ol:hover{background:rgba(255,255,255,0.15);color:#fff}
+.xl .colx{width:46px;min-width:46px;max-width:46px;padding:0 4px;text-align:center}
+.xl td.colx{background:var(--main-bg)}
+.xl th.vlab{font-size:9.5px;font-weight:600;color:var(--text-tertiary);white-space:normal;line-height:1.1}
+.tbtns{display:inline-flex;gap:6px}
+.tbtn{border:1px solid var(--border);background:var(--main-bg);color:var(--text-secondary);border-radius:var(--radius-sm);padding:4px 10px;font:500 12px 'Figtree',sans-serif;cursor:pointer}
+.tbtn:hover{color:var(--text-primary);border-color:var(--text-tertiary)}
 .legend{display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:11px;color:var(--text-secondary)}
 .legend i{display:inline-block;width:14px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px;border:1px solid var(--border)}
 .legend u{text-decoration:underline dashed;text-underline-offset:3px;text-decoration-color:var(--text-tertiary)}
@@ -313,11 +323,12 @@ html.mobile .xl-wrap{max-height:calc(100vh - 190px)}
             <div><span class="card-t">Income statement</span><span class="card-sub">(US$M unless noted · KPIs in thousands)</span></div>
             <div class="ctrls">
               <div class="legend"><span><i style="background:#FFF4CC"></i>Input / assumption</span><span><i style="background:rgba(46,117,182,0.12)"></i>Projected</span><span><sup style="color:var(--warning)">*</sup> Derived (FY − 9M)</span><span><u>123</u> Derived from rounded disclosure</span></div>
+              <div class="tbtns"><button class="tbtn" id="olExpand">+ Expand all</button><button class="tbtn" id="olCollapse">− Collapse all</button></div>
               <label class="chk"><input type="checkbox" id="hideSubs"> Hide growth and common-size rows</label>
             </div>
           </div>
           <div class="xl-wrap" id="modelTable"></div>
-          <div class="src">Source: SoFi 10-Qs (Q1–Q3'25, Q1–Q2'26), Q1–Q3'26 earnings releases (Tables 1, 2, 4 and 7), 2023–2025 10-Ks and earnings calls. 2024 quarters and FY2022 are not shown; they are the base for YoY growth. * Q4'25 (and the Q4'24 base) = full year per the 10-K less nine months per the 10-Q / release; Q4'25 LPB volume ($3.65B) and total fee-based revenue ($443M, from which "Other" is derived) come from the Q4'25 call. FY2026E = Q1–Q3'26 actuals + Q4'26E. Yellow cells are projection inputs; everything else is calculated. Growth above ±1,000% or on a negative base is shown as n/m. Fee-based revenue (Table 7) is not yet projected line by line. Projected adjusted net revenue = GAAP net revenue; projected adjusted EBITDA = pre-tax income + D&amp;A + share-based expense + corporate borrowing interest.</div>
+          <div class="src">Source: SoFi 10-Qs (Q1–Q3'25, Q1–Q2'26), Q1–Q3'26 earnings releases (Tables 1, 2, 4 and 7), 2023–2025 10-Ks and earnings calls (2025–2026). 2024 quarters and FY2022 are not shown; they are the base for YoY growth. * Q4'25 (and the Q4'24 base) = full year per the 10-K less nine months per the 10-Q / release. FY2026E = Q1–Q3'26 actuals + Q4'26E; FY2027E = sum of the projected quarters; FY2028E–FY2030E are annual-only projections anchored to SoFi's medium-term guidance (Jan-26 call: ≥30% adj. net revenue CAGR and 38–42% adj. EPS CAGR 2025–28) and 2030 ambitions (Oct-26 call: 100M products, ~50M members). Yellow cells are projection inputs; everything else is calculated. Guidance track record: midpoints of the first and latest guidance given for each period (hover a cell for the source); dotted underline = derived from full-year guidance less year-to-date actuals or from guided margins. Growth above ±1,000% or on a negative base is shown as n/m. Use the +/− boxes to collapse or expand sections, line details and column blocks.</div>
         </div>
       </section>
     </div>
@@ -1085,7 +1096,8 @@ function insights(){
 
 /* =====================================================================
    MODEL — Income statement (KPIs on top). Excel-style table, no charts.
-   Four blocks: quarterly actual · quarterly projected · annual actual · annual projected.
+   Four blocks: quarterly actual · quarterly projected · annual actual · annual projected (to FY2030E).
+   Rows and blocks collapse/expand like Excel groups.
    Money in US$M (entered in US$K and converted), KPIs in thousands.
    ===================================================================== */
 const MODEL = (() => {
@@ -1101,6 +1113,7 @@ const MODEL = (() => {
   const PDAYS = [92,90,91,92,92];
   const YLAB = ['FY2022','FY2023','FY2024','FY2025'];
   const YDAYS = [365,365,366,365];
+  const XLAB = ['FY2028E','FY2029E','FY2030E'];   // annual-only projections
   const FIRST_SHOWN_Q = 4;   // Q1'25
   const FIRST_SHOWN_Y = 1;   // FY2023
 
@@ -1165,7 +1178,8 @@ const MODEL = (() => {
   const MONEY = new Set(['avgIEA','avgLoans','intLoans','intOther','expSec','expDep','expCorp','expOther','losss','techRev','lpf','crypto','otherNII','prov','tpd','sm','coo','ga','gw','tax','adjRev','da','sbc','ebitda','adjNI','fLPF','fRefLPB','fRefOth','fInterch','fBrok','fOrig','fTech','fCrypto','fOther','shBasic','shDil']);
   const pick = i => { const o={}; for(const k in RAW){ const v=RAW[k][i]; o[k]= v===null ? null : MONEY.has(k) ? v/1000 : v; } for(const k in PER_SHARE) o[k]=PER_SHARE[k][i]; return o; };
 
-  // ---- Projection assumptions (input cells): one value per projected quarter ----
+  // ---- Projection assumptions (input cells) ----
+  // Quarterly: one value per projected quarter (Q4'26E … Q4'27E)
   const ASM = {
     memAdds:  [1200,1100,1100,1150,1200],      // net new members (k)
     ppmD:     [0.02,0.02,0.02,0.02,0.02],      // change in products per member
@@ -1193,9 +1207,52 @@ const MODEL = (() => {
     gSBC:     [0.02,0.02,0.02,0.02,0.02],
     gSh:      [0.004,0.004,0.004,0.004,0.004],
   };
+  // Annual: one value per year FY2028E, FY2029E, FY2030E. Anchored to SoFi's medium-term guidance
+  // (≥30% adj. net revenue CAGR and 38–42% adj. EPS CAGR 2025–28) and 2030 ambitions (~50M members, 100M products).
+  const ASMY = {
+    gMem:     [0.30,0.30,0.30],                // members YoY
+    ppm:      [1.77,1.88,2.00],                // products per member
+    gLend:    [0.22,0.20,0.18],                // lending products YoY
+    gTechAcc: [0.05,0.05,0.05],
+    gPL:      [0.22,0.20,0.18],
+    gSL:      [0.18,0.16,0.15],
+    gHL:      [0.20,0.18,0.16],
+    oSB:      [700,1100,1500],
+    gLPB:     [0.20,0.18,0.15],
+    gIEA:     [0.25,0.22,0.20],                // avg. interest-earning assets YoY
+    yield:    [0.0870,0.0865,0.0860],
+    nim:      [0.0605,0.0600,0.0595],
+    take:     [0.039,0.039,0.039],
+    origFee:  [0.0115,0.0115,0.0115],
+    gTechRev: [0.15,0.15,0.15],
+    gOther:   [0.45,0.35,0.30],
+    prov:     [0.012,0.012,0.012],
+    tpd:      [0.133,0.130,0.127],
+    sm:       [0.305,0.300,0.295],
+    coo:      [0.145,0.142,0.140],
+    ga:       [0.130,0.125,0.120],
+    tax:      [0.22,0.22,0.22],
+    gDA:      [0.15,0.12,0.10],
+    gSBC:     [0.08,0.07,0.06],
+    gSh:      [0.016,0.016,0.016],
+  };
   const ADJ_SH_Q3_26 = 1331.432; // adjusted diluted shares Q3'26 (M)
-  const GUIDE = { 'FY2026E':{adjRev:5040, ebitda:1660, adjNI:840, adjEps:0.61},
-                  'FY2027E':{adjRev:6400, ebitda:2240, adjNI:1280, adjEps:0.90} };
+
+  // ---- Guidance history: what was projected at the time (midpoints; US$M, EPS in US$) ----
+  // first = first guidance given for the period; latest = most recent; d = derived (FY guidance − 9M actuals or margin × revenue)
+  const GH = {
+    "Q2'25":  {first:{adjRev:795, ebitda:205, adjNI:65, adjEps:0.055, src:"Apr-25 call"}},
+    "Q4'25":  {first:{adjRev:961.4, ebitda:298.7, adjNI:147.2, adjEps:0.12, src:"Oct-25 call", d:['adjRev','ebitda','adjNI']}},
+    "Q1'26":  {first:{adjRev:1040, ebitda:300, adjNI:160, adjEps:null, src:"Jan-26 call"}},
+    "Q2'26":  {first:{adjRev:1115.7, ebitda:334.7, adjNI:139.5, adjEps:null, src:"Apr-26 call", d:['ebitda','adjNI']}},
+    "Q4'26E": {first:{adjRev:1376.1, ebitda:492.5, adjNI:269.9, adjEps:0.18, src:"Oct-26 release", d:['adjRev','ebitda','adjNI','adjEps']}},
+    'FY2025': {first:{adjRev:3237.5, ebitda:855, adjNI:295, adjEps:0.26, src:"Jan-25"}, latest:{adjRev:3540, ebitda:1035, adjNI:455, adjEps:0.37, src:"Oct-25"}},
+    'FY2026E':{first:{adjRev:4655, ebitda:1600, adjNI:825, adjEps:0.60, src:"Jan-26"}, latest:{adjRev:5040, ebitda:1660, adjNI:840, adjEps:0.61, src:"Oct-26"},
+               mt:{adjRev:4051, adjEps:0.675, src:"2024 plan: ≥25% rev. CAGR 2023–26, EPS $0.55–0.80"}},
+    'FY2027E':{first:{adjRev:6400, ebitda:2240, adjNI:1280, adjEps:0.90, src:"Oct-26"}, latest:{adjRev:6400, ebitda:2240, adjNI:1280, adjEps:0.90, src:"Oct-26"}},
+    'FY2028E':{mt:{adjRev:7890, adjEps:1.07, src:"Jan-26 plan: ≥30% rev. CAGR, 38–42% EPS CAGR 2025–28"}},
+    'FY2030E':{amb:{members:50000, products:100000, src:"Oct-26 call: 100M products, ~50M members by 2030"}},
+  };
 
   // ---- Engine ----
   const sum = (...a) => a.some(v=>v===null||v===undefined) ? null : a.reduce((s,v)=>s+v,0);
@@ -1216,70 +1273,98 @@ const MODEL = (() => {
     o.feeTot = sum(o.fLPB,o.fOrig,o.fFS,o.fTech,o.fOther);
     return o;
   }
-  const Q = QLAB.map((_,i)=>derive({...pick(i), days:QDAYS[i], lab:QLAB[i], end:QEND[i]}));
-  PLAB.forEach((lab,j)=>{
-    const i=Q.length, L=Q[i-1], Y=Q[i-4], a=k=>ASM[k][j];
-    const o={days:PDAYS[j], lab, end:PEND[j], proj:true};
-    o.members=L.members+a('memAdds');
-    const ppm=L.products/L.members + a('ppmD');
-    o.lendProd=L.lendProd+a('lendAdds');
-    o.fsProd=o.members*ppm-o.lendProd;
-    o.techAcc=L.techAcc+a('techAdds');
-    o.oPL=Y.oPL*(1+a('gPL')); o.oSL=Y.oSL*(1+a('gSL')); o.oHL=Y.oHL*(1+a('gHL'));
-    o.oSB=a('oSB'); o.lpbVol=a('lpbVol');
-    o.avgIEA=L.avgIEA*(1+a('gIEA')); o.avgLoans=o.avgIEA*(L.avgLoans/L.avgIEA);
-    const inc=o.avgIEA*a('yield')*o.days/365, nii=o.avgIEA*a('nim')*o.days/365, exp=inc-nii;
+  const FEE_KEYS = ['fLPF','fRefLPB','fRefOth','fInterch','fBrok','fOrig','fTech','fCrypto','fOther'];
+  // Shared revenue → net income build for projected periods (quarterly or annual)
+  function buildPL(o, L, a, factor){
+    const inc=o.avgIEA*a.yield*factor, nii=o.avgIEA*a.nim*factor, exp=inc-nii;
     const sl=L.intLoans/L.intInc;
     o.intLoans=inc*sl; o.intOther=inc*(1-sl);
-    o.expCorp=L.expCorp; o.expOther=L.expOther;
     const rest=exp-o.expCorp-o.expOther, sd=L.expDep/(L.expDep+L.expSec);
     o.expDep=rest*sd; o.expSec=rest*(1-sd);
-    o.lpf=o.lpbVol*a('take');
-    o.losss=(o.oPL+o.oSL+o.oHL+o.oSB-o.lpbVol)*a('origFee');
-    o.techRev=L.techRev*(1+a('gTech'));
-    o.crypto=L.crypto; o.otherNII=L.otherNII*(1+a('gOther'));
+    o.lpf=o.lpbVol*a.take;
+    o.losss=(o.oPL+o.oSL+o.oHL+o.oSB-o.lpbVol)*a.origFee;
     const rev=nii+o.lpf+o.losss+o.techRev+o.crypto+o.otherNII;
-    o.prov=rev*a('prov'); o.tpd=rev*a('tpd'); o.sm=rev*a('sm'); o.coo=rev*a('coo'); o.ga=rev*a('ga'); o.gw=0;
+    o.prov=rev*a.prov; o.tpd=rev*a.tpd; o.sm=rev*a.sm; o.coo=rev*a.coo; o.ga=rev*a.ga; o.gw=0;
     const pretax=rev-o.prov-o.tpd-o.sm-o.coo-o.ga;
-    o.tax=pretax*a('tax');
-    o.shBasic=L.shBasic*(1+a('gSh')); o.shDil=L.shDil*(1+a('gSh'));
-    o.adjSh=(L.adjSh||ADJ_SH_Q3_26)*(1+a('gSh'));
-    o.da=L.da*(1+a('gDA')); o.sbc=L.sbc*(1+a('gSBC'));
+    o.tax=pretax*a.tax;
     o.adjRev=rev;
     o.ebitda=pretax+o.da+o.sbc+o.expCorp;
-    ['fLPF','fRefLPB','fRefOth','fInterch','fBrok','fOrig','fTech','fCrypto','fOther'].forEach(k=>o[k]=null);
+    FEE_KEYS.forEach(k=>o[k]=null);
     derive(o);
     o.adjNI=o.ni; o.epsB=o.ni/o.shBasic; o.epsD=o.ni/o.shDil; o.adjEps=o.adjNI/o.adjSh;
-    Q.push(o);
+    o.proj=true;
+    return o;
+  }
+  const at = (obj,j) => Object.fromEntries(Object.entries(obj).map(([k,v])=>[k,v[j]]));
+
+  const Q = QLAB.map((_,i)=>derive({...pick(i), days:QDAYS[i], lab:QLAB[i], end:QEND[i]}));
+  PLAB.forEach((lab,j)=>{
+    const i=Q.length, L=Q[i-1], Y=Q[i-4], a=at(ASM,j);
+    const o={days:PDAYS[j], lab, end:PEND[j]};
+    o.members=L.members+a.memAdds;
+    const ppm=L.products/L.members + a.ppmD;
+    o.lendProd=L.lendProd+a.lendAdds;
+    o.fsProd=o.members*ppm-o.lendProd;
+    o.techAcc=L.techAcc+a.techAdds;
+    o.oPL=Y.oPL*(1+a.gPL); o.oSL=Y.oSL*(1+a.gSL); o.oHL=Y.oHL*(1+a.gHL);
+    o.oSB=a.oSB; o.lpbVol=a.lpbVol;
+    o.avgIEA=L.avgIEA*(1+a.gIEA); o.avgLoans=o.avgIEA*(L.avgLoans/L.avgIEA);
+    o.expCorp=L.expCorp; o.expOther=L.expOther;
+    o.techRev=L.techRev*(1+a.gTech);
+    o.crypto=L.crypto; o.otherNII=L.otherNII*(1+a.gOther);
+    o.shBasic=L.shBasic*(1+a.gSh); o.shDil=L.shDil*(1+a.gSh);
+    o.adjSh=(L.adjSh||ADJ_SH_Q3_26)*(1+a.gSh);
+    o.da=L.da*(1+a.gDA); o.sbc=L.sbc*(1+a.gSBC);
+    Q.push(buildPL(o, L, a, o.days/365));
   });
   const Y = YLAB.map((lab,j)=>derive({...pick(QLAB.length+j), days:YDAYS[j], lab, end:'Dec-'+lab.slice(-2)}));
   const STOCK=['members','lendProd','fsProd','techAcc'];
-  const FLOW=['oPL','oSL','oHL','oSB','lpbVol','intLoans','intOther','expSec','expDep','expCorp','expOther','losss','techRev','lpf','crypto','otherNII','prov','tpd','sm','coo','ga','gw','tax','adjRev','da','sbc','ebitda','adjNI','fLPF','fRefLPB','fRefOth','fInterch','fBrok','fOrig','fTech','fCrypto','fOther'];
-  function yearFrom(qs, lab){
-    const o={days:qs.reduce((s,q)=>s+q.days,0), lab, end:'Dec-'+lab.slice(4,6), proj:true};
+  const FLOW=['oPL','oSL','oHL','oSB','lpbVol','intLoans','intOther','expSec','expDep','expCorp','expOther','losss','techRev','lpf','crypto','otherNII','prov','tpd','sm','coo','ga','gw','tax','adjRev','da','sbc','ebitda','adjNI',...FEE_KEYS];
+  function yearFrom(qs, lab, end){
+    const o={days:qs.reduce((s,q)=>s+q.days,0), lab, end, proj:true, fromQ:true};
     STOCK.forEach(k=>o[k]=qs[3][k]);
     FLOW.forEach(k=>o[k]=sum(...qs.map(q=>q[k])));
     o.avgIEA=qs.reduce((s,q)=>s+q.avgIEA*q.days,0)/o.days;
     o.avgLoans=qs.reduce((s,q)=>s+q.avgLoans*q.days,0)/o.days;
     derive(o);
     const avg=k=>qs.every(q=>q[k])?qs.reduce((s,q)=>s+q[k],0)/4:null;
-    o.shDil=avg('shDil'); o.shBasic=avg('shBasic');
+    o.shDil=avg('shDil'); o.shBasic=avg('shBasic'); o.adjSh=avg('adjSh');
     o.epsD=o.shDil?o.ni/o.shDil:null; o.epsB=o.shBasic?o.ni/o.shBasic:null;
     o.adjEps=sum(...qs.map(q=>q.adjEps));
     return o;
   }
-  Y.push(yearFrom(Q.slice(8,12),'FY2026E'), yearFrom(Q.slice(12,16),'FY2027E'));
-  Y[4].end='Dec-26'; Y[5].end='Dec-27';
+  Y.push(yearFrom(Q.slice(8,12),'FY2026E','Dec-26'), yearFrom(Q.slice(12,16),'FY2027E','Dec-27'));
+  XLAB.forEach((lab,j)=>{
+    const P=Y[Y.length-1], a=at(ASMY,j);
+    const o={days:365, lab, end:'Dec-'+lab.slice(4,6), annualOnly:true};
+    o.members=P.members*(1+a.gMem);
+    o.lendProd=P.lendProd*(1+a.gLend);
+    o.fsProd=o.members*a.ppm-o.lendProd;
+    o.techAcc=P.techAcc*(1+a.gTechAcc);
+    o.oPL=P.oPL*(1+a.gPL); o.oSL=P.oSL*(1+a.gSL); o.oHL=P.oHL*(1+a.gHL); o.oSB=a.oSB;
+    o.lpbVol=P.lpbVol*(1+a.gLPB);
+    o.avgIEA=P.avgIEA*(1+a.gIEA); o.avgLoans=o.avgIEA*(P.avgLoans/P.avgIEA);
+    o.expCorp=P.expCorp; o.expOther=P.expOther;
+    o.techRev=P.techRev*(1+a.gTechRev);
+    o.crypto=P.crypto*(1+a.gOther); o.otherNII=P.otherNII*(1+a.gOther);
+    o.shBasic=P.shBasic*(1+a.gSh); o.shDil=P.shDil*(1+a.gSh); o.adjSh=P.adjSh*(1+a.gSh);
+    o.da=P.da*(1+a.gDA); o.sbc=P.sbc*(1+a.gSBC);
+    Y.push(buildPL(o, P, a, 1));
+    o.end='Dec-'+lab.slice(4,6).replace('20','');
+  });
+  Y.forEach(y=>{ if(y.lab.startsWith('FY20')) y.end='Dec-'+y.lab.slice(4,6); });
 
   // Displayed blocks
   const BLOCKS = [
-    {title:'Quarterly · Actual',    proj:false, cols:Q.slice(FIRST_SHOWN_Q, QLAB.length).map((v,k)=>({v, kind:'q', qi:FIRST_SHOWN_Q+k}))},
-    {title:'Quarterly · Projected', proj:true,  cols:Q.slice(QLAB.length).map((v,k)=>({v, kind:'q', qi:QLAB.length+k}))},
-    {title:'Annual · Actual',       proj:false, cols:Y.slice(FIRST_SHOWN_Y, YLAB.length).map((v,k)=>({v, kind:'y', yi:FIRST_SHOWN_Y+k}))},
-    {title:'Annual · Projected',    proj:true,  cols:Y.slice(YLAB.length).map((v,k)=>({v, kind:'y', yi:YLAB.length+k}))},
+    {id:'qa', title:'Quarterly · Actual',    short:'Q · Act.',  proj:false, cols:Q.slice(FIRST_SHOWN_Q, QLAB.length).map((v,k)=>({v, kind:'q', qi:FIRST_SHOWN_Q+k}))},
+    {id:'qp', title:'Quarterly · Projected', short:'Q · Proj.', proj:true,  cols:Q.slice(QLAB.length).map((v,k)=>({v, kind:'q', qi:QLAB.length+k}))},
+    {id:'ya', title:'Annual · Actual',       short:'Y · Act.',  proj:false, cols:Y.slice(FIRST_SHOWN_Y, YLAB.length).map((v,k)=>({v, kind:'y', yi:FIRST_SHOWN_Y+k}))},
+    {id:'yp', title:'Annual · Projected',    short:'Y · Proj.', proj:true,  cols:Y.slice(YLAB.length).map((v,k)=>({v, kind:'y', yi:YLAB.length+k}))},
   ];
   const yoyBase = c => c.kind==='q' ? Q[c.qi-4] : Y[c.yi-1];
   const prevBase = c => c.kind==='q' ? Q[c.qi-1] : Y[c.yi-1];
+  // Input highlighting: quarterly projections (inp) and annual-only projections FY2028E+ (inpY)
+  const isInput = (r,c) => (r.inp && c.kind==='q' && c.v.proj) || (r.inpY && c.v.annualOnly);
 
   // ---- Row helpers ----
   const val = k => o=>o[k];
@@ -1289,35 +1374,42 @@ const MODEL = (() => {
   const YOY = (k, extra={}) => ({l:'YoY growth', f:(o,c)=>growth(o[k], yoyBase(c)?.[k]), fmt:'g', u:'%', sub:1, ...extra});
   const QOQ = (k, extra={}) => ({l:'QoQ growth', f:(o,c)=>c.kind==='q'?growth(o[k], prevBase(c)?.[k]):null, fmt:'g', u:'%', sub:1, ...extra});
   const PCT = (l, a, b, extra={}) => ({l, f:ratio(a,b), fmt:'cs', u:'%', sub:1, ...extra});
+  const gh = (lab, kind, key) => GH[lab]?.[kind]?.[key] ?? null;
+  const GROW = (key, label, fmt) => [
+    {l:`${label} – first guidance`, f:(o)=>gh(o.lab,'first',key), fmt, u:fmt==='ps'?'US$':'US$M', ghk:key, ghkind:'first'},
+    {l:`${label} – latest guidance`, f:(o)=>gh(o.lab,'latest',key), fmt, u:fmt==='ps'?'US$':'US$M'},
+    {l:`${label} – actual / model`, f:(o)=>(GH[o.lab]?.first||GH[o.lab]?.latest)?o[key]:null, fmt, u:fmt==='ps'?'US$':'US$M', b:1},
+    {l:'vs first guidance', f:(o)=>{ const g=gh(o.lab,'first',key); return isN(g)&&isN(o[key])?o[key]/g-1:null; }, fmt:'g', u:'%', sub:1},
+  ];
 
   const SEC = t => ({sec:t});
   const ROWS = [
     SEC('Key performance indicators'),
     {l:'Members', f:val('members'), fmt:'k', u:'k', b:1},
-    YOY('members'),
+    YOY('members', {inpY:1}),
     {l:'Net new members', f:(o,c)=>{ const p=prevBase(c)?.members; return isN(o.members)&&isN(p)?o.members-p:null; }, fmt:'k', u:'k', sub:1, inp:1},
     {l:'Total products', f:val('products'), fmt:'k', u:'k', b:1},
     YOY('products'),
-    {l:'Products per member', f:ratio('products','members'), fmt:'x2', u:'x', sub:1, inp:1},
+    {l:'Products per member', f:ratio('products','members'), fmt:'x2', u:'x', sub:1, inp:1, inpY:1},
     {l:'Lending products', f:val('lendProd'), fmt:'k', u:'k', inp:1},
-    YOY('lendProd'),
+    YOY('lendProd', {inpY:1}),
     {l:'Financial Services products', f:val('fsProd'), fmt:'k', u:'k'},
     YOY('fsProd'),
     {l:'Technology Platform accounts', f:val('techAcc'), fmt:'mm1', u:'M', inp:1},
-    YOY('techAcc'),
+    YOY('techAcc', {inpY:1}),
 
     SEC('Loan originations'),
     {l:'Personal loans', f:val('oPL'), fmt:'m', u:'US$M'},
-    YOY('oPL', {inp:1}),
+    YOY('oPL', {inp:1, inpY:1}),
     {l:'Student loans', f:val('oSL'), fmt:'m', u:'US$M'},
-    YOY('oSL', {inp:1}),
+    YOY('oSL', {inp:1, inpY:1}),
     {l:'Home loans', f:val('oHL'), fmt:'m', u:'US$M'},
-    YOY('oHL', {inp:1}),
-    {l:'Small business loans', f:val('oSB'), fmt:'m', u:'US$M', inp:1},
+    YOY('oHL', {inp:1, inpY:1}),
+    {l:'Small business loans', f:val('oSB'), fmt:'m', u:'US$M', inp:1, inpY:1},
     {l:'Total originations', f:val('oTot'), fmt:'m', u:'US$M', tot:1},
     YOY('oTot'),
     {l:'Loan Platform Business volume', f:val('lpbVol'), fmt:'m', u:'US$M', inp:1},
-    YOY('lpbVol'),
+    YOY('lpbVol', {inpY:1}),
     PCT('% of total originations','lpbVol','oTot'),
     {l:'On-balance-sheet originations (total − LPB)', f:val('oBS'), fmt:'m', u:'US$M'},
     YOY('oBS'),
@@ -1329,7 +1421,7 @@ const MODEL = (() => {
     YOY('intOther'),
     {l:'Total interest income', f:val('intInc'), fmt:'m', u:'US$M', tot:1},
     YOY('intInc'),
-    {l:'Yield on avg. interest-earning assets', f:ann('intInc','avgIEA'), fmt:'p2', u:'%', sub:1, inp:1},
+    {l:'Yield on avg. interest-earning assets', f:ann('intInc','avgIEA'), fmt:'p2', u:'%', sub:1, inp:1, inpY:1},
     {l:'Securitizations and warehouses', f:val('expSec'), fmt:'m', u:'US$M'},
     {l:'Deposits', f:val('expDep'), fmt:'m', u:'US$M'},
     YOY('expDep'),
@@ -1341,25 +1433,25 @@ const MODEL = (() => {
     {l:'Net interest income', f:val('nii'), fmt:'m', u:'US$M', tot:1, key:1},
     YOY('nii'),
     PCT('% of total net revenue','nii','totRev'),
-    {l:'Net interest margin', f:ann('nii','avgIEA'), fmt:'p2', u:'%', sub:1, inp:1},
+    {l:'Net interest margin', f:ann('nii','avgIEA'), fmt:'p2', u:'%', sub:1, inp:1, inpY:1},
     {l:'Avg. interest-earning assets', f:val('avgIEA'), fmt:'m', u:'US$M'},
-    YOY('avgIEA'),
+    YOY('avgIEA', {inpY:1}),
     QOQ('avgIEA', {inp:1}),
 
     SEC('Fee income (noninterest income)'),
     {l:'Loan Platform Business fees', f:val('lpf'), fmt:'m', u:'US$M'},
     YOY('lpf'),
-    {l:'Take rate on LPB volume', f:ratio('lpf','lpbVol'), fmt:'p2', u:'%', sub:1, inp:1},
+    {l:'Take rate on LPB volume', f:ratio('lpf','lpbVol'), fmt:'p2', u:'%', sub:1, inp:1, inpY:1},
     {l:'Loan origination, sales, securitizations & servicing', f:val('losss'), fmt:'m', u:'US$M'},
     YOY('losss'),
-    {l:'% of on-balance-sheet originations', f:ratio('losss','oBS'), fmt:'p2', u:'%', sub:1, inp:1},
+    {l:'% of on-balance-sheet originations', f:ratio('losss','oBS'), fmt:'p2', u:'%', sub:1, inp:1, inpY:1},
     {l:'Technology Platform (products & solutions)', f:val('techRev'), fmt:'m', u:'US$M'},
-    YOY('techRev'),
+    YOY('techRev', {inpY:1}),
     QOQ('techRev', {inp:1}),
     {l:'Annualized revenue per account', f:o=>isN(o.techRev)&&o.techAcc?o.techRev*(365/o.days)/o.techAcc:null, fmt:'usd2', u:'US$', sub:1},
     {l:'Crypto (net)', f:val('crypto'), fmt:'m', u:'US$M'},
     {l:'Other (referrals, interchange, brokerage…)', f:val('otherNII'), fmt:'m', u:'US$M'},
-    YOY('otherNII'),
+    YOY('otherNII', {inpY:1}),
     QOQ('otherNII', {inp:1}),
     {l:'Total fee income', f:val('nonII'), fmt:'m', u:'US$M', tot:1, key:1},
     YOY('nonII'),
@@ -1368,22 +1460,23 @@ const MODEL = (() => {
     SEC('Income statement'),
     {l:'Total net revenue', f:val('totRev'), fmt:'m', u:'US$M', tot:1, key:1},
     YOY('totRev'),
+    {l:'Revenue per product (annualized)', f:o=>isN(o.totRev)&&o.products?o.totRev*1000*(365/o.days)/o.products:null, fmt:'usd0', u:'US$', sub:1},
     {l:'Provision for credit losses', f:val('prov'), fmt:'m', u:'US$M'},
     YOY('prov'),
-    PCT('% of revenue','prov','totRev',{inp:1}),
+    PCT('% of revenue','prov','totRev',{inp:1, inpY:1}),
     {l:'Technology and product development', f:val('tpd'), fmt:'m', u:'US$M'},
     YOY('tpd'),
-    PCT('% of revenue','tpd','totRev',{inp:1}),
+    PCT('% of revenue','tpd','totRev',{inp:1, inpY:1}),
     {l:'Sales and marketing', f:val('sm'), fmt:'m', u:'US$M'},
     YOY('sm'),
-    PCT('% of revenue','sm','totRev',{inp:1}),
+    PCT('% of revenue','sm','totRev',{inp:1, inpY:1}),
     {l:'S&M per net new member', f:(o,c)=>{ const p=prevBase(c)?.members; return isN(o.sm)&&isN(p)&&o.members>p ? o.sm*1000/(o.members-p) : null; }, fmt:'usd0', u:'US$', sub:1},
     {l:'Cost of operations', f:val('coo'), fmt:'m', u:'US$M'},
     YOY('coo'),
-    PCT('% of revenue','coo','totRev',{inp:1}),
+    PCT('% of revenue','coo','totRev',{inp:1, inpY:1}),
     {l:'General and administrative', f:val('ga'), fmt:'m', u:'US$M'},
     YOY('ga'),
-    PCT('% of revenue','ga','totRev',{inp:1}),
+    PCT('% of revenue','ga','totRev',{inp:1, inpY:1}),
     {l:'Goodwill impairment', f:val('gw'), fmt:'m', u:'US$M'},
     {l:'Total noninterest expense', f:val('opex'), fmt:'m', u:'US$M', tot:1},
     YOY('opex'),
@@ -1392,7 +1485,7 @@ const MODEL = (() => {
     YOY('pretax'),
     {l:'Pre-tax margin', f:ratio('pretax','totRev'), fmt:'p', u:'%', sub:1},
     {l:'Income tax expense (benefit)', f:val('tax'), fmt:'m', u:'US$M'},
-    {l:'Effective tax rate', f:o=>isN(o.tax)&&o.pretax>0?o.tax/o.pretax:null, fmt:'p', u:'%', sub:1, inp:1},
+    {l:'Effective tax rate', f:o=>isN(o.tax)&&o.pretax>0?o.tax/o.pretax:null, fmt:'p', u:'%', sub:1, inp:1, inpY:1},
     {l:'Net income', f:val('ni'), fmt:'m', u:'US$M', tot:1, key:1},
     YOY('ni'),
     {l:'Net margin', f:ratio('ni','totRev'), fmt:'p', u:'%', sub:1},
@@ -1400,16 +1493,16 @@ const MODEL = (() => {
     {l:'EPS – diluted', f:val('epsD'), fmt:'ps', u:'US$', b:1},
     YOY('epsD'),
     {l:'Diluted weighted avg. shares', f:val('shDil'), fmt:'m', u:'M', inp:1},
-    YOY('shDil'),
+    YOY('shDil', {inpY:1}),
 
     SEC('Adjusted metrics (non-GAAP)'),
     {l:'Adjusted net revenue', f:val('adjRev'), fmt:'m', u:'US$M', b:1},
     YOY('adjRev'),
     {l:'Depreciation and amortization', f:val('da'), fmt:'m', u:'US$M', inp:1},
-    YOY('da'),
+    YOY('da', {inpY:1}),
     PCT('% of revenue','da','adjRev'),
     {l:'Share-based expense', f:val('sbc'), fmt:'m', u:'US$M', inp:1},
-    YOY('sbc'),
+    YOY('sbc', {inpY:1}),
     PCT('% of revenue','sbc','adjRev'),
     {l:'Adjusted EBITDA', f:val('ebitda'), fmt:'m', u:'US$M', tot:1, key:1},
     YOY('ebitda'),
@@ -1445,16 +1538,33 @@ const MODEL = (() => {
     YOY('feeTot'),
     PCT('% of total net revenue','feeTot','totRev'),
 
-    SEC('Versus management guidance'),
-    {l:'Guidance: adjusted net revenue', f:(o)=>GUIDE[o.lab]?.adjRev??null, fmt:'m', u:'US$M', guide:1},
-    {l:'Model vs guidance', f:(o)=>GUIDE[o.lab]?o.adjRev/GUIDE[o.lab].adjRev-1:null, fmt:'g', u:'%', sub:1, guide:1},
-    {l:'Guidance: adjusted EBITDA', f:(o)=>GUIDE[o.lab]?.ebitda??null, fmt:'m', u:'US$M', guide:1},
-    {l:'Model vs guidance', f:(o)=>GUIDE[o.lab]?o.ebitda/GUIDE[o.lab].ebitda-1:null, fmt:'g', u:'%', sub:1, guide:1},
-    {l:'Guidance: adjusted net income', f:(o)=>GUIDE[o.lab]?.adjNI??null, fmt:'m', u:'US$M', guide:1},
-    {l:'Model vs guidance', f:(o)=>GUIDE[o.lab]?o.adjNI/GUIDE[o.lab].adjNI-1:null, fmt:'g', u:'%', sub:1, guide:1},
-    {l:'Guidance: adjusted diluted EPS', f:(o)=>GUIDE[o.lab]?.adjEps??null, fmt:'ps', u:'US$', guide:1},
-    {l:'Model vs guidance', f:(o)=>GUIDE[o.lab]?o.adjEps/GUIDE[o.lab].adjEps-1:null, fmt:'g', u:'%', sub:1, guide:1},
+    SEC('Guidance track record: what was projected at the time'),
+    ...GROW('adjRev','Adj. net revenue','m'),
+    ...GROW('ebitda','Adj. EBITDA','m'),
+    ...GROW('adjNI','Adj. net income','m'),
+    ...GROW('adjEps','Adj. diluted EPS','ps'),
+    {l:'Medium-term plan: adj. net revenue (floor)', f:o=>gh(o.lab,'mt','adjRev'), fmt:'m', u:'US$M', b:1},
+    {l:'Actual / model vs plan', f:o=>{ const g=gh(o.lab,'mt','adjRev'); return isN(g)?o.adjRev/g-1:null; }, fmt:'g', u:'%', sub:1},
+    {l:'Medium-term plan: adj. diluted EPS (midpoint)', f:o=>gh(o.lab,'mt','adjEps'), fmt:'ps', u:'US$', b:1},
+    {l:'Actual / model vs plan', f:o=>{ const g=gh(o.lab,'mt','adjEps'); return isN(g)?o.adjEps/g-1:null; }, fmt:'g', u:'%', sub:1},
+    {l:'2030 ambition: members', f:o=>gh(o.lab,'amb','members'), fmt:'k', u:'k', b:1},
+    {l:'Model vs ambition', f:o=>{ const g=gh(o.lab,'amb','members'); return isN(g)?o.members/g-1:null; }, fmt:'g', u:'%', sub:1},
+    {l:'2030 ambition: total products', f:o=>gh(o.lab,'amb','products'), fmt:'k', u:'k', b:1},
+    {l:'Model vs ambition', f:o=>{ const g=gh(o.lab,'amb','products'); return isN(g)?o.products/g-1:null; }, fmt:'g', u:'%', sub:1},
   ];
+  // Outline structure: each row knows its section and (for sub-rows) its parent line
+  let secIdx=-1, parentIdx=-1;
+  ROWS.forEach((r,i)=>{
+    if(r.sec){ secIdx=i; parentIdx=-1; r.id='s'+i; return; }
+    r.sec_=secIdx; r.id='r'+i;
+    if(r.sub){ r.parent=parentIdx; if(parentIdx>=0) ROWS[parentIdx].hasSubs=true; } else parentIdx=i;
+  });
+
+  // ---- Outline state (persisted) ----
+  const ST_KEY='pvg-model-outline';
+  let S0={}; try{ S0=JSON.parse(localStorage.getItem(ST_KEY)||'{}'); }catch(e){}
+  const state={ sec:new Set(S0.sec||[]), row:new Set(S0.row||[]), blk:new Set(S0.blk||[]), hideSubs:!!S0.hideSubs };
+  const save=()=>{ try{ localStorage.setItem(ST_KEY, JSON.stringify({sec:[...state.sec],row:[...state.row],blk:[...state.blk],hideSubs:state.hideSubs})); }catch(e){} };
 
   // ---- Render ----
   const FM = {
@@ -1462,46 +1572,71 @@ const MODEL = (() => {
     usd0: v => !isN(v) ? NA : '$'+nf0.format(v),
     usd2: v => !isN(v) ? NA : '$'+v.toFixed(2),
     p2:   v => !isN(v) ? NA : (v*100).toFixed(2)+'%',
-    m:    v => !isN(v) ? NA : v<0 ? `(${nf0.format(Math.abs(v))})` : nf0.format(v),
+    ps:   v => !isN(v) ? NA : (v<0?'($'+Math.abs(v).toFixed(2)+')':'$'+v.toFixed(v<0.1&&v>0&&Math.round(v*1000)%10!==0?3:2)),
   };
   const DERIVED_COLS = ["Q4'25"];
+  const btn = (kind,id,open,title) => `<button class="ol" data-ol="${kind}" data-id="${id}" title="${title}" aria-expanded="${open}">${open?'−':'+'}</button>`;
+  function visible(r){
+    const secClosed = state.sec.has(ROWS[r.sec_]?.id);
+    if(r.sub) return !secClosed && !state.hideSubs && !state.row.has(ROWS[r.parent]?.id);
+    return !secClosed || r.tot;
+  }
   function render(){
-    const gap = '<td class="gap"></td>';
-    const gapH = '<th class="gap"></th>';
-    const blockCells = (fn) => BLOCKS.map((b,bi)=>(bi?gap:'')+b.cols.map(c=>fn(c,b)).join('')).join('');
+    const gap = '<td class="gap"></td>', gapH = '<th class="gap"></th>';
+    const blocks = BLOCKS.map(b=>({...b, closed:state.blk.has(b.id)}));
+    const cells = (fn) => blocks.map((b,bi)=>(bi?gap:'')+(b.closed?'<td class="colx"></td>':b.cols.map(c=>fn(c,b)).join(''))).join('');
     const hA = `<tr class="hA"><th class="c-lab co-name">SoFi Technologies, Inc. (SOFI)</th><th class="c-unit"></th>${
-      BLOCKS.map((b,bi)=>(bi?gapH:'')+`<th colspan="${b.cols.length}" class="band ${b.proj?'band-p':'band-a'}">${b.title}</th>`).join('')}</tr>`;
+      blocks.map((b,bi)=>(bi?gapH:'')+(b.closed
+        ? `<th class="band ${b.proj?'band-p':'band-a'} colx" title="${b.title}">${btn('blk',b.id,false,'Expand '+b.title)}</th>`
+        : `<th colspan="${b.cols.length}" class="band ${b.proj?'band-p':'band-a'}">${btn('blk',b.id,true,'Collapse '+b.title)}<span>${b.title}</span></th>`)).join('')}</tr>`;
     const hB = `<tr class="hB"><th class="c-lab">US$ in millions, except per-share data and KPIs</th><th class="c-unit">Unit</th>${
-      BLOCKS.map((b,bi)=>(bi?gapH:'')+b.cols.map(c=>`<th class="per ${b.proj?'p':''}">${c.v.lab}${DERIVED_COLS.includes(c.v.lab)?'<sup>*</sup>':''}</th>`).join('')).join('')}</tr>`;
+      blocks.map((b,bi)=>(bi?gapH:'')+(b.closed?`<th class="colx vlab">${b.short}</th>`:b.cols.map(c=>`<th class="per ${b.proj?'p':''}">${c.v.lab}${DERIVED_COLS.includes(c.v.lab)?'<sup>*</sup>':''}</th>`).join(''))).join('')}</tr>`;
     const hC = `<tr class="hC"><th class="c-lab"></th><th class="c-unit"></th>${
-      BLOCKS.map((b,bi)=>(bi?gapH:'')+b.cols.map(c=>`<th class="${b.proj?'p':''}">${c.v.end}${c.v.lab==='FY2026E'?' · 3A+1E':''}</th>`).join('')).join('')}</tr>`;
+      blocks.map((b,bi)=>(bi?gapH:'')+(b.closed?'<th class="colx"></th>':b.cols.map(c=>`<th class="${b.proj?'p':''}">${c.v.end}${c.v.lab==='FY2026E'?' · 3A+1E':''}${c.v.annualOnly?' · annual':''}</th>`).join(''))).join('')}</tr>`;
     let body='';
     ROWS.forEach((r,ri)=>{
       if(r.sec){
-        if(ri) body+=`<tr class="spacer"><td class="c-lab"></td><td class="c-unit"></td>${blockCells(()=>'<td></td>')}</tr>`;
-        body+=`<tr class="sec"><td class="c-lab">${r.sec}</td><td class="c-unit"></td>${blockCells(()=>'<td></td>')}</tr>`;
+        const open=!state.sec.has(r.id);
+        if(ri) body+=`<tr class="spacer"><td class="c-lab"></td><td class="c-unit"></td>${cells(()=>'<td></td>')}</tr>`;
+        body+=`<tr class="sec"><td class="c-lab">${btn('sec',r.id,open,(open?'Collapse ':'Expand ')+r.sec)}${r.sec}</td><td class="c-unit"></td>${cells(()=>'<td></td>')}</tr>`;
         return;
       }
-      const tds = blockCells((c,b)=>{
-        const cls=['n', b.proj?'p':'', (r.inp && c.kind==='q' && b.proj)?'inp':''];
-        if(r.guide && !GUIDE[c.v.lab]) return `<td class="${cls.join(' ')}"></td>`;
+      if(!visible(r)) return;
+      const tds = cells((c,b)=>{
+        const cls=['n', b.proj?'p':'', isInput(r,c)?'inp':''];
         let v; try{ v=r.f(c.v,c); }catch(e){ v=null; }
         let s=(FM[r.fmt]||FM.m)(v);
-        if(r.der && r.der.includes(c.v.lab) && isN(v)) s=`<span class="derived">${s}</span>`;
-        return `<td class="${cls.join(' ')}">${s}</td>`;
+        const derived = (r.der && r.der.includes(c.v.lab)) || (r.ghk && GH[c.v.lab]?.[r.ghkind]?.d?.includes(r.ghk));
+        if(derived && isN(v)) s=`<span class="derived">${s}</span>`;
+        const t = r.ghk && GH[c.v.lab]?.[r.ghkind]?.src ? ` title="${GH[c.v.lab][r.ghkind].src}"` : '';
+        return `<td class="${cls.join(' ')}"${t}>${s}</td>`;
       });
       const rc=[r.sub?'sub':'', r.tot?'tot':'', r.key?'kt':'', r.b?'b':''].join(' ');
-      body+=`<tr class="${rc}"><td class="c-lab" title="${r.l}">${r.l}</td><td class="c-unit">${r.u||''}</td>${tds}</tr>`;
+      const tog = r.hasSubs && !state.hideSubs && !state.sec.has(ROWS[r.sec_]?.id) ? btn('row',r.id,!state.row.has(r.id),'Show / hide detail') : (r.sub?'':'<span class="ol-sp"></span>');
+      body+=`<tr class="${rc}"><td class="c-lab" title="${r.l}">${tog}${r.l}</td><td class="c-unit">${r.u||''}</td>${tds}</tr>`;
     });
-    document.getElementById('modelTable').innerHTML=`<table class="xl"><thead>${hA}${hB}${hC}</thead><tbody>${body}</tbody></table>`;
+    const el=document.getElementById('modelTable');
+    const sx=el.scrollLeft, sy=el.scrollTop;
+    el.innerHTML=`<table class="xl"><thead>${hA}${hB}${hC}</thead><tbody>${body}</tbody></table>`;
+    el.scrollLeft=sx; el.scrollTop=sy;
+    document.getElementById('hideSubs').checked=state.hideSubs;
   }
-  return {render, Q, Y};
+  // Outline interactions
+  function toggle(kind,id){ const set=state[kind]; set.has(id)?set.delete(id):set.add(id); save(); render(); }
+  function expandAll(){ state.sec.clear(); state.row.clear(); state.blk.clear(); state.hideSubs=false; save(); render(); }
+  function collapseAll(){ ROWS.forEach(r=>{ if(r.sec) state.sec.add(r.id); }); save(); render(); }
+  function setHideSubs(v){ state.hideSubs=v; save(); render(); }
+  return {render, toggle, expandAll, collapseAll, setHideSubs, Q, Y};
 })();
 
 let modelRendered=false;
 function renderModel(){ if(modelRendered) return; MODEL.render(); modelRendered=true; }
-document.getElementById('hideSubs').addEventListener('change',e=>{
-  document.getElementById('modelTable').classList.toggle('no-subs', e.target.checked);
+document.getElementById('hideSubs').addEventListener('change',e=>MODEL.setHideSubs(e.target.checked));
+document.getElementById('olExpand').addEventListener('click',()=>MODEL.expandAll());
+document.getElementById('olCollapse').addEventListener('click',()=>MODEL.collapseAll());
+document.getElementById('modelTable').addEventListener('click',e=>{
+  const b=e.target.closest('button.ol'); if(!b) return;
+  MODEL.toggle(b.dataset.ol, b.dataset.id);
 });
 
 /* =====================================================================
