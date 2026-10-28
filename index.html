@@ -148,7 +148,14 @@ html.mobile .nav-item .ic-desk{display:block}
 .xl td.bt{color:var(--accent);background:var(--proj)}
 .xl tr.b td.bt,.xl tr.tot td.bt{color:var(--accent)}
 .xl tr.sub td.bt{color:var(--accent);opacity:.85}
-.xl td.vr{background:var(--proj)}
+.xl td.bt{border-left:1px dashed rgba(46,117,182,0.45)}
+.xl tr.subh td{height:26px;vertical-align:bottom;border-bottom:1px solid var(--border)}
+.xl tr.subh td.c-lab{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--accent);padding-left:14px}
+.xl tr.subh td.n{color:transparent}
+.xl th.btc{color:var(--accent);background:var(--accent-light);border-left:1px dashed rgba(46,117,182,0.45)}
+.xl th.btc .pt{display:block;font-size:9px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;line-height:1}
+.xl tr.hB th.btc{line-height:1.05}
+.xl th.band .ol.ol-txt{width:auto;height:18px;padding:0 8px;margin:0 0 0 12px;font-size:10px;font-weight:600;letter-spacing:.03em;text-transform:none;border-radius:9px}
 .xl th.band .ol{background:transparent;color:#fff;border-color:rgba(255,255,255,0.7);margin-right:8px}
 .xl th.band .ol:hover{background:rgba(255,255,255,0.15);color:#fff}
 .xl .colx{width:46px;min-width:46px;max-width:46px;padding:0 4px;text-align:center}
@@ -328,13 +335,12 @@ html.mobile .xl-wrap{max-height:calc(100vh - 190px)}
             <div><span class="card-t">Income statement</span><span class="card-sub">(US$M unless noted · KPIs in thousands)</span></div>
             <div class="ctrls">
               <div class="legend"><span><i style="background:#FFF4CC"></i>Input / assumption</span><span><i style="background:rgba(46,117,182,0.12)"></i>Projected</span><span><sup style="color:var(--warning)">*</sup> Derived (FY − 9M)</span><span><u>123</u> Derived from rounded disclosure</span></div>
-              <span class="ctrl-l">Past periods</span><div class="seg" id="pastView"><button class="on" data-v="act">Actual</button><button data-v="bt">Projected at the time</button><button data-v="var">Actual vs projected</button></div>
               <div class="tbtns"><button class="tbtn" id="olExpand">+ Expand all</button><button class="tbtn" id="olCollapse">− Collapse all</button></div>
               <label class="chk"><input type="checkbox" id="hideSubs"> Hide growth and common-size rows</label>
             </div>
           </div>
           <div class="xl-wrap" id="modelTable"></div>
-          <div class="src">Source: SoFi 10-Qs (Q1'23–Q2'26), Q1–Q3'26 earnings releases (Tables 1, 2, 4 and 7), 2023–2025 10-Ks and earnings calls (2025–2026). Standard layout: total revenue and its breakdown → cost of revenue → gross income → operating expenses → operating income → non-operating items → EBT → taxes → net income → EBITDA bridge → adjusted EBITDA. SoFi has no cost of revenue or non-operating line: interest expense and gains on debt are reported inside net revenue. Costs are shown as negatives. 2022 quarters and FY2022 are not shown; they are the base for YoY growth. * Q4'23, Q4'24 and Q4'25 = full year per the 10-K less nine months. Q1–Q2'23 LPB fees and referrals are split pro rata from the reported referral totals (dotted underline); 2022 quarters likewise. FY2026E = Q1–Q3'26 actuals + Q4'26E; FY2027E = sum of projected quarters; FY2028E–FY2030E are annual-only projections anchored to SoFi's medium-term guidance (Jan-26: ≥30% adj. net revenue CAGR and 38–42% adj. EPS CAGR 2025–28) and 2030 ambitions (100M products, ~50M members). Yellow cells are projection inputs. "Projected at the time" (blue) shows what this model would have projected for each past period using only data through the prior period: net adds, growth rates, yields, take rates and cost ratios of the prior period carried forward (FY2023 would need FY2021 data). Growth above ±1,000% or on a negative base is shown as n/m.</div>
+          <div class="src">Source: SoFi 10-Qs (Q1'23–Q2'26), Q1–Q3'26 earnings releases (Tables 1, 2, 4 and 7), 2023–2025 10-Ks and earnings calls (2025–2026). Standard layout: total revenue and its breakdown → cost of revenue → gross income → operating expenses → operating income → non-operating items → EBT → taxes → net income → EBITDA bridge → adjusted EBITDA. Revenue is shown first by segment, as SoFi reports it (10-Q segment notes and Table 6; Corporate/Other absorbs funds-transfer-pricing differences and intercompany eliminations, and SoFi's allocation methodology changed over time), then by type. Projected segment split: Lending and Financial Services keep the prior period's share of net interest income, Lending noninterest income = loan origination/sales/servicing, Financial Services noninterest income = LPB + other fee income + crypto, Technology Platform = technology revenue + prior intercompany fees, Corporate/Other is the balancing item. SoFi has no cost of revenue or non-operating line: interest expense and gains on debt are reported inside net revenue. Costs are shown as negatives. 2022 quarters and FY2022 are not shown; they are the base for YoY growth. * Q4'23, Q4'24 and Q4'25 = full year per the 10-K less nine months. Q1–Q2'23 LPB fees and referrals are split pro rata from the reported referral totals (dotted underline); 2022 quarters likewise. FY2026E = Q1–Q3'26 actuals + Q4'26E; FY2027E = sum of projected quarters; FY2028E–FY2030E are annual-only projections anchored to SoFi's medium-term guidance (Jan-26: ≥30% adj. net revenue CAGR and 38–42% adj. EPS CAGR 2025–28) and 2030 ambitions (100M products, ~50M members). Yellow cells are projection inputs. Use "+ projected at the time" on an actual block to add, next to each past period, a blue column with what this model would have projected using only data through the prior period: net adds, growth rates, yields, take rates and cost ratios of the prior period carried forward (FY2023 would need FY2021 data). Growth above ±1,000% or on a negative base is shown as n/m.</div>
         </div>
       </section>
     </div>
@@ -1182,6 +1188,15 @@ const MODEL = (() => {
     adjFX:    [0,0,0,0,0,0,0,10971, 174,194,475,840, 276,2066,2954,1808,411,926,319, 0,10971,1683,7104],
     adjSR:    [-11580,-9098,-6182,-12791,-12084,-8601,-7420,-6595, -5226,-1654,-4362,4962, -1074,3274,-11989,-12224,-13163,-13142,-13952, -39651,-34700,-6280,-22013],
     adjResid: [2963,2662,1453,-470,89,-602,928,10, 73,1,9,25, 35,12,15,8,27,16,-23, 6608,425,108,70],
+    // Segment net revenue as reported by SoFi: net interest income and noninterest income per segment
+    sL_nii: [94354,114003,139516,183607, 201047,231885,265215,262626, 266536,279212,316268,345210, 360621,372675,427973,444763, 500231,573298,670230, 531480,960773,1207226,1606032],
+    sL_non: [158635,143114,162178,144584, 136034,99556,83758,90500, 63940,61493,79977,72586, 52752,70837,65409,53919, 142189,151500,151115, 608511,409848,277996,242917],
+    sT_nii: [0,0,0,0, 0,0,573,941, 501,555,629,473, 413,266,432,394, 355,1022,1030, 0,1514,2158,1505],
+    sT_non: [60805,83899,84777,85652, 77887,87623,89350,95966, 93865,94883,101910,102362, 103014,109567,114146,121979, 74731,83483,86338, 315133,350826,393020,448706],
+    sF_nii: [5882,12925,28158,45609, 58037,74637,93101,109072, 119713,139229,154143,160337, 173199,193322,203660,207810, 227740,249052,281254, 92574,334847,573422,777991],
+    sF_non: [17661,17438,20795,19208, 23064,23415,25146,30043, 30838,36903,84165,96183, 129920,169211,215963,248931, 200803,217226,243841, 75102,101668,248089,764025],
+    sC_nii: [-5303,-4199,-9824,-20632, -23074,-15396,-13926,17002, 15968,-6412,-40030,-35851, -35507,-48426,-46951,-35688, -35338,-35177,-23062, -39958,-35394,-66325,-166572],
+    sC_non: [-1690,-4653,-1615,-1349, -837,-3702,-6008,9254, 53634,-7245,59,-7175, -12653,-12508,-19032,-17057, -10343,-21728,-25647, -9307,-1293,39273,-61250],
     adjGain:  [0,0,0,0,0,0,0,-14574, -59194,0,-3323,0, 0,0,0,0,0,0,0, 0,-14574,-62517,0],
   };
   const PER_SHARE = {
@@ -1189,7 +1204,7 @@ const MODEL = (() => {
     epsD:   [-0.14,-0.12,-0.09,null,-0.05,-0.06,-0.29,null, 0.02,0.01,0.05,null, 0.06,0.08,0.11,0.13,0.12,0.12,0.18, -0.40,-0.36,0.39,0.39],
     adjEps: [-0.14,-0.12,-0.09,null,-0.05,-0.06,-0.02,null, null,null,null,null, 0.06,0.08,0.11,0.13,0.12,0.12,0.18, -0.40,-0.10,0.15,0.39],
   };
-  const MONEY = new Set(['avgIEA','avgLoans','intLoans','intOther','expSec','expDep','expCorp','expOther','losss','techRev','lpf','crypto','otherNII','prov','tpd','sm','coo','ga','gw','tax','adjRev','da','sbc','ebitda','adjNI','fLPF','fRefLPB','fRefOth','fInterch','fBrok','fOrig','fTech','fCrypto','fOther','shBasic','shDil','adjRestr','adjTrans','adjImp','adjFX','adjSR','adjResid','adjGain']);
+  const MONEY = new Set(['avgIEA','avgLoans','intLoans','intOther','expSec','expDep','expCorp','expOther','losss','techRev','lpf','crypto','otherNII','prov','tpd','sm','coo','ga','gw','tax','adjRev','da','sbc','ebitda','adjNI','fLPF','fRefLPB','fRefOth','fInterch','fBrok','fOrig','fTech','fCrypto','fOther','shBasic','shDil','adjRestr','adjTrans','adjImp','adjFX','adjSR','adjResid','adjGain','sL_nii','sL_non','sT_nii','sT_non','sF_nii','sF_non','sC_nii','sC_non']);
   const pick = i => { const o={}; for(const k in RAW){ const v=RAW[k][i]; o[k]= v===null ? null : MONEY.has(k) ? v/1000 : v; } for(const k in PER_SHARE) o[k]=PER_SHARE[k][i]; return o; };
 
   // ---- Projection assumptions (input cells) ----
@@ -1290,6 +1305,8 @@ const MODEL = (() => {
     o.ni = o.ebt!==null ? o.ebt-o.tax : null;
     o.ebitdaU = sum(o.ni,o.tax,o.expCorp,o.da);
     o.ebitdaCalc = sum(o.ebitdaU,o.sbc,o.adjRestr,o.adjTrans,o.adjImp,o.adjFX,o.adjSR,o.adjResid,o.adjGain);
+    o.segL = sum(o.sL_nii,o.sL_non); o.segT = sum(o.sT_nii,o.sT_non);
+    o.segF = sum(o.sF_nii,o.sF_non); o.segC = sum(o.sC_nii,o.sC_non);
     o.fLPB = sum(o.fLPF,o.fRefLPB);
     o.fFS = sum(o.fRefOth,o.fInterch,o.fBrok,o.fCrypto??0);
     o.feeTot = sum(o.fLPB,o.fOrig,o.fFS,o.fTech,o.fOther);
@@ -1313,6 +1330,13 @@ const MODEL = (() => {
     ADJ_KEYS.forEach(k=>o[k]=0);
     o.adjRev=rev;
     FEE_KEYS.forEach(k=>o[k]=null);
+    derive(o);                                   // consolidated NII / noninterest income first
+    const shr = k => isN(L[k])&&L.nii ? L[k]/L.nii : 0;
+    o.sL_nii=o.nii*shr('sL_nii'); o.sF_nii=o.nii*shr('sF_nii'); o.sT_nii=L.sT_nii??0;
+    o.sC_nii=o.nii-o.sL_nii-o.sF_nii-o.sT_nii;
+    o.sL_non=o.losss; o.sF_non=o.lpf+o.otherNII+(o.crypto||0);
+    o.sT_non=o.techRev+((L.sT_non??0)-(L.techRev??0));
+    o.sC_non=o.nonII-o.sL_non-o.sF_non-o.sT_non;
     derive(o);
     o.ebitda=o.ebitdaCalc;
     o.adjNI=o.ni; o.epsB=o.ni/o.shBasic; o.epsD=o.ni/o.shDil; o.adjEps=o.adjNI/o.adjSh;
@@ -1343,7 +1367,7 @@ const MODEL = (() => {
   });
   const Y = YLAB.map((lab,j)=>derive({...pick(QLAB.length+j), days:YDAYS[j], lab, end:'Dec-'+lab.slice(-2)}));
   const STOCK=['members','lendProd','fsProd','techAcc'];
-  const FLOW=['oPL','oSL','oHL','oSB','lpbVol','intLoans','intOther','expSec','expDep','expCorp','expOther','losss','techRev','lpf','crypto','otherNII','prov','tpd','sm','coo','ga','gw','tax','adjRev','da','sbc','ebitda','adjNI',...FEE_KEYS,...ADJ_KEYS];
+  const FLOW=['oPL','oSL','oHL','oSB','lpbVol','intLoans','intOther','expSec','expDep','expCorp','expOther','losss','techRev','lpf','crypto','otherNII','prov','tpd','sm','coo','ga','gw','tax','adjRev','da','sbc','ebitda','adjNI',...FEE_KEYS,...ADJ_KEYS,'sL_nii','sL_non','sT_nii','sT_non','sF_nii','sF_non','sC_nii','sC_non'];
   function yearFrom(qs, lab, end){
     const o={days:qs.reduce((s,q)=>s+q.days,0), lab, end, proj:true, fromQ:true};
     STOCK.forEach(k=>o[k]=qs[3][k]);
@@ -1478,6 +1502,13 @@ const MODEL = (() => {
     YOY('fsProd'),
     {l:'Technology Platform accounts', f:val('techAcc'), fmt:'mm1', u:'M', inp:1},
     YOY('techAcc', {inpY:1}),
+    // Balance sheet drivers (kept out of the income statement)
+    {l:'Avg. interest-earning assets', f:val('avgIEA'), fmt:'m', u:'US$M', b:1},
+    YOY('avgIEA', {inpY:1}),
+    QOQ('avgIEA', {inp:1}),
+    {l:'Yield on avg. interest-earning assets', f:ann('intInc','avgIEA'), fmt:'p2', u:'%', sub:1, inp:1, inpY:1},
+    {l:'Cost of funds (on avg. interest-earning assets)', f:ann('intExp','avgIEA'), fmt:'p2', u:'%', sub:1},
+    {l:'Net interest margin', f:ann('nii','avgIEA'), fmt:'p2', u:'%', sub:1, inp:1, inpY:1},
 
     SEC('Loan originations'),
     {l:'Personal loans', f:val('oPL'), fmt:'m', u:'US$M'},
@@ -1499,7 +1530,31 @@ const MODEL = (() => {
     {l:'Total net revenue', f:val('totRev'), fmt:'m', u:'US$M', tot:1, key:1},
     YOY('totRev'),
     {l:'Revenue per product (annualized)', f:o=>isN(o.totRev)&&o.products?o.totRev*1000*(365/o.days)/o.products:null, fmt:'usd0', u:'US$', sub:1},
-    // ---- Revenue breakdown: net interest income ----
+    // ---- Revenue by segment, as SoFi reports it ----
+    {l:'By segment (as reported by SoFi)', f:()=>null, subh:1},
+    {l:'Lending', f:val('segL'), fmt:'m', u:'US$M', b:1},
+    YOY('segL'),
+    PCT('% of total net revenue','segL','totRev'),
+    {l:'Revenue per lending product (annualized)', f:o=>isN(o.segL)&&o.lendProd?o.segL*1000*(365/o.days)/o.lendProd:null, fmt:'usd0', u:'US$', sub:1},
+    {l:'Net interest income', f:val('sL_nii'), fmt:'m', u:'US$M', ind:1},
+    {l:'Noninterest income', f:val('sL_non'), fmt:'m', u:'US$M', ind:1},
+    {l:'Technology Platform', f:val('segT'), fmt:'m', u:'US$M', b:1},
+    YOY('segT'),
+    PCT('% of total net revenue','segT','totRev'),
+    {l:'Revenue per account (annualized)', f:o=>isN(o.segT)&&o.techAcc?o.segT*(365/o.days)/o.techAcc:null, fmt:'usd2', u:'US$', sub:1},
+    {l:'Net interest income', f:val('sT_nii'), fmt:'m', u:'US$M', ind:1},
+    {l:'Noninterest income (incl. intercompany)', f:val('sT_non'), fmt:'m', u:'US$M', ind:1},
+    {l:'Financial Services', f:val('segF'), fmt:'m', u:'US$M', b:1},
+    YOY('segF'),
+    PCT('% of total net revenue','segF','totRev'),
+    {l:'Revenue per Financial Services product (annualized)', f:o=>isN(o.segF)&&o.fsProd?o.segF*1000*(365/o.days)/o.fsProd:null, fmt:'usd0', u:'US$', sub:1},
+    {l:'Net interest income', f:val('sF_nii'), fmt:'m', u:'US$M', ind:1},
+    {l:'Noninterest income', f:val('sF_non'), fmt:'m', u:'US$M', ind:1},
+    {l:'Corporate/Other (incl. eliminations)', f:val('segC'), fmt:'m', u:'US$M', b:1},
+    {l:'Net interest income (expense)', f:val('sC_nii'), fmt:'m', u:'US$M', ind:1},
+    {l:'Noninterest income (expense)', f:val('sC_non'), fmt:'m', u:'US$M', ind:1},
+    // ---- Revenue by type: net interest income ----
+    {l:'By type', f:()=>null, subh:1},
     {l:'Net interest income', f:val('nii'), fmt:'m', u:'US$M', b:1},
     YOY('nii'),
     PCT('% of total net revenue','nii','totRev'),
@@ -1508,7 +1563,6 @@ const MODEL = (() => {
     {l:'Interest income – other', f:val('intOther'), fmt:'m', u:'US$M', ind:1},
     {l:'Total interest income', f:val('intInc'), fmt:'m', u:'US$M', ind:1, b:1},
     YOY('intInc'),
-    {l:'Yield on avg. interest-earning assets', f:ann('intInc','avgIEA'), fmt:'p2', u:'%', sub:1, inp:1, inpY:1},
     {l:'Interest expense – securitizations and warehouses', f:o=>neg(o.expSec), fmt:'m', u:'US$M', ind:1},
     {l:'Interest expense – deposits', f:o=>neg(o.expDep), fmt:'m', u:'US$M', ind:1},
     YOY('expDep'),
@@ -1516,11 +1570,6 @@ const MODEL = (() => {
     {l:'Interest expense – other', f:o=>neg(o.expOther), fmt:'m', u:'US$M', ind:1},
     {l:'Total interest expense', f:o=>neg(o.intExp), fmt:'m', u:'US$M', ind:1, b:1},
     YOY('intExp'),
-    {l:'Cost of funds (on avg. interest-earning assets)', f:ann('intExp','avgIEA'), fmt:'p2', u:'%', sub:1},
-    {l:'Avg. interest-earning assets', f:val('avgIEA'), fmt:'m', u:'US$M', ind:1},
-    YOY('avgIEA', {inpY:1}),
-    QOQ('avgIEA', {inp:1}),
-    {l:'Net interest margin', f:ann('nii','avgIEA'), fmt:'p2', u:'%', sub:1, inp:1, inpY:1},
     // ---- Revenue breakdown: noninterest income ----
     {l:'Noninterest income', f:val('nonII'), fmt:'m', u:'US$M', b:1},
     YOY('nonII'),
@@ -1664,8 +1713,8 @@ const MODEL = (() => {
   // ---- Outline state (persisted) ----
   const ST_KEY='pvg-model-outline';
   let S0={}; try{ S0=JSON.parse(localStorage.getItem(ST_KEY)||'{}'); }catch(e){}
-  const state={ sec:new Set(S0.sec||[]), row:new Set(S0.row||[]), blk:new Set(S0.blk||[]), hideSubs:!!S0.hideSubs, view:S0.view||'act' };
-  const save=()=>{ try{ localStorage.setItem(ST_KEY, JSON.stringify({sec:[...state.sec],row:[...state.row],blk:[...state.blk],hideSubs:state.hideSubs,view:state.view})); }catch(e){} };
+  const state={ sec:new Set(S0.sec||[]), row:new Set(S0.row||[]), blk:new Set(S0.blk||[]), hideSubs:!!S0.hideSubs, bt:new Set(S0.bt||[]) };
+  const save=()=>{ try{ localStorage.setItem(ST_KEY, JSON.stringify({sec:[...state.sec],row:[...state.row],blk:[...state.blk],hideSubs:state.hideSubs,bt:[...state.bt]})); }catch(e){} };
 
   // ---- Render ----
   const FM = {
@@ -1684,18 +1733,22 @@ const MODEL = (() => {
   }
   function render(){
     const gap = '<td class="gap"></td>', gapH = '<th class="gap"></th>';
-    const view = state.view;
-    const pastTitle = {qa:{bt:'Quarterly · Projected at the time', var:'Quarterly · Actual vs projected'}, ya:{bt:'Annual · Projected at the time', var:'Annual · Actual vs projected'}};
-    const blocks = BLOCKS.map(b=>({...b, closed:state.blk.has(b.id), title:(view!=='act'&&pastTitle[b.id])?pastTitle[b.id][view]:b.title, past:!b.proj}));
-    const cells = (fn) => blocks.map((b,bi)=>(bi?gap:'')+(b.closed?'<td class="colx"></td>':b.cols.map(c=>fn(c,b)).join(''))).join('');
+    const blocks = BLOCKS.map(b=>{
+      const bt = !b.proj && state.bt.has(b.id);
+      // each displayed column: {c, bt:false} for actual, {c, bt:true} for the projection made at the time
+      const dcols = bt ? b.cols.flatMap(c=>[{c,bt:false},{c,bt:true}]) : b.cols.map(c=>({c,bt:false}));
+      return {...b, closed:state.blk.has(b.id), past:!b.proj, btOpen:bt, dcols};
+    });
+    const cells = (fn) => blocks.map((b,bi)=>(bi?gap:'')+(b.closed?'<td class="colx"></td>':b.dcols.map(d=>fn(d.c,b,d.bt)).join(''))).join('');
+    const btBtn = b => b.past ? `<button class="ol ol-txt" data-ol="bt" data-id="${b.id}" aria-expanded="${b.btOpen}" title="Show what the model would have projected for each period with data through the prior period">${b.btOpen?'− projected at the time':'+ projected at the time'}</button>` : '';
     const hA = `<tr class="hA"><th class="c-lab co-name">SoFi Technologies, Inc. (SOFI)</th><th class="c-unit"></th>${
       blocks.map((b,bi)=>(bi?gapH:'')+(b.closed
-        ? `<th class="band ${b.proj||(b.past&&view!=='act')?'band-p':'band-a'} colx" title="${b.title}">${btn('blk',b.id,false,'Expand '+b.title)}</th>`
-        : `<th colspan="${b.cols.length}" class="band ${b.proj||(b.past&&view!=='act')?'band-p':'band-a'}">${btn('blk',b.id,true,'Collapse '+b.title)}<span>${b.title}</span></th>`)).join('')}</tr>`;
+        ? `<th class="band ${b.proj?'band-p':'band-a'} colx" title="${b.title}">${btn('blk',b.id,false,'Expand '+b.title)}</th>`
+        : `<th colspan="${b.dcols.length}" class="band ${b.proj?'band-p':'band-a'}">${btn('blk',b.id,true,'Collapse '+b.title)}<span>${b.title}</span>${btBtn(b)}</th>`)).join('')}</tr>`;
     const hB = `<tr class="hB"><th class="c-lab">US$ in millions, except per-share data and KPIs</th><th class="c-unit">Unit</th>${
-      blocks.map((b,bi)=>(bi?gapH:'')+(b.closed?`<th class="colx vlab">${b.short}</th>`:b.cols.map(c=>`<th class="per ${b.proj?'p':''}">${c.v.lab}${DERIVED_COLS.includes(c.v.lab)?'<sup>*</sup>':''}</th>`).join(''))).join('')}</tr>`;
+      blocks.map((b,bi)=>(bi?gapH:'')+(b.closed?`<th class="colx vlab">${b.short}</th>`:b.dcols.map(({c,bt})=>bt?`<th class="per btc" title="Projected at the time for ${c.v.lab}">${c.v.lab}<span class="pt">proj.</span></th>`:`<th class="per ${b.proj?'p':''}">${c.v.lab}${DERIVED_COLS.includes(c.v.lab)?'<sup>*</sup>':''}</th>`).join(''))).join('')}</tr>`;
     const hC = `<tr class="hC"><th class="c-lab"></th><th class="c-unit"></th>${
-      blocks.map((b,bi)=>(bi?gapH:'')+(b.closed?'<th class="colx"></th>':b.cols.map(c=>`<th class="${b.proj?'p':''}">${c.v.end}${c.v.lab==='FY2026E'?' · 3A+1E':''}${c.v.annualOnly?' · annual':''}</th>`).join(''))).join('')}</tr>`;
+      blocks.map((b,bi)=>(bi?gapH:'')+(b.closed?'<th class="colx"></th>':b.dcols.map(({c,bt})=>bt?`<th class="btc">as of prior ${c.kind==='q'?'qtr':'year'}</th>`:`<th class="${b.proj?'p':''}">${c.v.end}${c.v.lab==='FY2026E'?' · 3A+1E':''}${c.v.annualOnly?' · annual':''}</th>`).join(''))).join('')}</tr>`;
     let body='';
     ROWS.forEach((r,ri)=>{
       if(r.sec){
@@ -1705,28 +1758,22 @@ const MODEL = (() => {
         return;
       }
       if(!visible(r)) return;
-      const tds = cells((c,b)=>{
+      const tds = cells((c,b,bt)=>{
+        if(r.subh) return `<td class="n${b.proj?' p':''}"></td>`;
         const cls=['n', b.proj?'p':'', isInput(r,c)?'inp':''];
+        if(bt){
+          const bo = c.kind==='q' ? BQ[c.qi] : BY[c.yi];
+          let bv=null; if(bo && !ROWS[r.sec_]?.sec?.startsWith('Guidance')){ try{ bv=r.f(bo,c); }catch(e){ bv=null; } }
+          return `<td class="n bt">${(FM[r.fmt]||FM.m)(bv)}</td>`;
+        }
         let v; try{ v=r.f(c.v,c); }catch(e){ v=null; }
         let s=(FM[r.fmt]||FM.m)(v);
-        if(b.past && view!=='act'){
-          const bo = c.kind==='q' ? BQ[c.qi] : BY[c.yi];
-          let bv=null; if(bo){ try{ bv=r.f(bo,c); }catch(e){ bv=null; } }
-          if(view==='bt'){ cls.push('bt'); s=(FM[r.fmt]||FM.m)(bv); }
-          else {
-            const pctPoint = ['p','p2','cs','g'].includes(r.fmt);
-            const d = !isN(v)||!isN(bv) ? null : pctPoint ? (v-bv)*100 : (Math.abs(bv)<1e-9 ? null : (bv<0||v<0 ? NaN : v/bv-1));
-            s = pctPoint ? FM.pp(d) : FM.g(d);
-            cls.push('vr');
-          }
-          return `<td class="${cls.join(' ')}">${s}</td>`;
-        }
         const derived = (r.der && r.der.includes(c.v.lab)) || (r.ghk && GH[c.v.lab]?.[r.ghkind]?.d?.includes(r.ghk));
         if(derived && isN(v)) s=`<span class="derived">${s}</span>`;
         const t = r.ghk && GH[c.v.lab]?.[r.ghkind]?.src ? ` title="${GH[c.v.lab][r.ghkind].src}"` : '';
         return `<td class="${cls.join(' ')}"${t}>${s}</td>`;
       });
-      const rc=[r.sub?'sub':'', r.tot?'tot':'', r.key?'kt':'', r.b?'b':'', r.ind?'ind':''].join(' ');
+      const rc=[r.sub?'sub':'', r.tot?'tot':'', r.key?'kt':'', r.b?'b':'', r.ind?'ind':'', r.subh?'subh':''].join(' ');
       const tog = r.hasSubs && !state.hideSubs ? btn('row',r.id,!state.row.has(r.id),'Show / hide detail') : (r.sub?'':'<span class="ol-sp"></span>');
       body+=`<tr class="${rc}"><td class="c-lab" title="${r.note||r.l}">${tog}${r.l}</td><td class="c-unit">${r.u||''}</td>${tds}</tr>`;
     });
@@ -1735,22 +1782,19 @@ const MODEL = (() => {
     el.innerHTML=`<table class="xl"><thead>${hA}${hB}${hC}</thead><tbody>${body}</tbody></table>`;
     el.scrollLeft=sx; el.scrollTop=sy;
     document.getElementById('hideSubs').checked=state.hideSubs;
-    document.querySelectorAll('#pastView button').forEach(x=>x.classList.toggle('on',x.dataset.v===state.view));
   }
   // Outline interactions
   function toggle(kind,id){ const set=state[kind]; set.has(id)?set.delete(id):set.add(id); save(); render(); }
   function expandAll(){ state.sec.clear(); state.row.clear(); state.blk.clear(); state.hideSubs=false; save(); render(); }
   function collapseAll(){ ROWS.forEach(r=>{ if(r.sec) state.sec.add(r.id); }); save(); render(); }
   function setHideSubs(v){ state.hideSubs=v; save(); render(); }
-  function setView(v){ state.view=v; save(); render(); }
-  return {render, toggle, expandAll, collapseAll, setHideSubs, setView, Q, Y, BQ, BY};
+  return {render, toggle, expandAll, collapseAll, setHideSubs, Q, Y, BQ, BY};
 })();
 
 let modelRendered=false;
 function renderModel(){ if(modelRendered) return; MODEL.render(); modelRendered=true; }
 document.getElementById('hideSubs').addEventListener('change',e=>MODEL.setHideSubs(e.target.checked));
 document.getElementById('olExpand').addEventListener('click',()=>MODEL.expandAll());
-document.getElementById('pastView').addEventListener('click',e=>{ const b=e.target.closest('button'); if(b) MODEL.setView(b.dataset.v); });
 document.getElementById('olCollapse').addEventListener('click',()=>MODEL.collapseAll());
 document.getElementById('modelTable').addEventListener('click',e=>{
   const b=e.target.closest('button.ol'); if(!b) return;
