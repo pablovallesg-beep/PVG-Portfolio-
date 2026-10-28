@@ -398,6 +398,27 @@ html.mobile .stmt-title{font-size:17px}
 .derived{text-decoration:underline dashed;text-underline-offset:3px;text-decoration-color:var(--text-tertiary)}
 
 /* Insight */
+/* Collapsible cards, data tables under charts and source notes */
+.card.fold > .card-h{cursor:pointer;user-select:none}
+.card.fold > .card-h:hover{background:var(--main-bg)}
+.card-h .fchev{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;margin:0 8px 0 -6px;border-radius:5px;color:var(--accent);flex:none;transition:transform .18s ease}
+.card-h .fchev svg{width:12px;height:12px}
+.card.fold.closed > .card-h .fchev{transform:rotate(-90deg)}
+.card.fold.closed > :not(.card-h){display:none !important}
+.card.fold.closed > .card-h{border-bottom:0}
+.card-h .fttl{display:flex;align-items:center;min-width:0}
+.tbl-tog{display:flex;align-items:center;gap:6px;width:100%;border:0;border-top:1px solid var(--border);background:var(--card-bg);padding:8px 20px;font:600 12px 'Figtree',sans-serif;color:var(--accent);cursor:pointer;text-align:left}
+.tbl-tog:hover{background:var(--main-bg)}
+.tbl-tog svg{width:10px;height:10px;transition:transform .18s ease}
+.tbl-tog[aria-expanded="false"] svg{transform:rotate(-90deg)}
+.tbl-wrap.hid{display:none}
+.src.src-c{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.src.src-c::before{content:"ⓘ ";font-style:normal}
+.src{cursor:pointer}
+.fold-bar{display:flex;gap:4px;margin-left:auto;order:98;align-items:center;flex:none}
+.fold-bar button{border:1px solid var(--border);background:var(--card-bg);color:var(--text-secondary);border-radius:7px;padding:5px 10px;font:500 11.5px 'Figtree',sans-serif;cursor:pointer;white-space:nowrap}
+.fold-bar button:hover{color:var(--text-primary);border-color:var(--text-tertiary)}
+.per-seg{margin-left:8px !important}
 .insight{background:var(--accent-light);border-left:3px solid var(--accent);border-radius:var(--radius-sm);padding:12px 16px;font-size:12.5px;color:var(--text-secondary);line-height:1.6}
 .insight strong{color:var(--text-primary)}
 
@@ -1137,27 +1158,29 @@ function seg(){
   mk('c-seg',{data:{labels:Q,datasets:ds},options:opts});
   renderTable('t-seg',Q,rows);
 }
+// first index with data, so charts with short history don't show empty years
+const firstData = (...arrs) => { const i = Math.min(...arrs.map(a=>{ const k=a.findIndex(isN); return k<0?Infinity:k; })); return isFinite(i)?i:0; };
 function cp(){
-  const c=C(), m=S.cp;
-  const segs=[['Lending',D.lendCp,D.lendRev,c.s1],['Financial Services',D.fsCp,D.fsRev,c.s2],['Technology Platform',D.techCp,D.techRev,c.s3]];
+  const c=C(), m=S.cp, f0=firstData(D.lendCp,D.fsCp,D.techCp), QC=Q.slice(f0), sl=a=>a.slice(f0);
+  const segs=[['Lending',sl(D.lendCp),sl(D.lendRev),c.s1],['Financial Services',sl(D.fsCp),sl(D.fsRev),c.s2],['Technology Platform',sl(D.techCp),sl(D.techRev),c.s3]];
   const mg=m==='m';
   document.getElementById('u-cp').textContent=mg?'(% of segment revenue)':'(US$M)';
   const ds=segs.map(([l,cpv,rv,col])=> mg ? line(l,div(cpv,rv),col,{tip:v=>F.p(v)}) : bar(l,cpv,col));
-  mk('c-cp',{data:{labels:Q,datasets:ds},options:baseOpts(mg?{yTick:v=>(v*100).toFixed(0)+'%',yMin:0,yMax:0.8}:{yTick:axM})});
-  renderTable('t-cp',Q, segs.map(([l,cpv,rv,col])=> mg
+  mk('c-cp',{data:{labels:QC,datasets:ds},options:baseOpts(mg?{yTick:v=>(v*100).toFixed(0)+'%',yMin:0,yMax:0.8}:{yTick:axM})});
+  renderTable('t-cp',QC, segs.map(([l,cpv,rv,col])=> mg
     ? {label:l,data:div(cpv,rv),fmt:'p',color:col}
     : [{label:l,data:cpv,fmt:'m',color:col},{label:'Margin',data:div(cpv,rv),fmt:'p',cls:'sub'}]).flat());
 }
 function fee(){
   const c=C(), pct=div(D.fee,D.rev);
-  const Qs=Q, f=D.fee, p=pct;
+  const f0=firstData(D.fee), Qs=Q.slice(f0), f=D.fee.slice(f0), p=pct.slice(f0);
   mk('c-fee',{data:{labels:Qs,datasets:[
     line('% of net revenue', p, c.s5, {yAxisID:'y1', tip:v=>F.p(v), order:0}),
     bar('Fee-based revenue', f, c.s4, {order:1}),
   ]},options:baseOpts({yTick:axM, yMin:0, y1:true, y1Tick:v=>(v*100).toFixed(0)+'%', y1Min:0, y1Max:0.6})});
   renderTable('t-fee',Qs,[
-    {label:'Fee-based revenue',data:f,fmt:'m',color:c.s4,derived:q4Idx()},
-    {label:'YoY growth',data:yoyArr(D.fee),fmt:'g',cls:'sub'},
+    {label:'Fee-based revenue',data:f,fmt:'m',color:c.s4,derived:q4Idx().map(i=>i-f0).filter(i=>i>=0)},
+    {label:'YoY growth',data:yoyArr(D.fee).slice(f0),fmt:'g',cls:'sub'},
     {label:'% of net revenue',data:p,fmt:'cs',color:c.s5},
   ]);
 }
@@ -2842,6 +2865,69 @@ try{ const th=localStorage.getItem('pvg-theme'); if(th) document.documentElement
 insights();
 try{ const t=localStorage.getItem('pvg-tab'); if(t && VIEWS[t]) { document.querySelectorAll('#m-tesis .tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===t)); document.querySelectorAll('#m-tesis .view').forEach(x=>x.classList.toggle('active',x.id==='v-'+t)); current=t; } }catch(e){}
 try{ const v=localStorage.getItem('pvg-vtab'); if(v && document.getElementById('vv-'+v)) showVtab(v); }catch(e){}
+/* =====================================================================
+   FOLDING — every card collapses from its title, data tables under charts start hidden,
+   source notes show one line until clicked. State is remembered per card.
+   ===================================================================== */
+const FOLD = (() => {
+  const KEY='pvg-fold'; let st={};
+  try{ st=JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){}
+  const save=()=>{ try{ localStorage.setItem(KEY, JSON.stringify(st)); }catch(e){} };
+  const CH='<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.25 6 7.75l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  // detail cards that start collapsed so each tab opens with the essentials
+  const DEFAULT_CLOSED = new Set(['Borrower characteristics by quarter','Charge-offs and delinquencies by quarter','Credit performance',"Outside SoFi's credit box",
+    'Partners and commitments','How much is committed','Economics','What Anthony Noto repeats on every call','How the loop works',
+    'Analyst Q&A','Open questions from analysts','Capital and book value','Products by segment','Technology Platform accounts','Contribution profit by segment']);
+  const SKIP = el => el.closest('#vv-model') || el.closest('.dcf-top');       // the Model sheet and DCF inputs keep their own layout
+  const idOf = (card, i) => { const v=card.closest('.view, .mview'); const t=(card.querySelector('.card-t')?.textContent||'card'+i).trim(); return (v?.id||'x')+'|'+t; };
+  function enhance(root=document){
+    root.querySelectorAll('.card').forEach((card,i)=>{
+      if(SKIP(card)) return;
+      const h = card.querySelector(':scope > .card-h');
+      if(h && !card.dataset.fold){
+        card.dataset.fold = idOf(card,i); card.classList.add('fold');
+        const first = h.firstElementChild;
+        const ch = document.createElement('span'); ch.className='fchev'; ch.innerHTML=CH;
+        if(first){ first.classList.add('fttl'); first.prepend(ch); } else h.prepend(ch);
+        const t=(card.querySelector('.card-t')?.textContent||'').trim(), saved=st['c|'+card.dataset.fold];
+        if(saved===true || (saved===undefined && DEFAULT_CLOSED.has(t))) card.classList.add('closed');
+      }
+      // data tables under a chart start hidden behind "Show data"
+      if(card.querySelector('canvas') && !card.dataset.tbl){
+        const tw = card.querySelector(':scope > .tbl-wrap');
+        if(tw){
+          card.dataset.tbl='1';
+          const k='t|'+(card.dataset.fold||idOf(card,i)), open=!!st[k];
+          const b=document.createElement('button'); b.className='tbl-tog'; b.dataset.k=k; b.setAttribute('aria-expanded',open);
+          b.innerHTML=CH+'<span>'+(open?'Hide data':'Show data')+'</span>';
+          tw.before(b); tw.classList.toggle('hid',!open);
+        }
+      }
+    });
+    root.querySelectorAll('.src:not([data-src])').forEach(el=>{ el.dataset.src='1'; if(!SKIP(el)) el.classList.add('src-c'); });
+  }
+  document.addEventListener('click', e=>{
+    const tb = e.target.closest('.tbl-tog');
+    if(tb){ const open = tb.getAttribute('aria-expanded')!=='true'; tb.setAttribute('aria-expanded',open); tb.querySelector('span').textContent=open?'Hide data':'Show data';
+      tb.nextElementSibling.classList.toggle('hid',!open); st[tb.dataset.k]=open; save(); return; }
+    const sr = e.target.closest('.src[data-src]'); if(sr && !e.target.closest('a')){ sr.classList.toggle('src-c'); return; }
+    const h = e.target.closest('.card.fold > .card-h');
+    if(h && !e.target.closest('button, input, select, a, label, .seg, .stmt-seg')){
+      const card=h.parentElement, closed=card.classList.toggle('closed'); st['c|'+card.dataset.fold]=closed; save();
+      if(!closed) card.querySelectorAll('canvas').forEach(cv=>{ const c=Chart.getChart(cv); if(c) c.resize(); });
+    }
+  });
+  document.querySelectorAll('#m-tesis > .subtabs, #m-earnings > .subtabs, #m-valuation > .subtabs').forEach(nav=>{
+    const b=document.createElement('span'); b.className='fold-bar';
+    b.innerHTML='<button data-fa="1">+ Expand all</button><button data-fa="0">− Collapse all</button>';
+    nav.appendChild(b);
+  });
+  document.addEventListener('click', e=>{ const b=e.target.closest('[data-fa]'); if(b) FOLD.all(b.dataset.fa==='1'); });
+  new MutationObserver(()=>enhance()).observe(document.getElementById('page-company'), {childList:true, subtree:true});
+  enhance();
+  return {enhance, all(open){ document.querySelectorAll('.mview.active .view.active .card.fold').forEach(c=>{ c.classList.toggle('closed',!open); st['c|'+c.dataset.fold]=!open;
+    if(open) c.querySelectorAll('canvas').forEach(cv=>{ const ch=Chart.getChart(cv); if(ch) ch.resize(); }); }); save(); }};
+})();
 try{ const m=localStorage.getItem('pvg-main'); if(m && document.getElementById('m-'+m)) showMain(m); }catch(e){}
 if(location.hash.length>1) showCompany(location.hash.slice(1));
 </script>
