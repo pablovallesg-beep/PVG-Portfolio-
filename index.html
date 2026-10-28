@@ -340,7 +340,7 @@ html.mobile .xl-wrap{max-height:calc(100vh - 190px)}
             </div>
           </div>
           <div class="xl-wrap" id="modelTable"></div>
-          <div class="src">Source: SoFi 10-Qs (Q1'23–Q2'26), Q1–Q3'26 earnings releases (Tables 1, 2, 4 and 7), 2023–2025 10-Ks and earnings calls (2025–2026). Standard layout: total revenue and its breakdown → cost of revenue → gross income → operating expenses → operating income → non-operating items → EBT → taxes → net income → EBITDA bridge → adjusted EBITDA. Revenue is shown first by segment, as SoFi reports it (10-Q segment notes and Table 6; Corporate/Other absorbs funds-transfer-pricing differences and intercompany eliminations, and SoFi's allocation methodology changed over time), then by type. Projected segment split: Lending and Financial Services keep the prior period's share of net interest income, Lending noninterest income = loan origination/sales/servicing, Financial Services noninterest income = LPB + other fee income + crypto, Technology Platform = technology revenue + prior intercompany fees, Corporate/Other is the balancing item. SoFi has no cost of revenue or non-operating line: interest expense and gains on debt are reported inside net revenue. Costs are shown as negatives. 2022 quarters and FY2022 are not shown; they are the base for YoY growth. * Q4'23, Q4'24 and Q4'25 = full year per the 10-K less nine months. Q1–Q2'23 LPB fees and referrals are split pro rata from the reported referral totals (dotted underline); 2022 quarters likewise. FY2026E = Q1–Q3'26 actuals + Q4'26E; FY2027E = sum of projected quarters; FY2028E–FY2030E are annual-only projections anchored to SoFi's medium-term guidance (Jan-26: ≥30% adj. net revenue CAGR and 38–42% adj. EPS CAGR 2025–28) and 2030 ambitions (100M products, ~50M members). Yellow cells are projection inputs. Use "+ projected at the time" on an actual block to add, next to each past period, a blue column with what this model would have projected using only data through the prior period: net adds, growth rates, yields, take rates and cost ratios of the prior period carried forward (FY2023 would need FY2021 data). Growth above ±1,000% or on a negative base is shown as n/m.</div>
+          <div class="src">Source: SoFi 10-Qs (Q1'23–Q2'26), Q1–Q3'26 earnings releases (Tables 1, 2, 4 and 7), 2023–2025 10-Ks and earnings calls (2025–2026). Standard layout: total revenue and its breakdown → cost of revenue → gross income → operating expenses → operating income → non-operating items → EBT → taxes → net income → EBITDA bridge → adjusted EBITDA. Revenue is shown by type (interest and noninterest income) and then by segment, as SoFi reports it (10-Q segment notes and Table 6; Corporate/Other absorbs funds-transfer-pricing differences and intercompany eliminations, and SoFi's allocation methodology changed over time). Projected segment split: Lending and Financial Services keep the prior period's share of net interest income, Lending noninterest income = loan origination/sales/servicing, Financial Services noninterest income = LPB + other fee income + crypto, Technology Platform = technology revenue + prior intercompany fees, Corporate/Other is the balancing item. SoFi has no cost of revenue or non-operating line: interest expense and gains on debt are reported inside net revenue. Costs are shown as negatives. 2022 quarters and FY2022 are not shown; they are the base for YoY growth. * Q4'23, Q4'24 and Q4'25 = full year per the 10-K less nine months. Q1–Q2'23 LPB fees and referrals are split pro rata from the reported referral totals (dotted underline); 2022 quarters likewise. FY2026E = Q1–Q3'26 actuals + Q4'26E; FY2027E = sum of projected quarters; FY2028E–FY2030E are annual-only projections anchored to SoFi's medium-term guidance (Jan-26: ≥30% adj. net revenue CAGR and 38–42% adj. EPS CAGR 2025–28) and 2030 ambitions (100M products, ~50M members). Yellow cells are projection inputs. Use "+ projected at the time" on an actual block to add, next to each past period, a blue column with what this model would have projected using only data through the prior period: net adds, growth rates, yields, take rates and cost ratios of the prior period carried forward (FY2023 would need FY2021 data). Growth above ±1,000% or on a negative base is shown as n/m.</div>
         </div>
       </section>
     </div>
@@ -1530,29 +1530,6 @@ const MODEL = (() => {
     {l:'Total net revenue', f:val('totRev'), fmt:'m', u:'US$M', tot:1, key:1},
     YOY('totRev'),
     {l:'Revenue per product (annualized)', f:o=>isN(o.totRev)&&o.products?o.totRev*1000*(365/o.days)/o.products:null, fmt:'usd0', u:'US$', sub:1},
-    // ---- Revenue by segment, as SoFi reports it ----
-    {l:'By segment (as reported by SoFi)', f:()=>null, subh:1},
-    {l:'Lending', f:val('segL'), fmt:'m', u:'US$M', b:1},
-    YOY('segL'),
-    PCT('% of total net revenue','segL','totRev'),
-    {l:'Revenue per lending product (annualized)', f:o=>isN(o.segL)&&o.lendProd?o.segL*1000*(365/o.days)/o.lendProd:null, fmt:'usd0', u:'US$', sub:1},
-    {l:'Net interest income', f:val('sL_nii'), fmt:'m', u:'US$M', ind:1},
-    {l:'Noninterest income', f:val('sL_non'), fmt:'m', u:'US$M', ind:1},
-    {l:'Technology Platform', f:val('segT'), fmt:'m', u:'US$M', b:1},
-    YOY('segT'),
-    PCT('% of total net revenue','segT','totRev'),
-    {l:'Revenue per account (annualized)', f:o=>isN(o.segT)&&o.techAcc?o.segT*(365/o.days)/o.techAcc:null, fmt:'usd2', u:'US$', sub:1},
-    {l:'Net interest income', f:val('sT_nii'), fmt:'m', u:'US$M', ind:1},
-    {l:'Noninterest income (incl. intercompany)', f:val('sT_non'), fmt:'m', u:'US$M', ind:1},
-    {l:'Financial Services', f:val('segF'), fmt:'m', u:'US$M', b:1},
-    YOY('segF'),
-    PCT('% of total net revenue','segF','totRev'),
-    {l:'Revenue per Financial Services product (annualized)', f:o=>isN(o.segF)&&o.fsProd?o.segF*1000*(365/o.days)/o.fsProd:null, fmt:'usd0', u:'US$', sub:1},
-    {l:'Net interest income', f:val('sF_nii'), fmt:'m', u:'US$M', ind:1},
-    {l:'Noninterest income', f:val('sF_non'), fmt:'m', u:'US$M', ind:1},
-    {l:'Corporate/Other (incl. eliminations)', f:val('segC'), fmt:'m', u:'US$M', b:1},
-    {l:'Net interest income (expense)', f:val('sC_nii'), fmt:'m', u:'US$M', ind:1},
-    {l:'Noninterest income (expense)', f:val('sC_non'), fmt:'m', u:'US$M', ind:1},
     // ---- Revenue by type: net interest income ----
     {l:'By type', f:()=>null, subh:1},
     {l:'Net interest income', f:val('nii'), fmt:'m', u:'US$M', b:1},
@@ -1588,8 +1565,31 @@ const MODEL = (() => {
     {l:'Other (referrals, interchange, brokerage…)', f:val('otherNII'), fmt:'m', u:'US$M', ind:1, der:["Q1'23","Q2'23"]},
     YOY('otherNII', {inpY:1}),
     QOQ('otherNII', {inp:1}),
+    // ---- Revenue by segment, as SoFi reports it ----
+    {l:'By segment (as reported by SoFi)', f:()=>null, subh:1},
+    {l:'Lending', f:val('segL'), fmt:'m', u:'US$M', b:1},
+    YOY('segL'),
+    PCT('% of total net revenue','segL','totRev'),
+    {l:'Revenue per lending product (annualized)', f:o=>isN(o.segL)&&o.lendProd?o.segL*1000*(365/o.days)/o.lendProd:null, fmt:'usd0', u:'US$', sub:1},
+    {l:'Net interest income', f:val('sL_nii'), fmt:'m', u:'US$M', ind:1},
+    {l:'Noninterest income', f:val('sL_non'), fmt:'m', u:'US$M', ind:1},
+    {l:'Technology Platform', f:val('segT'), fmt:'m', u:'US$M', b:1},
+    YOY('segT'),
+    PCT('% of total net revenue','segT','totRev'),
+    {l:'Revenue per account (annualized)', f:o=>isN(o.segT)&&o.techAcc?o.segT*(365/o.days)/o.techAcc:null, fmt:'usd2', u:'US$', sub:1},
+    {l:'Net interest income', f:val('sT_nii'), fmt:'m', u:'US$M', ind:1},
+    {l:'Noninterest income (incl. intercompany)', f:val('sT_non'), fmt:'m', u:'US$M', ind:1},
+    {l:'Financial Services', f:val('segF'), fmt:'m', u:'US$M', b:1},
+    YOY('segF'),
+    PCT('% of total net revenue','segF','totRev'),
+    {l:'Revenue per Financial Services product (annualized)', f:o=>isN(o.segF)&&o.fsProd?o.segF*1000*(365/o.days)/o.fsProd:null, fmt:'usd0', u:'US$', sub:1},
+    {l:'Net interest income', f:val('sF_nii'), fmt:'m', u:'US$M', ind:1},
+    {l:'Noninterest income', f:val('sF_non'), fmt:'m', u:'US$M', ind:1},
+    {l:'Corporate/Other (incl. eliminations)', f:val('segC'), fmt:'m', u:'US$M', b:1},
+    {l:'Net interest income (expense)', f:val('sC_nii'), fmt:'m', u:'US$M', ind:1},
+    {l:'Noninterest income (expense)', f:val('sC_non'), fmt:'m', u:'US$M', ind:1},
     // ---- Gross income ----
-    {l:'Cost of revenue (COGS)', f:val('cogs'), fmt:'m', u:'US$M', note:'Not applicable: SoFi reports interest expense inside net revenue'},
+    {l:'Cost of revenue (COGS)', f:val('cogs'), fmt:'m', u:'US$M', grpEnd:1, note:'Not applicable: SoFi reports interest expense inside net revenue'},
     {l:'Gross income', f:val('gross'), fmt:'m', u:'US$M', tot:1, key:1},
     YOY('gross'),
     PCT('Gross margin','gross','totRev'),
@@ -1703,9 +1703,12 @@ const MODEL = (() => {
     {l:'Model vs ambition', f:o=>{ const g=gh(o.lab,'amb','products'); return isN(g)?o.products/g-1:null; }, fmt:'g', u:'%', sub:1},
   ];
   // Outline structure: each row knows its section and (for sub-rows) its parent line
-  let secIdx=-1, parentIdx=-1;
+  // Sub-heading groups (e.g. "By segment") run until the next sub-heading or a row flagged grpEnd
+  let secIdx=-1, parentIdx=-1, grpIdx=-1;
   ROWS.forEach((r,i)=>{
-    if(r.sec){ secIdx=i; parentIdx=-1; r.id='s'+i; return; }
+    if(r.sec){ secIdx=i; parentIdx=-1; grpIdx=-1; r.id='s'+i; return; }
+    if(r.subh) grpIdx=i; else if(r.grpEnd) grpIdx=-1;
+    r.grp_ = r.subh ? -1 : grpIdx;
     r.sec_=secIdx; r.id='r'+i;
     if(r.sub){ r.parent=parentIdx; if(parentIdx>=0) ROWS[parentIdx].hasSubs=true; } else parentIdx=i;
   });
@@ -1713,8 +1716,8 @@ const MODEL = (() => {
   // ---- Outline state (persisted) ----
   const ST_KEY='pvg-model-outline';
   let S0={}; try{ S0=JSON.parse(localStorage.getItem(ST_KEY)||'{}'); }catch(e){}
-  const state={ sec:new Set(S0.sec||[]), row:new Set(S0.row||[]), blk:new Set(S0.blk||[]), hideSubs:!!S0.hideSubs, bt:new Set(S0.bt||[]) };
-  const save=()=>{ try{ localStorage.setItem(ST_KEY, JSON.stringify({sec:[...state.sec],row:[...state.row],blk:[...state.blk],hideSubs:state.hideSubs,bt:[...state.bt]})); }catch(e){} };
+  const state={ sec:new Set(S0.sec||[]), row:new Set(S0.row||[]), blk:new Set(S0.blk||[]), hideSubs:!!S0.hideSubs, grp:new Set(S0.grp||[]), bt:new Set(S0.bt||[]) };
+  const save=()=>{ try{ localStorage.setItem(ST_KEY, JSON.stringify({sec:[...state.sec],row:[...state.row],blk:[...state.blk],hideSubs:state.hideSubs,grp:[...state.grp],bt:[...state.bt]})); }catch(e){} };
 
   // ---- Render ----
   const FM = {
@@ -1727,6 +1730,7 @@ const MODEL = (() => {
   const DERIVED_COLS = ["Q4'23","Q4'24","Q4'25"];
   const btn = (kind,id,open,title) => `<button class="ol" data-ol="${kind}" data-id="${id}" title="${title}" aria-expanded="${open}">${open?'−':'+'}</button>`;
   function visible(r){
+    if(r.grp_>=0 && state.grp.has(ROWS[r.grp_].id)) return false;
     const secClosed = state.sec.has(ROWS[r.sec_]?.id);
     if(r.sub) return !secClosed && !state.hideSubs && !state.row.has(ROWS[r.parent]?.id);
     return !secClosed || r.tot;
@@ -1774,7 +1778,7 @@ const MODEL = (() => {
         return `<td class="${cls.join(' ')}"${t}>${s}</td>`;
       });
       const rc=[r.sub?'sub':'', r.tot?'tot':'', r.key?'kt':'', r.b?'b':'', r.ind?'ind':'', r.subh?'subh':''].join(' ');
-      const tog = r.hasSubs && !state.hideSubs ? btn('row',r.id,!state.row.has(r.id),'Show / hide detail') : (r.sub?'':'<span class="ol-sp"></span>');
+      const tog = r.subh ? btn('grp',r.id,!state.grp.has(r.id),(state.grp.has(r.id)?'Expand ':'Collapse ')+r.l) : r.hasSubs && !state.hideSubs ? btn('row',r.id,!state.row.has(r.id),'Show / hide detail') : (r.sub?'':'<span class="ol-sp"></span>');
       body+=`<tr class="${rc}"><td class="c-lab" title="${r.note||r.l}">${tog}${r.l}</td><td class="c-unit">${r.u||''}</td>${tds}</tr>`;
     });
     const el=document.getElementById('modelTable');
@@ -1785,7 +1789,7 @@ const MODEL = (() => {
   }
   // Outline interactions
   function toggle(kind,id){ const set=state[kind]; set.has(id)?set.delete(id):set.add(id); save(); render(); }
-  function expandAll(){ state.sec.clear(); state.row.clear(); state.blk.clear(); state.hideSubs=false; save(); render(); }
+  function expandAll(){ state.sec.clear(); state.row.clear(); state.blk.clear(); state.grp.clear(); state.hideSubs=false; save(); render(); }
   function collapseAll(){ ROWS.forEach(r=>{ if(r.sec) state.sec.add(r.id); }); save(); render(); }
   function setHideSubs(v){ state.hideSubs=v; save(); render(); }
   return {render, toggle, expandAll, collapseAll, setHideSubs, Q, Y, BQ, BY};
