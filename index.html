@@ -144,6 +144,11 @@ html.mobile .nav-item .ic-desk{display:block}
 .xl .ol{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;padding:0;margin-right:7px;vertical-align:-2px;border:1px solid var(--text-tertiary);border-radius:2px;background:var(--card-bg);color:var(--text-secondary);font:700 11px/1 'Figtree',sans-serif;cursor:pointer}
 .xl .ol:hover{border-color:var(--accent);color:var(--accent)}
 .xl .ol-sp{display:inline-block;width:14px;margin-right:7px}
+.xl tbody tr.ind:not(.sub) td.c-lab{padding-left:30px}
+.xl td.bt{color:var(--accent);background:var(--proj)}
+.xl tr.b td.bt,.xl tr.tot td.bt{color:var(--accent)}
+.xl tr.sub td.bt{color:var(--accent);opacity:.85}
+.xl td.vr{background:var(--proj)}
 .xl th.band .ol{background:transparent;color:#fff;border-color:rgba(255,255,255,0.7);margin-right:8px}
 .xl th.band .ol:hover{background:rgba(255,255,255,0.15);color:#fff}
 .xl .colx{width:46px;min-width:46px;max-width:46px;padding:0 4px;text-align:center}
@@ -323,12 +328,13 @@ html.mobile .xl-wrap{max-height:calc(100vh - 190px)}
             <div><span class="card-t">Income statement</span><span class="card-sub">(US$M unless noted · KPIs in thousands)</span></div>
             <div class="ctrls">
               <div class="legend"><span><i style="background:#FFF4CC"></i>Input / assumption</span><span><i style="background:rgba(46,117,182,0.12)"></i>Projected</span><span><sup style="color:var(--warning)">*</sup> Derived (FY − 9M)</span><span><u>123</u> Derived from rounded disclosure</span></div>
+              <span class="ctrl-l">Past periods</span><div class="seg" id="pastView"><button class="on" data-v="act">Actual</button><button data-v="bt">Projected at the time</button><button data-v="var">Actual vs projected</button></div>
               <div class="tbtns"><button class="tbtn" id="olExpand">+ Expand all</button><button class="tbtn" id="olCollapse">− Collapse all</button></div>
               <label class="chk"><input type="checkbox" id="hideSubs"> Hide growth and common-size rows</label>
             </div>
           </div>
           <div class="xl-wrap" id="modelTable"></div>
-          <div class="src">Source: SoFi 10-Qs (Q1–Q3'25, Q1–Q2'26), Q1–Q3'26 earnings releases (Tables 1, 2, 4 and 7), 2023–2025 10-Ks and earnings calls (2025–2026). 2024 quarters and FY2022 are not shown; they are the base for YoY growth. * Q4'25 (and the Q4'24 base) = full year per the 10-K less nine months per the 10-Q / release. FY2026E = Q1–Q3'26 actuals + Q4'26E; FY2027E = sum of the projected quarters; FY2028E–FY2030E are annual-only projections anchored to SoFi's medium-term guidance (Jan-26 call: ≥30% adj. net revenue CAGR and 38–42% adj. EPS CAGR 2025–28) and 2030 ambitions (Oct-26 call: 100M products, ~50M members). Yellow cells are projection inputs; everything else is calculated. Guidance track record: midpoints of the first and latest guidance given for each period (hover a cell for the source); dotted underline = derived from full-year guidance less year-to-date actuals or from guided margins. Growth above ±1,000% or on a negative base is shown as n/m. Use the +/− boxes to collapse or expand sections, line details and column blocks.</div>
+          <div class="src">Source: SoFi 10-Qs (Q1'24–Q2'26), Q1–Q3'26 earnings releases (Tables 1, 2, 4 and 7), 2023–2025 10-Ks and earnings calls (2025–2026). Standard layout: total revenue and its breakdown → cost of revenue → gross income → operating expenses → operating income → non-operating items → EBT → taxes → net income → EBITDA bridge → adjusted EBITDA. SoFi has no cost of revenue or non-operating line: interest expense and gains on debt are reported inside net revenue. Costs are shown as negatives. 2024 quarters and FY2022 are not shown; they are the base for YoY growth. * Q4'25 = full year per the 10-K less nine months. FY2026E = Q1–Q3'26 actuals + Q4'26E; FY2027E = sum of projected quarters; FY2028E–FY2030E are annual-only projections anchored to SoFi's medium-term guidance (Jan-26: ≥30% adj. net revenue CAGR and 38–42% adj. EPS CAGR 2025–28) and 2030 ambitions (100M products, ~50M members). Yellow cells are projection inputs. "Projected at the time" (blue) shows what this model would have projected for each past period using only data through the prior period: net adds, growth rates, yields, take rates and cost ratios of the prior period carried forward (FY2023 would need FY2021 data). Growth above ±1,000% or on a negative base is shown as n/m.</div>
         </div>
       </section>
     </div>
@@ -1169,13 +1175,21 @@ const MODEL = (() => {
     fTech:    [84650,85469,89432,86634, 85988,89574,88023,92136,48784,50512,52400, 299379,319845,346185,355721],
     fCrypto:  [0,0,0,0, 0,0,0,null,852,1183,1633, 0,0,0,null],
     fOther:   [null,null,null,null, 2367,3136,5720,5700,6530,15236,22740, null,null,8310,16923],
+    // Adjusted EBITDA reconciliation items (10-K quarterly table, releases; US$K)
+    adjRestr: [0,0,1275,255, 851,36,41,20,1960,682,2654, null,12749,1530,948],
+    adjTrans: [0,615,0,0, 0,0,0,0,873,4384,53, null,142,615,0],
+    adjImp:   [0,0,0,0, 0,0,0,0,0,0,0, null,248417,0,0],
+    adjFX:    [174,194,475,840, 276,2066,2954,1808,411,926,319, null,10971,1683,7104],
+    adjSR:    [-5226,-1654,-4362,4962, -1074,3274,-11989,-12224,-13163,-13142,-13952, null,-34700,-6280,-22013],
+    adjResid: [73,1,9,25, 35,12,15,8,27,16,-23, null,425,108,70],
+    adjGain:  [-59194,0,-3323,0, 0,0,0,0,0,0,0, null,-14574,-62517,0],
   };
   const PER_SHARE = {
     epsB:   [0.08,0.01,0.06,null, 0.06,0.09,0.12,null,0.13,0.12,0.19, -0.40,-0.36,0.46,0.42],
     epsD:   [0.02,0.01,0.05,null, 0.06,0.08,0.11,0.13,0.12,0.12,0.18, -0.40,-0.36,0.39,0.39],
     adjEps: [null,null,null,null, 0.06,0.08,0.11,0.13,0.12,0.12,0.18, -0.40,-0.10,0.15,0.39],
   };
-  const MONEY = new Set(['avgIEA','avgLoans','intLoans','intOther','expSec','expDep','expCorp','expOther','losss','techRev','lpf','crypto','otherNII','prov','tpd','sm','coo','ga','gw','tax','adjRev','da','sbc','ebitda','adjNI','fLPF','fRefLPB','fRefOth','fInterch','fBrok','fOrig','fTech','fCrypto','fOther','shBasic','shDil']);
+  const MONEY = new Set(['avgIEA','avgLoans','intLoans','intOther','expSec','expDep','expCorp','expOther','losss','techRev','lpf','crypto','otherNII','prov','tpd','sm','coo','ga','gw','tax','adjRev','da','sbc','ebitda','adjNI','fLPF','fRefLPB','fRefOth','fInterch','fBrok','fOrig','fTech','fCrypto','fOther','shBasic','shDil','adjRestr','adjTrans','adjImp','adjFX','adjSR','adjResid','adjGain']);
   const pick = i => { const o={}; for(const k in RAW){ const v=RAW[k][i]; o[k]= v===null ? null : MONEY.has(k) ? v/1000 : v; } for(const k in PER_SHARE) o[k]=PER_SHARE[k][i]; return o; };
 
   // ---- Projection assumptions (input cells) ----
@@ -1266,14 +1280,23 @@ const MODEL = (() => {
     o.nonII = sum(o.losss,o.techRev,o.lpf,o.crypto??0,o.otherNII);
     o.totRev = sum(o.nii,o.nonII);
     o.opex = sum(o.tpd,o.sm,o.coo,o.ga,o.gw);
-    o.pretax = o.totRev!==null&&o.opex!==null ? o.totRev-o.prov-o.opex : null;
-    o.ni = o.pretax!==null ? o.pretax-o.tax : null;
+    o.cogs = null;                                   // not applicable for SoFi
+    o.gross = o.totRev;
+    o.opexAll = sum(o.prov,o.opex);
+    o.opInc = o.gross!==null&&o.opexAll!==null ? o.gross-o.opexAll : null;
+    o.nonOp = null;                                  // not applicable for SoFi
+    o.ebt = o.opInc;
+    o.pretax = o.ebt;
+    o.ni = o.ebt!==null ? o.ebt-o.tax : null;
+    o.ebitdaU = sum(o.ni,o.tax,o.expCorp,o.da);
+    o.ebitdaCalc = sum(o.ebitdaU,o.sbc,o.adjRestr,o.adjTrans,o.adjImp,o.adjFX,o.adjSR,o.adjResid,o.adjGain);
     o.fLPB = sum(o.fLPF,o.fRefLPB);
     o.fFS = sum(o.fRefOth,o.fInterch,o.fBrok,o.fCrypto??0);
     o.feeTot = sum(o.fLPB,o.fOrig,o.fFS,o.fTech,o.fOther);
     return o;
   }
   const FEE_KEYS = ['fLPF','fRefLPB','fRefOth','fInterch','fBrok','fOrig','fTech','fCrypto','fOther'];
+  const ADJ_KEYS = ['adjRestr','adjTrans','adjImp','adjFX','adjSR','adjResid','adjGain'];
   // Shared revenue → net income build for projected periods (quarterly or annual)
   function buildPL(o, L, a, factor){
     const inc=o.avgIEA*a.yield*factor, nii=o.avgIEA*a.nim*factor, exp=inc-nii;
@@ -1281,16 +1304,17 @@ const MODEL = (() => {
     o.intLoans=inc*sl; o.intOther=inc*(1-sl);
     const rest=exp-o.expCorp-o.expOther, sd=L.expDep/(L.expDep+L.expSec);
     o.expDep=rest*sd; o.expSec=rest*(1-sd);
-    o.lpf=o.lpbVol*a.take;
+    o.lpf=o.lpfOverride ?? o.lpbVol*a.take;
     o.losss=(o.oPL+o.oSL+o.oHL+o.oSB-o.lpbVol)*a.origFee;
     const rev=nii+o.lpf+o.losss+o.techRev+o.crypto+o.otherNII;
     o.prov=rev*a.prov; o.tpd=rev*a.tpd; o.sm=rev*a.sm; o.coo=rev*a.coo; o.ga=rev*a.ga; o.gw=0;
     const pretax=rev-o.prov-o.tpd-o.sm-o.coo-o.ga;
     o.tax=pretax*a.tax;
+    ADJ_KEYS.forEach(k=>o[k]=0);
     o.adjRev=rev;
-    o.ebitda=pretax+o.da+o.sbc+o.expCorp;
     FEE_KEYS.forEach(k=>o[k]=null);
     derive(o);
+    o.ebitda=o.ebitdaCalc;
     o.adjNI=o.ni; o.epsB=o.ni/o.shBasic; o.epsD=o.ni/o.shDil; o.adjEps=o.adjNI/o.adjSh;
     o.proj=true;
     return o;
@@ -1319,7 +1343,7 @@ const MODEL = (() => {
   });
   const Y = YLAB.map((lab,j)=>derive({...pick(QLAB.length+j), days:YDAYS[j], lab, end:'Dec-'+lab.slice(-2)}));
   const STOCK=['members','lendProd','fsProd','techAcc'];
-  const FLOW=['oPL','oSL','oHL','oSB','lpbVol','intLoans','intOther','expSec','expDep','expCorp','expOther','losss','techRev','lpf','crypto','otherNII','prov','tpd','sm','coo','ga','gw','tax','adjRev','da','sbc','ebitda','adjNI',...FEE_KEYS];
+  const FLOW=['oPL','oSL','oHL','oSB','lpbVol','intLoans','intOther','expSec','expDep','expCorp','expOther','losss','techRev','lpf','crypto','otherNII','prov','tpd','sm','coo','ga','gw','tax','adjRev','da','sbc','ebitda','adjNI',...FEE_KEYS,...ADJ_KEYS];
   function yearFrom(qs, lab, end){
     const o={days:qs.reduce((s,q)=>s+q.days,0), lab, end, proj:true, fromQ:true};
     STOCK.forEach(k=>o[k]=qs[3][k]);
@@ -1346,13 +1370,68 @@ const MODEL = (() => {
     o.avgIEA=P.avgIEA*(1+a.gIEA); o.avgLoans=o.avgIEA*(P.avgLoans/P.avgIEA);
     o.expCorp=P.expCorp; o.expOther=P.expOther;
     o.techRev=P.techRev*(1+a.gTechRev);
-    o.crypto=P.crypto*(1+a.gOther); o.otherNII=P.otherNII*(1+a.gOther);
+    o.crypto=(P.crypto??0)*(1+a.gOther); o.otherNII=P.otherNII*(1+a.gOther);
     o.shBasic=P.shBasic*(1+a.gSh); o.shDil=P.shDil*(1+a.gSh); o.adjSh=P.adjSh*(1+a.gSh);
     o.da=P.da*(1+a.gDA); o.sbc=P.sbc*(1+a.gSBC);
     Y.push(buildPL(o, P, a, 1));
     o.end='Dec-'+lab.slice(4,6).replace('20','');
   });
   Y.forEach(y=>{ if(y.lab.startsWith('FY20')) y.end='Dec-'+y.lab.slice(4,6); });
+
+  // ---- Back-projections (shown in blue for past periods) ----
+  // Mechanical run-rate method using only data available at the end of the prior period:
+  // net adds, growth rates, yields, take rates and cost ratios of the prior period carry forward.
+  const gr = (a,b) => isN(a)&&isN(b)&&b>0 ? a/b-1 : 0;
+  const clampTax = (t,p) => isN(t)&&isN(p)&&p>0 ? Math.min(Math.max(t/p,0),0.30) : 0;
+  const BQ = {}, BY = {};
+  for(let i=FIRST_SHOWN_Q;i<QLAB.length;i++){
+    const L=Q[i-1], L2=Q[i-2], Yq=Q[i-4], LY=Q[i-5];
+    const yoyPrev = k => LY ? gr(L[k],LY[k]) : gr(Y[2][k],Y[1][k]);    // Q1'25: use FY2024 vs FY2023
+    const a = {
+      yield:L.intInc*(365/L.days)/L.avgIEA, nim:L.nii*(365/L.days)/L.avgIEA,
+      take:L.lpbVol>0?L.lpf/L.lpbVol:0, origFee:L.losss/L.oBS,
+      prov:L.prov/L.totRev, tpd:L.tpd/L.totRev, sm:L.sm/L.totRev, coo:L.coo/L.totRev, ga:L.ga/L.totRev,
+      tax:clampTax(L.tax,L.ebt),
+    };
+    const o={days:QDAYS[i], lab:QLAB[i], end:QEND[i], back:true};
+    o.members=L.members+(L.members-L2.members);
+    const ppm=L.products/L.members+(L.products/L.members-L2.products/L2.members);
+    o.lendProd=L.lendProd+(L.lendProd-L2.lendProd);
+    o.fsProd=o.members*ppm-o.lendProd;
+    o.techAcc=L.techAcc+(L.techAcc-L2.techAcc);
+    o.oPL=Yq.oPL*(1+yoyPrev('oPL')); o.oSL=Yq.oSL*(1+yoyPrev('oSL')); o.oHL=Yq.oHL*(1+yoyPrev('oHL'));
+    o.oSB=L.oSB; o.lpbVol=L.lpbVol;
+    o.avgIEA=L.avgIEA*(1+gr(L.avgIEA,L2.avgIEA)); o.avgLoans=o.avgIEA*(L.avgLoans/L.avgIEA);
+    o.expCorp=L.expCorp; o.expOther=L.expOther;
+    o.techRev=L.techRev*(1+gr(L.techRev,L2.techRev));
+    o.crypto=L.crypto??0; o.otherNII=L.otherNII*(1+gr(L.otherNII,L2.otherNII));
+    o.shDil=L.shDil??L2.shDil; o.shBasic=L.shBasic??L2.shBasic; o.adjSh=o.shDil;
+    o.da=L.da*(1+gr(L.da,L2.da)); o.sbc=L.sbc*(1+gr(L.sbc,L2.sbc));
+    BQ[i]=buildPL(o, L, a, o.days/365);
+  }
+  for(let j=2;j<YLAB.length;j++){                 // FY2024 and FY2025 (FY2023 would need FY2021)
+    const P=Y[j-1], PP=Y[j-2];
+    const a = {
+      yield:P.intInc/P.avgIEA, nim:P.nii/P.avgIEA, take:P.lpbVol>0?P.lpf/P.lpbVol:0, origFee:P.losss/P.oBS,
+      prov:P.prov/P.totRev, tpd:P.tpd/P.totRev, sm:P.sm/P.totRev, coo:P.coo/P.totRev, ga:P.ga/P.totRev,
+      tax:clampTax(P.tax,P.ebt),
+    };
+    const o={days:365, lab:YLAB[j], end:'Dec-'+YLAB[j].slice(-2), back:true};
+    o.members=P.members*(1+gr(P.members,PP.members));
+    o.lendProd=P.lendProd*(1+gr(P.lendProd,PP.lendProd));
+    o.fsProd=o.members*(P.products/P.members)-o.lendProd;
+    o.techAcc=P.techAcc*(1+gr(P.techAcc,PP.techAcc));
+    o.oPL=P.oPL*(1+gr(P.oPL,PP.oPL)); o.oSL=P.oSL*(1+gr(P.oSL,PP.oSL)); o.oHL=P.oHL*(1+gr(P.oHL,PP.oHL)); o.oSB=P.oSB;
+    o.lpbVol=P.lpbVol*(1+gr(P.lpbVol,PP.lpbVol));
+    if(!(P.lpbVol>0)) o.lpfOverride=P.lpf*(1+gr(P.lpf,PP.lpf));
+    o.avgIEA=P.avgIEA*(1+gr(P.avgIEA,PP.avgIEA)); o.avgLoans=P.avgLoans?o.avgIEA*(P.avgLoans/P.avgIEA):null;
+    o.expCorp=P.expCorp; o.expOther=P.expOther;
+    o.techRev=P.techRev*(1+gr(P.techRev,PP.techRev));
+    o.crypto=P.crypto??0; o.otherNII=P.otherNII*(1+gr(P.otherNII,PP.otherNII));
+    o.shDil=P.shDil; o.shBasic=P.shBasic; o.adjSh=P.shDil;
+    o.da=P.da*(1+gr(P.da,PP.da)); o.sbc=P.sbc*(1+gr(P.sbc,PP.sbc));
+    BY[j]=buildPL(o, P, a, 1);
+  }
 
   // Displayed blocks
   const BLOCKS = [
@@ -1383,6 +1462,7 @@ const MODEL = (() => {
   ];
 
   const SEC = t => ({sec:t});
+  const neg = v => isN(v) ? (v===0 ? 0 : -v) : v;          // costs shown as negatives, Excel style
   const ROWS = [
     SEC('Key performance indicators'),
     {l:'Members', f:val('members'), fmt:'k', u:'k', b:1},
@@ -1414,78 +1494,86 @@ const MODEL = (() => {
     {l:'On-balance-sheet originations (total − LPB)', f:val('oBS'), fmt:'m', u:'US$M'},
     YOY('oBS'),
 
-    SEC('Net interest income'),
-    {l:'Loans and securitizations', f:val('intLoans'), fmt:'m', u:'US$M'},
-    YOY('intLoans'),
-    {l:'Other interest income', f:val('intOther'), fmt:'m', u:'US$M'},
-    YOY('intOther'),
-    {l:'Total interest income', f:val('intInc'), fmt:'m', u:'US$M', tot:1},
-    YOY('intInc'),
-    {l:'Yield on avg. interest-earning assets', f:ann('intInc','avgIEA'), fmt:'p2', u:'%', sub:1, inp:1, inpY:1},
-    {l:'Securitizations and warehouses', f:val('expSec'), fmt:'m', u:'US$M'},
-    {l:'Deposits', f:val('expDep'), fmt:'m', u:'US$M'},
-    YOY('expDep'),
-    {l:'Corporate borrowings', f:val('expCorp'), fmt:'m', u:'US$M'},
-    {l:'Other interest expense', f:val('expOther'), fmt:'m', u:'US$M'},
-    {l:'Total interest expense', f:val('intExp'), fmt:'m', u:'US$M', tot:1},
-    YOY('intExp'),
-    {l:'Cost of funds (on avg. interest-earning assets)', f:ann('intExp','avgIEA'), fmt:'p2', u:'%', sub:1},
-    {l:'Net interest income', f:val('nii'), fmt:'m', u:'US$M', tot:1, key:1},
-    YOY('nii'),
-    PCT('% of total net revenue','nii','totRev'),
-    {l:'Net interest margin', f:ann('nii','avgIEA'), fmt:'p2', u:'%', sub:1, inp:1, inpY:1},
-    {l:'Avg. interest-earning assets', f:val('avgIEA'), fmt:'m', u:'US$M'},
-    YOY('avgIEA', {inpY:1}),
-    QOQ('avgIEA', {inp:1}),
-
-    SEC('Fee income (noninterest income)'),
-    {l:'Loan Platform Business fees', f:val('lpf'), fmt:'m', u:'US$M'},
-    YOY('lpf'),
-    {l:'Take rate on LPB volume', f:ratio('lpf','lpbVol'), fmt:'p2', u:'%', sub:1, inp:1, inpY:1},
-    {l:'Loan origination, sales, securitizations & servicing', f:val('losss'), fmt:'m', u:'US$M'},
-    YOY('losss'),
-    {l:'% of on-balance-sheet originations', f:ratio('losss','oBS'), fmt:'p2', u:'%', sub:1, inp:1, inpY:1},
-    {l:'Technology Platform (products & solutions)', f:val('techRev'), fmt:'m', u:'US$M'},
-    YOY('techRev', {inpY:1}),
-    QOQ('techRev', {inp:1}),
-    {l:'Annualized revenue per account', f:o=>isN(o.techRev)&&o.techAcc?o.techRev*(365/o.days)/o.techAcc:null, fmt:'usd2', u:'US$', sub:1},
-    {l:'Crypto (net)', f:val('crypto'), fmt:'m', u:'US$M'},
-    {l:'Other (referrals, interchange, brokerage…)', f:val('otherNII'), fmt:'m', u:'US$M'},
-    YOY('otherNII', {inpY:1}),
-    QOQ('otherNII', {inp:1}),
-    {l:'Total fee income', f:val('nonII'), fmt:'m', u:'US$M', tot:1, key:1},
-    YOY('nonII'),
-    PCT('% of total net revenue','nonII','totRev'),
-
     SEC('Income statement'),
     {l:'Total net revenue', f:val('totRev'), fmt:'m', u:'US$M', tot:1, key:1},
     YOY('totRev'),
     {l:'Revenue per product (annualized)', f:o=>isN(o.totRev)&&o.products?o.totRev*1000*(365/o.days)/o.products:null, fmt:'usd0', u:'US$', sub:1},
-    {l:'Provision for credit losses', f:val('prov'), fmt:'m', u:'US$M'},
+    // ---- Revenue breakdown: net interest income ----
+    {l:'Net interest income', f:val('nii'), fmt:'m', u:'US$M', b:1},
+    YOY('nii'),
+    PCT('% of total net revenue','nii','totRev'),
+    {l:'Interest income – loans and securitizations', f:val('intLoans'), fmt:'m', u:'US$M', ind:1},
+    YOY('intLoans'),
+    {l:'Interest income – other', f:val('intOther'), fmt:'m', u:'US$M', ind:1},
+    {l:'Total interest income', f:val('intInc'), fmt:'m', u:'US$M', ind:1, b:1},
+    YOY('intInc'),
+    {l:'Yield on avg. interest-earning assets', f:ann('intInc','avgIEA'), fmt:'p2', u:'%', sub:1, inp:1, inpY:1},
+    {l:'Interest expense – securitizations and warehouses', f:o=>neg(o.expSec), fmt:'m', u:'US$M', ind:1},
+    {l:'Interest expense – deposits', f:o=>neg(o.expDep), fmt:'m', u:'US$M', ind:1},
+    YOY('expDep'),
+    {l:'Interest expense – corporate borrowings', f:o=>neg(o.expCorp), fmt:'m', u:'US$M', ind:1},
+    {l:'Interest expense – other', f:o=>neg(o.expOther), fmt:'m', u:'US$M', ind:1},
+    {l:'Total interest expense', f:o=>neg(o.intExp), fmt:'m', u:'US$M', ind:1, b:1},
+    YOY('intExp'),
+    {l:'Cost of funds (on avg. interest-earning assets)', f:ann('intExp','avgIEA'), fmt:'p2', u:'%', sub:1},
+    {l:'Avg. interest-earning assets', f:val('avgIEA'), fmt:'m', u:'US$M', ind:1},
+    YOY('avgIEA', {inpY:1}),
+    QOQ('avgIEA', {inp:1}),
+    {l:'Net interest margin', f:ann('nii','avgIEA'), fmt:'p2', u:'%', sub:1, inp:1, inpY:1},
+    // ---- Revenue breakdown: noninterest income ----
+    {l:'Noninterest income', f:val('nonII'), fmt:'m', u:'US$M', b:1},
+    YOY('nonII'),
+    PCT('% of total net revenue','nonII','totRev'),
+    {l:'Loan Platform Business fees', f:val('lpf'), fmt:'m', u:'US$M', ind:1},
+    YOY('lpf'),
+    {l:'Take rate on LPB volume', f:ratio('lpf','lpbVol'), fmt:'p2', u:'%', sub:1, inp:1, inpY:1},
+    {l:'Loan origination, sales, securitizations & servicing', f:val('losss'), fmt:'m', u:'US$M', ind:1},
+    YOY('losss'),
+    {l:'% of on-balance-sheet originations', f:ratio('losss','oBS'), fmt:'p2', u:'%', sub:1, inp:1, inpY:1},
+    {l:'Technology Platform (products & solutions)', f:val('techRev'), fmt:'m', u:'US$M', ind:1},
+    YOY('techRev', {inpY:1}),
+    QOQ('techRev', {inp:1}),
+    {l:'Annualized revenue per account', f:o=>isN(o.techRev)&&o.techAcc?o.techRev*(365/o.days)/o.techAcc:null, fmt:'usd2', u:'US$', sub:1},
+    {l:'Crypto (net)', f:val('crypto'), fmt:'m', u:'US$M', ind:1},
+    {l:'Other (referrals, interchange, brokerage…)', f:val('otherNII'), fmt:'m', u:'US$M', ind:1},
+    YOY('otherNII', {inpY:1}),
+    QOQ('otherNII', {inp:1}),
+    // ---- Gross income ----
+    {l:'Cost of revenue (COGS)', f:val('cogs'), fmt:'m', u:'US$M', note:'Not applicable: SoFi reports interest expense inside net revenue'},
+    {l:'Gross income', f:val('gross'), fmt:'m', u:'US$M', tot:1, key:1},
+    YOY('gross'),
+    PCT('Gross margin','gross','totRev'),
+    // ---- Operating expenses ----
+    {l:'Provision for credit losses', f:o=>neg(o.prov), fmt:'m', u:'US$M', ind:1},
     YOY('prov'),
     PCT('% of revenue','prov','totRev',{inp:1, inpY:1}),
-    {l:'Technology and product development', f:val('tpd'), fmt:'m', u:'US$M'},
+    {l:'Technology and product development', f:o=>neg(o.tpd), fmt:'m', u:'US$M', ind:1},
     YOY('tpd'),
     PCT('% of revenue','tpd','totRev',{inp:1, inpY:1}),
-    {l:'Sales and marketing', f:val('sm'), fmt:'m', u:'US$M'},
+    {l:'Sales and marketing', f:o=>neg(o.sm), fmt:'m', u:'US$M', ind:1},
     YOY('sm'),
     PCT('% of revenue','sm','totRev',{inp:1, inpY:1}),
     {l:'S&M per net new member', f:(o,c)=>{ const p=prevBase(c)?.members; return isN(o.sm)&&isN(p)&&o.members>p ? o.sm*1000/(o.members-p) : null; }, fmt:'usd0', u:'US$', sub:1},
-    {l:'Cost of operations', f:val('coo'), fmt:'m', u:'US$M'},
+    {l:'Cost of operations', f:o=>neg(o.coo), fmt:'m', u:'US$M', ind:1},
     YOY('coo'),
     PCT('% of revenue','coo','totRev',{inp:1, inpY:1}),
-    {l:'General and administrative', f:val('ga'), fmt:'m', u:'US$M'},
+    {l:'General and administrative', f:o=>neg(o.ga), fmt:'m', u:'US$M', ind:1},
     YOY('ga'),
     PCT('% of revenue','ga','totRev',{inp:1, inpY:1}),
-    {l:'Goodwill impairment', f:val('gw'), fmt:'m', u:'US$M'},
-    {l:'Total noninterest expense', f:val('opex'), fmt:'m', u:'US$M', tot:1},
-    YOY('opex'),
-    PCT('Efficiency ratio (expense / revenue)','opex','totRev'),
-    {l:'Income before income taxes', f:val('pretax'), fmt:'m', u:'US$M', tot:1},
-    YOY('pretax'),
-    {l:'Pre-tax margin', f:ratio('pretax','totRev'), fmt:'p', u:'%', sub:1},
-    {l:'Income tax expense (benefit)', f:val('tax'), fmt:'m', u:'US$M'},
-    {l:'Effective tax rate', f:o=>isN(o.tax)&&o.pretax>0?o.tax/o.pretax:null, fmt:'p', u:'%', sub:1, inp:1, inpY:1},
+    {l:'Goodwill impairment', f:o=>neg(o.gw), fmt:'m', u:'US$M', ind:1},
+    {l:'Total operating expenses', f:o=>neg(o.opexAll), fmt:'m', u:'US$M', b:1},
+    YOY('opexAll'),
+    PCT('% of revenue (efficiency ratio)','opexAll','totRev'),
+    // ---- Operating income → EBT → net income ----
+    {l:'Operating income', f:val('opInc'), fmt:'m', u:'US$M', tot:1, key:1},
+    YOY('opInc'),
+    {l:'Operating margin', f:ratio('opInc','totRev'), fmt:'p', u:'%', sub:1},
+    {l:'Non-operating income (expense)', f:val('nonOp'), fmt:'m', u:'US$M', note:'SoFi books interest and gains on debt inside net revenue'},
+    {l:'Earnings before taxes (EBT)', f:val('ebt'), fmt:'m', u:'US$M', tot:1},
+    YOY('ebt'),
+    {l:'EBT margin', f:ratio('ebt','totRev'), fmt:'p', u:'%', sub:1},
+    {l:'Income tax (expense) benefit', f:o=>neg(o.tax), fmt:'m', u:'US$M'},
+    {l:'Effective tax rate', f:o=>isN(o.tax)&&o.ebt>0?o.tax/o.ebt:null, fmt:'p', u:'%', sub:1, inp:1, inpY:1},
     {l:'Net income', f:val('ni'), fmt:'m', u:'US$M', tot:1, key:1},
     YOY('ni'),
     {l:'Net margin', f:ratio('ni','totRev'), fmt:'p', u:'%', sub:1},
@@ -1495,19 +1583,31 @@ const MODEL = (() => {
     {l:'Diluted weighted avg. shares', f:val('shDil'), fmt:'m', u:'M', inp:1},
     YOY('shDil', {inpY:1}),
 
-    SEC('Adjusted metrics (non-GAAP)'),
-    {l:'Adjusted net revenue', f:val('adjRev'), fmt:'m', u:'US$M', b:1},
-    YOY('adjRev'),
-    {l:'Depreciation and amortization', f:val('da'), fmt:'m', u:'US$M', inp:1},
+    SEC('EBITDA and adjusted EBITDA'),
+    {l:'Net income', f:val('ni'), fmt:'m', u:'US$M', b:1},
+    {l:'(+) Income tax expense (benefit)', f:val('tax'), fmt:'m', u:'US$M', ind:1},
+    {l:'(+) Interest expense – corporate borrowings', f:val('expCorp'), fmt:'m', u:'US$M', ind:1},
+    {l:'(+) Depreciation and amortization', f:val('da'), fmt:'m', u:'US$M', ind:1, inp:1},
     YOY('da', {inpY:1}),
-    PCT('% of revenue','da','adjRev'),
-    {l:'Share-based expense', f:val('sbc'), fmt:'m', u:'US$M', inp:1},
+    PCT('% of revenue','da','totRev'),
+    {l:'EBITDA', f:val('ebitdaU'), fmt:'m', u:'US$M', tot:1},
+    YOY('ebitdaU'),
+    {l:'EBITDA margin', f:ratio('ebitdaU','totRev'), fmt:'p', u:'%', sub:1},
+    {l:'(+) Share-based expense', f:val('sbc'), fmt:'m', u:'US$M', ind:1, inp:1},
     YOY('sbc', {inpY:1}),
-    PCT('% of revenue','sbc','adjRev'),
+    PCT('% of revenue','sbc','totRev'),
+    {l:'(+) Restructuring charges', f:val('adjRestr'), fmt:'m', u:'US$M', ind:1},
+    {l:'(+) Transaction-related expense', f:val('adjTrans'), fmt:'m', u:'US$M', ind:1},
+    {l:'(+) Impairment expense', f:val('adjImp'), fmt:'m', u:'US$M', ind:1},
+    {l:'(+) FX impact of highly inflationary subsidiaries', f:val('adjFX'), fmt:'m', u:'US$M', ind:1},
+    {l:'(±) Fair value changes – servicing rights & residual interests', f:o=>sum(o.adjSR,o.adjResid), fmt:'m', u:'US$M', ind:1},
+    {l:'(−) Gain on extinguishment of debt', f:val('adjGain'), fmt:'m', u:'US$M', ind:1},
     {l:'Adjusted EBITDA', f:val('ebitda'), fmt:'m', u:'US$M', tot:1, key:1},
     YOY('ebitda'),
-    {l:'Adjusted EBITDA margin', f:ratio('ebitda','adjRev'), fmt:'p', u:'%', sub:1},
-    {l:'Adjusted net income', f:val('adjNI'), fmt:'m', u:'US$M', tot:1},
+    {l:'Adjusted EBITDA margin (on adj. net revenue)', f:ratio('ebitda','adjRev'), fmt:'p', u:'%', sub:1},
+    {l:'Adjusted net revenue (net revenue + fair value changes + debt gains)', f:val('adjRev'), fmt:'m', u:'US$M', b:1},
+    YOY('adjRev'),
+    {l:'Adjusted net income', f:val('adjNI'), fmt:'m', u:'US$M', b:1},
     YOY('adjNI'),
     {l:'Adjusted net margin', f:ratio('adjNI','adjRev'), fmt:'p', u:'%', sub:1},
     {l:'Adjusted diluted EPS', f:val('adjEps'), fmt:'ps', u:'US$', b:1},
@@ -1563,8 +1663,8 @@ const MODEL = (() => {
   // ---- Outline state (persisted) ----
   const ST_KEY='pvg-model-outline';
   let S0={}; try{ S0=JSON.parse(localStorage.getItem(ST_KEY)||'{}'); }catch(e){}
-  const state={ sec:new Set(S0.sec||[]), row:new Set(S0.row||[]), blk:new Set(S0.blk||[]), hideSubs:!!S0.hideSubs };
-  const save=()=>{ try{ localStorage.setItem(ST_KEY, JSON.stringify({sec:[...state.sec],row:[...state.row],blk:[...state.blk],hideSubs:state.hideSubs})); }catch(e){} };
+  const state={ sec:new Set(S0.sec||[]), row:new Set(S0.row||[]), blk:new Set(S0.blk||[]), hideSubs:!!S0.hideSubs, view:S0.view||'act' };
+  const save=()=>{ try{ localStorage.setItem(ST_KEY, JSON.stringify({sec:[...state.sec],row:[...state.row],blk:[...state.blk],hideSubs:state.hideSubs,view:state.view})); }catch(e){} };
 
   // ---- Render ----
   const FM = {
@@ -1583,12 +1683,14 @@ const MODEL = (() => {
   }
   function render(){
     const gap = '<td class="gap"></td>', gapH = '<th class="gap"></th>';
-    const blocks = BLOCKS.map(b=>({...b, closed:state.blk.has(b.id)}));
+    const view = state.view;
+    const pastTitle = {qa:{bt:'Quarterly · Projected at the time', var:'Quarterly · Actual vs projected'}, ya:{bt:'Annual · Projected at the time', var:'Annual · Actual vs projected'}};
+    const blocks = BLOCKS.map(b=>({...b, closed:state.blk.has(b.id), title:(view!=='act'&&pastTitle[b.id])?pastTitle[b.id][view]:b.title, past:!b.proj}));
     const cells = (fn) => blocks.map((b,bi)=>(bi?gap:'')+(b.closed?'<td class="colx"></td>':b.cols.map(c=>fn(c,b)).join(''))).join('');
     const hA = `<tr class="hA"><th class="c-lab co-name">SoFi Technologies, Inc. (SOFI)</th><th class="c-unit"></th>${
       blocks.map((b,bi)=>(bi?gapH:'')+(b.closed
-        ? `<th class="band ${b.proj?'band-p':'band-a'} colx" title="${b.title}">${btn('blk',b.id,false,'Expand '+b.title)}</th>`
-        : `<th colspan="${b.cols.length}" class="band ${b.proj?'band-p':'band-a'}">${btn('blk',b.id,true,'Collapse '+b.title)}<span>${b.title}</span></th>`)).join('')}</tr>`;
+        ? `<th class="band ${b.proj||(b.past&&view!=='act')?'band-p':'band-a'} colx" title="${b.title}">${btn('blk',b.id,false,'Expand '+b.title)}</th>`
+        : `<th colspan="${b.cols.length}" class="band ${b.proj||(b.past&&view!=='act')?'band-p':'band-a'}">${btn('blk',b.id,true,'Collapse '+b.title)}<span>${b.title}</span></th>`)).join('')}</tr>`;
     const hB = `<tr class="hB"><th class="c-lab">US$ in millions, except per-share data and KPIs</th><th class="c-unit">Unit</th>${
       blocks.map((b,bi)=>(bi?gapH:'')+(b.closed?`<th class="colx vlab">${b.short}</th>`:b.cols.map(c=>`<th class="per ${b.proj?'p':''}">${c.v.lab}${DERIVED_COLS.includes(c.v.lab)?'<sup>*</sup>':''}</th>`).join(''))).join('')}</tr>`;
     const hC = `<tr class="hC"><th class="c-lab"></th><th class="c-unit"></th>${
@@ -1606,33 +1708,48 @@ const MODEL = (() => {
         const cls=['n', b.proj?'p':'', isInput(r,c)?'inp':''];
         let v; try{ v=r.f(c.v,c); }catch(e){ v=null; }
         let s=(FM[r.fmt]||FM.m)(v);
+        if(b.past && view!=='act'){
+          const bo = c.kind==='q' ? BQ[c.qi] : BY[c.yi];
+          let bv=null; if(bo){ try{ bv=r.f(bo,c); }catch(e){ bv=null; } }
+          if(view==='bt'){ cls.push('bt'); s=(FM[r.fmt]||FM.m)(bv); }
+          else {
+            const pctPoint = ['p','p2','cs','g'].includes(r.fmt);
+            const d = !isN(v)||!isN(bv) ? null : pctPoint ? (v-bv)*100 : (Math.abs(bv)<1e-9 ? null : (bv<0||v<0 ? NaN : v/bv-1));
+            s = pctPoint ? FM.pp(d) : FM.g(d);
+            cls.push('vr');
+          }
+          return `<td class="${cls.join(' ')}">${s}</td>`;
+        }
         const derived = (r.der && r.der.includes(c.v.lab)) || (r.ghk && GH[c.v.lab]?.[r.ghkind]?.d?.includes(r.ghk));
         if(derived && isN(v)) s=`<span class="derived">${s}</span>`;
         const t = r.ghk && GH[c.v.lab]?.[r.ghkind]?.src ? ` title="${GH[c.v.lab][r.ghkind].src}"` : '';
         return `<td class="${cls.join(' ')}"${t}>${s}</td>`;
       });
-      const rc=[r.sub?'sub':'', r.tot?'tot':'', r.key?'kt':'', r.b?'b':''].join(' ');
-      const tog = r.hasSubs && !state.hideSubs && !state.sec.has(ROWS[r.sec_]?.id) ? btn('row',r.id,!state.row.has(r.id),'Show / hide detail') : (r.sub?'':'<span class="ol-sp"></span>');
-      body+=`<tr class="${rc}"><td class="c-lab" title="${r.l}">${tog}${r.l}</td><td class="c-unit">${r.u||''}</td>${tds}</tr>`;
+      const rc=[r.sub?'sub':'', r.tot?'tot':'', r.key?'kt':'', r.b?'b':'', r.ind?'ind':''].join(' ');
+      const tog = r.hasSubs && !state.hideSubs ? btn('row',r.id,!state.row.has(r.id),'Show / hide detail') : (r.sub?'':'<span class="ol-sp"></span>');
+      body+=`<tr class="${rc}"><td class="c-lab" title="${r.note||r.l}">${tog}${r.l}</td><td class="c-unit">${r.u||''}</td>${tds}</tr>`;
     });
     const el=document.getElementById('modelTable');
     const sx=el.scrollLeft, sy=el.scrollTop;
     el.innerHTML=`<table class="xl"><thead>${hA}${hB}${hC}</thead><tbody>${body}</tbody></table>`;
     el.scrollLeft=sx; el.scrollTop=sy;
     document.getElementById('hideSubs').checked=state.hideSubs;
+    document.querySelectorAll('#pastView button').forEach(x=>x.classList.toggle('on',x.dataset.v===state.view));
   }
   // Outline interactions
   function toggle(kind,id){ const set=state[kind]; set.has(id)?set.delete(id):set.add(id); save(); render(); }
   function expandAll(){ state.sec.clear(); state.row.clear(); state.blk.clear(); state.hideSubs=false; save(); render(); }
   function collapseAll(){ ROWS.forEach(r=>{ if(r.sec) state.sec.add(r.id); }); save(); render(); }
   function setHideSubs(v){ state.hideSubs=v; save(); render(); }
-  return {render, toggle, expandAll, collapseAll, setHideSubs, Q, Y};
+  function setView(v){ state.view=v; save(); render(); }
+  return {render, toggle, expandAll, collapseAll, setHideSubs, setView, Q, Y, BQ, BY};
 })();
 
 let modelRendered=false;
 function renderModel(){ if(modelRendered) return; MODEL.render(); modelRendered=true; }
 document.getElementById('hideSubs').addEventListener('change',e=>MODEL.setHideSubs(e.target.checked));
 document.getElementById('olExpand').addEventListener('click',()=>MODEL.expandAll());
+document.getElementById('pastView').addEventListener('click',e=>{ const b=e.target.closest('button'); if(b) MODEL.setView(b.dataset.v); });
 document.getElementById('olCollapse').addEventListener('click',()=>MODEL.collapseAll());
 document.getElementById('modelTable').addEventListener('click',e=>{
   const b=e.target.closest('button.ol'); if(!b) return;
