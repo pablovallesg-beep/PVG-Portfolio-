@@ -123,6 +123,12 @@ html.mobile .nav-item .ic-desk{display:block}
 .tk-name{color:var(--text-secondary);font-size:13px}
 .top-meta{margin-left:auto;display:flex;gap:18px;align-items:center;flex-wrap:wrap}
 .meta{display:flex;flex-direction:column;align-items:flex-end}
+.px{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.px-v{font-size:26px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:10px}
+.px-c{font-size:13px;font-weight:700;letter-spacing:0}
+.px-s{font-size:11px;color:var(--text-tertiary)}
+html.mobile .px{align-items:flex-start}
+html.mobile .px-v{font-size:22px}
 .meta .l{font-size:11px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.06em}
 .meta .v{font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
 .tabs{display:flex;gap:2px;padding:0 24px;background:var(--card-bg);border-bottom:1px solid var(--border);overflow-x:auto}
@@ -235,6 +241,51 @@ html.mobile .ec-grid{grid-template-columns:minmax(0,1fr)}
 .ec-tl li{list-style:none;margin:8px 0}
 .ec-tl{padding-left:0 !important}
 .ec-tgt td:first-child{font-weight:600}
+.th-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:16px}
+@media (max-width:1100px){.th-grid{grid-template-columns:minmax(0,1fr)}}
+html.mobile .th-grid{grid-template-columns:minmax(0,1fr)}
+.fw-svg{display:block;width:100%;max-width:560px;margin:8px auto 4px}
+.fw-svg text{font-family:'Figtree',sans-serif}
+.fw-steps{margin:0;padding:6px 20px 18px 20px;counter-reset:fw;list-style:none}
+.fw-steps li{position:relative;padding:8px 0 8px 40px;border-bottom:1px solid var(--border);font-size:13px;line-height:1.5}
+.fw-steps li:last-child{border-bottom:0}
+.fw-steps li::before{counter-increment:fw;content:counter(fw);position:absolute;left:0;top:8px;width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center}
+.fw-steps b{display:block;font-size:13px}
+.th-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;padding:14px 20px 18px}
+.th-card{border:1px solid var(--border);border-radius:10px;padding:12px 14px;background:var(--main-bg)}
+.th-card h5{margin:0 0 6px;font-size:13.5px}
+.th-card p{margin:0 0 8px;font-size:12.5px;line-height:1.5;color:var(--text-secondary)}
+.th-card q{display:block;font-size:12.5px;font-style:italic;color:var(--text-primary);border-left:3px solid var(--accent);padding-left:9px;margin:6px 0 8px}
+.th-card .calls span{display:inline-block;margin:2px 4px 0 0;padding:1px 7px;border-radius:9px;background:var(--accent-light);color:var(--accent);font-size:10.5px;font-weight:700}
+.flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;padding:18px 20px}
+@media (max-width:1100px){.flow{grid-template-columns:repeat(2,minmax(0,1fr))}}
+html.mobile .flow{grid-template-columns:minmax(0,1fr)}
+.flow .nd{min-width:0;border:1px solid var(--border);border-radius:10px;padding:10px 12px;background:var(--main-bg)}
+.flow .nd .n{display:inline-flex;width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:700;align-items:center;justify-content:center;margin-bottom:6px}
+.flow .nd b{display:block;font-size:12.5px;margin-bottom:4px}
+.flow .nd span{font-size:12px;line-height:1.45;color:var(--text-secondary)}
+.flow .ar{display:none}
+.lpb-map{padding:6px 20px 18px}
+.lpb-map svg{display:block;width:100%;max-width:980px;margin:0 auto}
+.lpb-map text{font-family:'Figtree',sans-serif}
+.fico{padding:18px 20px 8px}
+.fico .bar{position:relative;display:flex;height:34px;border-radius:8px;overflow:visible}
+.fico .bar div{display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;text-shadow:0 1px 1px rgba(0,0,0,.25)}
+.fico .bar div:first-child{border-radius:8px 0 0 8px} .fico .bar div:last-child{border-radius:0 8px 8px 0}
+.fico .ticks{position:relative;height:18px;font-size:10.5px;color:var(--text-tertiary)}
+.fico .ticks span{position:absolute;transform:translateX(-50%)}
+.fico .mk{position:absolute;bottom:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;font-size:11px;font-weight:700;white-space:nowrap}
+.fico .mk i{display:block;width:2px;background:var(--text-primary)}
+.fico .marks{position:relative;height:54px}
+.fico-leg{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;padding:6px 20px 18px}
+.fico-leg div{font-size:11.5px;line-height:1.4;color:var(--text-secondary);border-top:3px solid;padding-top:6px}
+.fico-leg b{display:block;color:var(--text-primary);font-size:12px}
+html.mobile .fico-leg{grid-template-columns:repeat(2,minmax(0,1fr))}
+.bw{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;padding:14px 20px 18px}
+.bw > div{border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+.bw .l{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-tertiary)}
+.bw .v{font-size:24px;font-weight:700;letter-spacing:-.02em;margin-top:4px}
+.bw .s{font-size:12px;color:var(--text-secondary)}
 .ave-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .ave-cards{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
 .ave-cards .chart{height:230px}
@@ -464,7 +515,9 @@ html.mobile .xl-wrap{max-height:calc(100vh - 190px)}
       <button class="tab" data-tab="crecimiento">Members &amp; products</button>
       <button class="tab" data-tab="segmentos">Segments</button>
       <button class="tab" data-tab="lending">Originations &amp; credit</button>
-      <button class="tab" data-tab="anual">Annual history</button>
+      <button class="tab" data-tab="flywheel">Flywheel</button>
+      <button class="tab" data-tab="lpb">LPB</button>
+      <button class="tab" data-tab="credit">Client Credit Quality</button>
     </nav>
 
     <!-- ============ RESUMEN ============ -->
@@ -579,6 +632,11 @@ html.mobile .xl-wrap{max-height:calc(100vh - 190px)}
       <div class="insight" id="ins-seg"></div>
     </section>
 
+    <!-- ============ FLYWHEEL / LPB / CLIENT CREDIT QUALITY ============ -->
+    <section class="view" id="v-flywheel"></section>
+    <section class="view" id="v-lpb"></section>
+    <section class="view" id="v-credit"></section>
+
     <!-- ============ LENDING ============ -->
     <section class="view" id="v-lending">
       <div class="grid">
@@ -623,41 +681,6 @@ html.mobile .xl-wrap{max-height:calc(100vh - 190px)}
       <div class="insight" id="ins-lend"></div>
     </section>
 
-    <!-- ============ ANUAL ============ -->
-    <section class="view" id="v-anual">
-      <div class="grid">
-        <div class="card span-2">
-          <div class="card-h">
-            <div><span class="card-t">Net revenue by segment and guidance</span><span class="card-sub" id="u-ann">(US$B)</span></div>
-            <div class="ctrls"><span class="ctrl-l">View</span>
-              <div class="seg" data-ctl="ann"><button class="on" data-v="lvl">US$B</button><button data-v="cs">Mix</button></div>
-            </div>
-          </div>
-          <div class="card-b"><div class="chart tall"><canvas id="c-ann"></canvas></div></div>
-          <div class="tbl-wrap" id="t-ann"></div>
-          <div class="src">Source: 2023, 2024 and 2025 10-Ks; guidance from the Q3'26 release. Segments on GAAP revenue; guidance exists only for consolidated adjusted net revenue, so 2026G and 2027G are shown as a total.</div>
-        </div>
-
-        <div class="card">
-          <div class="card-h">
-            <div><span class="card-t">Adjusted EBITDA and net income</span><span class="card-sub">(US$B)</span></div>
-          </div>
-          <div class="card-b"><div class="chart"><canvas id="c-prof"></canvas></div></div>
-          <div class="tbl-wrap" id="t-prof"></div>
-          <div class="src">Source: 2023–2025 10-Ks; guidance from the Q3'26 release. 2024 GAAP net income includes a $258M tax benefit from the valuation allowance release.</div>
-        </div>
-
-        <div class="card">
-          <div class="card-h">
-            <div><span class="card-t">Members, originations and deposits</span><span class="card-sub">(millions · US$B)</span></div>
-          </div>
-          <div class="card-b"><div class="chart"><canvas id="c-annm"></canvas></div></div>
-          <div class="tbl-wrap" id="t-annm"></div>
-          <div class="src">Source: 2023–2025 10-Ks. 2021 deposits are not included in the available 10-Ks.</div>
-        </div>
-      </div>
-      <div class="insight" id="ins-anual"></div>
-    </section>
     </div>
 
     <!-- ============ VALUATION ============ -->
@@ -1201,66 +1224,6 @@ function cap(){
 }
 
 /* =====================================================================
-   ANUAL
-   ===================================================================== */
-function ann(){
-  const c=C(), m=S.ann, cs=m==='cs';
-  const segTot=add(A.lend,A.fs,A.tech);
-  const b=a=>a.map(v=>isN(v)?v/1000:null);
-  let ds,opts,rows;
-  if(!cs){
-    const gTot=A.adjRev.map((v,i)=>i>=AFC?v/1000:null);
-    ds=[bar('Lending',b(A.lend),c.s1,{tip:fmtTipB}),bar('Financial Services',b(A.fs),c.s2,{tip:fmtTipB}),bar('Technology Platform',b(A.tech),c.s3,{tip:fmtTipB}),
-        bar('Adj. net revenue guidance',gTot,alpha(c.s1,0.45),{tip:fmtTipB}),
-        line('Adjusted net revenue',b(A.adjRev),c.total,{borderDash:[5,4],pointRadius:3,tip:fmtTipB,stack:'t'})];
-    opts=baseOpts({stacked:true,fc:AFC,fcLabel:'Guidance',yTick:v=>axB(v,0),yMin:0});
-    rows=[{label:'Lending',data:A.lend,fmt:'m',color:c.s1},{label:'YoY growth',data:yoyArr(A.lend,1),fmt:'g',cls:'sub'},
-      {label:'Financial Services',data:A.fs,fmt:'m',color:c.s2},{label:'YoY growth',data:yoyArr(A.fs,1),fmt:'g',cls:'sub'},
-      {label:'Technology Platform',data:A.tech,fmt:'m',color:c.s3},{label:'YoY growth',data:yoyArr(A.tech,1),fmt:'g',cls:'sub'},
-      {label:'GAAP net revenue',data:A.rev,fmt:'m',cls:'total'},
-      {label:'Adjusted net revenue',data:A.adjRev,fmt:'m',color:c.total},{label:'YoY growth',data:yoyArr(A.adjRev,1),fmt:'g',cls:'sub'}];
-  } else {
-    ds=[['Lending',A.lend,c.s1],['Financial Services',A.fs,c.s2],['Technology Platform',A.tech,c.s3]].map(([l,d,col])=>bar(l,div(d,segTot).slice(0,AFC),col,{tip:v=>F.p(v)}));
-    opts=baseOpts({stacked:true,yTick:v=>(v*100).toFixed(0)+'%',yMin:0,yMax:1});
-    rows=[['Lending',A.lend,c.s1],['Financial Services',A.fs,c.s2],['Technology Platform',A.tech,c.s3]].map(([l,d,col])=>({label:l,data:div(d,segTot).slice(0,AFC),fmt:'cs',color:col}));
-  }
-  document.getElementById('u-ann').textContent=cs?'(% of segment revenue)':'(US$B)';
-  const labels=cs?Y.slice(0,AFC):Y;
-  mk('c-ann',{data:{labels,datasets:ds},options:opts});
-  renderTable('t-ann',labels,rows,cs?undefined:AFC);
-}
-function prof(){
-  const c=C(), b=a=>a.map(v=>isN(v)?v/1000:null);
-  const niPlot=A.ni.map((v,i)=>i<AFC?v:A.adjNi[i]);
-  mk('c-prof',{type:'bar',data:{labels:Y,datasets:[
-    bar('Adjusted EBITDA',b(A.ebitda),A.ebitda.map((_,i)=>i>=AFC?alpha(c.s2,0.5):c.s2),{tip:fmtTipB}),
-    bar('Net income (GAAP; guidance = adjusted)',b(niPlot),niPlot.map((v,i)=>{const col=v>=0?c.pos:c.neg;return i>=AFC?alpha(col,0.5):col;}),{tip:fmtTipB}),
-  ]},options:baseOpts({fc:AFC,fcLabel:'Guidance',yTick:v=>axB(v,1)})});
-  renderTable('t-prof',Y,[
-    {label:'Adjusted EBITDA',data:A.ebitda,fmt:'m',color:c.s2},
-    {label:'Margin',data:div(A.ebitda,A.adjRev),fmt:'p',cls:'sub'},
-    {label:'GAAP net income',data:A.ni,fmt:'m'},
-    {label:'Adjusted net income',data:A.adjNi,fmt:'m'},
-    {label:'Adjusted EPS',data:A.adjEps,fmt:'ps'},
-  ],AFC);
-}
-function annm(){
-  const c=C(), n=AFC, lab=Y.slice(0,n);
-  mk('c-annm',{data:{labels:lab,datasets:[
-    line('Members (M)',A.members.slice(0,n),c.s5,{yAxisID:'y1',tip:v=>v.toFixed(1)+'M',order:0}),
-    bar('Originations',A.orig.slice(0,n).map(v=>v/1000),c.s1,{tip:fmtTipB,order:1}),
-    bar('Deposits',A.deposits.slice(0,n),c.s2,{tip:fmtTipB,order:1}),
-  ]},options:baseOpts({yTick:v=>axB(v,0),yMin:0,y1:true,y1Tick:v=>v+'M',y1Min:0})});
-  renderTable('t-annm',lab,[
-    {label:'Members (millions)',data:A.members.slice(0,n),fmt:'mm1',color:c.s5},
-    {label:'YoY growth',data:yoyArr(A.members,1).slice(0,n),fmt:'g',cls:'sub'},
-    {label:'Originations (US$M)',data:A.orig.slice(0,n),fmt:'m',color:c.s1},
-    {label:'Deposits (US$B)',data:A.deposits.slice(0,n),fmt:'b1',color:c.s2},
-    {label:'Net interest margin',data:A.nim.slice(0,n),fmt:'r2'},
-  ]);
-}
-
-/* =====================================================================
    INSIGHTS (calculated from the data)
    ===================================================================== */
 function insights(){
@@ -1271,7 +1234,6 @@ function insights(){
   document.getElementById('ins-seg').innerHTML=`<strong>Lending was the engine again: ${fmtTipG(yoy(D.lendRev,L))} YoY to $${nf0.format(D.lendRev[L])}M, ${F.p(D.lendRev[L]/segTot)} of segment revenue, with a ${F.p(D.lendCp[L]/D.lendRev[L])} contribution margin.</strong> Financial Services grew ${fmtTipG(yoy(D.fsRev,L))} but its margin fell to ${F.p(D.fsCp[L]/D.fsRev[L])} from ${F.p(D.fsCp[L-4]/D.fsRev[L-4])}. Technology Platform declined ${fmtTipG(yoy(D.techRev,L))} YoY (per the company, +18% excluding the departed client). Fee-based revenue reached ${F.p(D.fee[L]/D.rev[L])} of net revenue.`;
   const o=add(D.oPL,D.oSL,D.oHL,D.oSB);
   document.getElementById('ins-lend').innerHTML=`<strong>Record originations of $${(o[L]/1000).toFixed(1)}B (${fmtTipG(yoy(o,L))} YoY) while the personal loan net charge-off rate fell to ${D.ncoPL[L].toFixed(2)}% from ${D.ncoPL[L-4].toFixed(2)}% a year ago.</strong> Net interest margin rose to ${D.nim[L].toFixed(2)}% and deposits to $${D.deposits[L].toFixed(1)}B. Worth watching: CET1 fell from ${D.cet1[L-2].toFixed(1)}% in Q1'26 to ${D.cet1[L].toFixed(1)}% as risk-weighted assets grow (still well above the 7.0% minimum).`;
-  document.getElementById('ins-anual').innerHTML=`<strong>From a $${nf0.format(-A.ni[0])}M net loss in 2021 to $${nf0.format(A.ni[4])}M of net income in 2025, with the adjusted EBITDA margin rising from ${F.p(A.ebitda[0]/A.adjRev[0])} to ${F.p(A.ebitda[4]/A.adjRev[4])}.</strong> Financial Services went from ${F.p(A.fs[0]/(A.lend[0]+A.fs[0]+A.tech[0]))} to ${F.p(A.fs[4]/(A.lend[4]+A.fs[4]+A.tech[4]))} of segment revenue. 2027 guidance implies a ${F.p(A.ebitda[6]/A.adjRev[6])} adjusted EBITDA margin and a ${F.p(A.adjNi[6]/A.adjRev[6])} adjusted net margin.`;
 }
 
 /* =====================================================================
@@ -2292,7 +2254,7 @@ const AVE = (() => {
    DCF — trading multiples, FCFF (exit EV/EBITDA) and FCFE (exit P/E)
    ===================================================================== */
 // Price from Interactive Brokers (realtime snapshot); shares outstanding from the Q3'26 release balance sheet.
-const MKT = {price:16.86, asOf:'Oct 28, 2026', src:'Interactive Brokers, realtime last trade', shares:1296.617, sharesSrc:"shares outstanding at Sep 30, 2026 (Q3'26 release)"};
+const MKT = {price:17.05, chg:0.65, chgPct:3.96, asOf:'Oct 28, 2026', time:'13:36', src:'Interactive Brokers, realtime last trade', shares:1296.617, sharesSrc:"shares outstanding at Sep 30, 2026 (Q3'26 release)"};
 const DCF = (() => {
   const DEF = {price:MKT.price, shares:MKT.shares, rf:4.25, beta:1.80, erp:5.50, kd:null, tax:22, exitEV:null, exitPE:null};
   let st = {...DEF};
@@ -2465,6 +2427,121 @@ const GR = (() => {
 })();
 
 /* =====================================================================
+   THESIS — flywheel, Loan Platform Business and client credit quality
+   ===================================================================== */
+// Sourced from SoFi's investor presentations, earnings releases and call transcripts in Sofi/.
+const THESIS = {"flywheel":{"title":"Financial Services Productivity Loop (FSPL)","tagline":"Generating the highest lifetime value of members is our sustainable competitive advantage","src":"Q3'26 investor presentation, slide 8 (same slide in Q1'26/Q2'26 decks)","kpi":"Cross-buy rate of 51% in Q3'26 'demonstrates the power of the FSPL'; products per member at an all-time high of 1.56 in Q3'26","steps":[{"label":"Large digital audience","text":"Digitally-oriented generations, who make up half of the American population, are a huge opportunity."},{"label":"Brand brings members in","text":"Brand awareness brings new members into the Financial Services Productivity Loop."},{"label":"Full suite + value proposition","text":"A full set of products and a better value proposition help members spend less than they make and invest the rest."},{"label":"Trust leads to more products","text":"That builds trust, so members take out more products (cross-buy)."},{"label":"Better unit economics, higher LTV","text":"Strong cross-buy and higher revenue per product improve unit economics, which raises member lifetime value (LTV)."},{"label":"Reinvest in innovation","text":"Higher LTVs pay for new products and features, which make the value proposition stronger and keep members and products growing."},{"label":"Virtuous cycle","text":"The loop repeats, and SoFi calls this virtuous cycle its sustainable competitive advantage."}],"themes":[{"theme":"Building a trusted household brand","text":"Noto says marketing builds SoFi into a trusted household name, measured by unaided brand awareness. He calls it the entry point that feeds the loop.","quote":"This investment is centered on building SoFi into a trusted household brand name, which we measure based on unaided brand awareness","calls":["Q1'25","Q2'25","Q3'25","Q4'25","Q1'26","Q2'26"]},{"theme":"Spend less than you make, invest the rest","text":"He calls this the most important factor in a member's financial life, and products such as Cash Coach and SoFi Coach are built to drive it.","quote":"Our critical success factor is helping people spend less than they make and invest the rest","calls":["Q1'25","Q3'25","Q1'26"]},{"theme":"Get your money right / financial independence","text":"The mission is to help members get their money right and reach financial independence so they can realize their ambitions.","quote":"We help people reach financial independence to achieve their ambitions","calls":["Q1'25","Q2'25","Q3'25","Q4'25","Q1'26","Q2'26"]},{"theme":"One-stop shop / Everything Financial app","text":"SoFi presents itself as the only digitally native one-stop shop for financial services. Having more products means more ways to attract members and grow with them.","quote":"As the only one-stop shop for digital financial services, our investments can drive greater long-term growth","calls":["Q1'25","Q2'25","Q3'25","Q4'25","Q1'26","Q2'26","Q3'26"]},{"theme":"Cross-buy","text":"Cross-buy (new products opened by existing members) is the main gauge of whether the loop works. It rose from about 35% in Q2'25 to 40% and then 51%.","quote":"Cross-buy continues to accelerate with 51% of new products opened by existing SoFi members","calls":["Q1'25","Q2'25","Q3'25","Q4'25","Q1'26","Q2'26","Q3'26"]},{"theme":"Products per member inflecting","text":"In 2026 he points to rising products per member as evidence that the loop is compounding, driven by products like SoFi Plus.","quote":"Growth in members and products per member reflects the strength of our Financial Services Productivity Loop","calls":["Q2'26","Q3'26"]},{"theme":"Highest lifetime value = competitive advantage","text":"Doing more with each member raises LTV, which funds better rates, lower loan pricing and new products.","quote":"As we do more with each member, we drive a higher lifetime value, which is our sustainable competitive advantage","calls":["Q1'25","Q2'25","Q3'25","Q1'26","Q2'26","Q3'26"]},{"theme":"Durable, diversified growth","text":"Growth is described as durable and diversified across lending, financial services and tech platform, and as able to hold up in different rate environments.","quote":"I now have as much confidence in our ability to drive durable growth in a high-rate environment as I do in a low-rate environment","calls":["Q1'25","Q2'25","Q3'25","Q4'25","Q1'26","Q2'26","Q3'26"]},{"theme":"Shift to capital-light, fee-based revenue","text":"The business is deliberately moving toward fee and capital-light revenue (LPB, interchange, brokerage, referrals), with a long-term goal of 50% of revenue from fees.","quote":"reflecting the deliberate diversification of our business towards more capital-light revenue streams","calls":["Q1'25","Q2'25","Q3'25","Q4'25","Q1'26","Q2'26","Q3'26"]},{"theme":"Relentless product innovation (incl. AI)","text":"Innovation and brand building are presented as the two engines of growth. AI tools such as Cash Coach and Doc Coach improve the member experience and efficiency.","quote":"Our durable growth with an acceleration in revenue growth and strong returns in profitability is fueled by our consistent focus on innovation and brand building","calls":["Q1'25","Q2'25","Q3'25","Q4'25","Q1'26","Q2'26","Q3'26"]},{"theme":"Tech company with a bank charter","text":"As a nationally chartered bank with insured deposits, SoFi has stable funding and regulation that fintech peers lack. This supports LPB partners, crypto and stablecoin plans.","quote":"Some of the other fintech lenders ... do not have deposit funding. They are not a bank.","calls":["Q1'25","Q2'25","Q3'25","Q4'25","Q1'26","Q3'26"]},{"theme":"Top 10 financial institution ambition","text":"He ties the one-stop-shop strategy and growth in brand awareness (to the mid-20%s) to becoming a top 10 financial institution.","quote":"on our way to becoming a top 10 financial institution","calls":["Q2'25","Q4'25"]}]},"lpb":{"definition":"Loans are originated on behalf of third parties to meet their pre-defined criteria (presentation, Lending Platform Capabilities slide).","how":[{"label":"Member applies at SoFi","text":"LPB uses SoFi's customer acquisition, operations and service capabilities. The borrower applies through SoFi like any other member."},{"label":"Originate to partner's criteria","text":"SoFi underwrites and originates customized loan portfolios that meet each partner's pre-defined criteria."},{"label":"Volume SoFi wouldn't hold","text":"LPB covers incremental volume SoFi would not keep on its own balance sheet, because of capital ratios, balance-sheet growth limits or borrower credit profile. That includes near-prime borrowers outside SoFi's credit box."},{"label":"Pass-through in days","text":"Loans move through SoFi's balance sheet in a matter of days and are then transferred to the partner, so they need no additional capital."},{"label":"Partner owns the credit","text":"After transfer the partner funds and owns the loan. SoFi keeps no credit risk and has no loss-share agreements."},{"label":"SoFi earns fees","text":"SoFi collects a fee for each loan transferred, and most of the cash comes upfront. It also earns referral fees on applicants sent to third parties, plus servicing income."},{"label":"Keep servicing and the member","text":"SoFi keeps servicing and the client relationship, which keeps members in the FSPL and drives cross-buy."},{"label":"Liquidity and new asset types","text":"SoFi securitizes LPB collateral (SCLP) to give partners liquidity, keeping only a 5% vertical risk-retention slice. In 2026 it added SMB loans and home equity / closed-end seconds."}],"economics":["SoFi collects a fee for each loan transferred (Q2'25 call). LPB loans 'pay the majority of cash upfront, but free up capital instantly and remove the credit risk for SoFi' (Q1'26 call).","Revenue lines: 'Loan platform fees' plus 'Referrals, loan platform business' make up 'Total Loan platform fees' in the fee-based revenue table. Q3'26 was $129.3M + $21.9M = $151.2M, vs $164.9M in Q3'25 (Q3'26 earnings release).","Total LPB contribution to adjusted net revenue: Q1'25 $96M, Q2'25 $131M, Q3'25 $168M, Q4'25 $194M, Q1'26 $140.8M, Q2'26 $143.3M, Q3'26 $153.4M (calls and 2026 releases).","In 2025, LPB fee revenue was reported in the Financial Services segment, and about $3M a quarter of LPB servicing cash flow was recorded in the Lending segment (Q1'25-Q3'25 calls). Q2'26: '$2 million of servicing income recognized in our lending segment'.","The 2026 decks' Lending Platform Capabilities slide shows LPB under the 'Lending Segment' legend and 'LPB Referrals' under 'Financial Services Segment'. This reading of the slide's legend is an inference; the change is not discussed on the calls.","Capital-light: no capital required, no retained credit risk, no loss-share. For LPB securitizations SoFi contributes a 5% vertical slice for risk retention and holds no first-loss or horizontal position (Q1'26 call).","Monetization depends on the mix of assets transferred, excess supply and demand, and the timing and structure of new partnerships and extensions. It 'will fluctuate' and is 'relatively range bound' (Q3'26 call). Each deal is structured differently, and excess investor demand creates 'pricing tension' (Q1'25 call).","Near-prime / outside-credit-box loans carry a higher WAC and could make the revenue stream 'much, much larger' (Q1'25 call).","Annualized run-rates given: over $6B originations and over $380M fees (Q1'25); over $9.5B and over $0.5B (Q2'25); over $13B and $660M (Q3'25); $775M revenue pace and about $14.5B volume (Q4'25)."],"partners":[{"partner":"Fortress","asset":"Personal loans","amount":"$2B","term":"Initial deal","start":"Q3'24","notes":"First large LPB forward-flow deal.","src":"Q2'25 call"},{"partner":"Fortress (extension)","asset":"Personal loans","amount":"$2B","term":"1 year","start":"Q3'25","notes":"Extension of the original deal.","src":"Q1'25 and Q2'25 calls"},{"partner":"Blue Owl Capital","asset":"Personal loans","amount":"$5B","term":"2 years","start":"Q1'25","notes":"Finalized in 2025.","src":"Q1'25 and Q2'25 calls"},{"partner":"Fortress + Edge Focus JV","asset":"Personal loans","amount":"$1.2B","term":"2 years","start":"Q1'25 (began scaling)","notes":"Noto cited it as 'a piece' of the push to originate outside the credit box (FICO about 600-680).","src":"Q1'25 and Q2'25 calls"},{"partner":"Investment banks and other investment managers (unnamed)","asset":"Personal loans","amount":"n/d","term":"n/d","start":"by Q2'25","notes":"'Other partnerships with impressive firms ... representing meaningful value.'","src":"Q2'25 call"},{"partner":"New partner (unnamed)","asset":"Personal loans","amount":"n/d","term":"2026","start":"Signed Jan 2026","notes":"'Signed a new partner this week for 2026'. Several others were at final term-sheet stage, and existing partners extended and often upsized.","src":"Q4'25 call"},{"partner":"Leading global bank + prominent insurance group + top-five global private asset manager","asset":"Personal loans","amount":"$3.6B (combined)","term":"About 2 years","start":"Q1'26","notes":"Three new partners. Chris described them as a large investment bank, a large asset management firm and an insurance fund.","src":"Q1'26 call"},{"partner":"Sixth Street","asset":"Personal loans","amount":"Up to $1B","term":"n/d","start":"Q2'26","notes":"New partner.","src":"Q2'26 call, Q2'26 release"},{"partner":"BasePoint Capital","asset":"SMB loans","amount":"$3B","term":"3 years","start":"Q2'26 (first SMB transfers in Q3'26)","notes":"First non-personal-loan expansion of LPB. Reaffirmed on the Q3'26 call.","src":"Q2'26 and Q3'26 calls"},{"partner":"Undisclosed SMB partner","asset":"SMB loans","amount":"Several hundred million dollars","term":"n/d","start":"Q2'26","notes":"The second SMB partnership.","src":"Q2'26 call"},{"partner":"Leading global bank (home equity)","asset":"Home equity loans / closed-end seconds","amount":"n/d","term":"n/d","start":"Q3'26 (first transfers just after the Q2'26 call)","notes":"Q3'26 home-loan LPB originations were $189.5M. SoFi is 'pacing ahead' in Q4'26.","src":"Q2'26 call; Q3'26 presentation and call"},{"partner":"Two new partners (unnamed)","asset":"n/d","amount":"n/d","term":"n/d","start":"Q3'26","notes":"'We just signed up two new partners in this quarter.'","src":"Q3'26 call"}],"committed":{"summary":"SoFi has never given an all-in total of LPB commitments. The disclosed deals add up to about $17.8B: Fortress $2B + $2B, Blue Owl $5B, Fortress/Edge Focus $1.2B, three Q1'26 partners $3.6B, Sixth Street up to $1B and BasePoint $3B. That excludes undisclosed amounts. This sum is our own arithmetic, not a SoFi figure.","statements":[{"text":"'Signed over $8 billion of LPB partnerships between Blue Owl, Fortress, and Edge Focus' ($5B + $2B + $1.2B).","src":"Q1'25 call"},{"text":"An additional $3.2B was secured on top of Blue Owl: the $2B Fortress extension plus the $1.2B Fortress/Edge Focus JV.","src":"Q1'25 call"},{"text":"Existing partners have extended their contracts and often upsized their commitments. Partners upsize intra-quarter when they have excess demand.","src":"Q3'25 and Q4'25 calls"},{"text":"'$3.6 billion of new commitments with three new partners' over the next two years.","src":"Q1'26 call"},{"text":"'Demand above our contractual obligations'. SoFi filled all contractual commitments 'and more' but chose not to fulfill all excess partner demand.","src":"Q1'26 and Q2'26 calls"},{"text":"Sixth Street (up to $1B, PL), BasePoint ($3B over 3 years, SMB) and an undisclosed SMB partner (several hundred million dollars).","src":"Q2'26 call"},{"text":"Two new partners were signed in Q3'26, and several other discussions are ongoing.","src":"Q3'26 call"}]},"volume":[{"q":"Q1'25","volume":"$1.6B","revenue":"$96M","src":"Q1'25 call"},{"q":"Q2'25","volume":"$2.4B","revenue":"$131M","src":"Q2'25 call; Q2'26 deck"},{"q":"Q3'25","volume":"$3.4B","revenue":"$168M","src":"Q3'25 call; Q3'26 deck"},{"q":"Q4'25","volume":"$3.7B (~$3.65B)","revenue":"$194M","src":"Q4'25 call"},{"q":"Q1'26","volume":"$3.0B","revenue":"$140.8M","src":"Q1'26 call and release"},{"q":"Q2'26","volume":"$3.1B","revenue":"$143.3M","src":"Q2'26 call, release and deck"},{"q":"Q3'26","volume":"~$3.8B (PL $3.6B + home $189.5M + SMB)","revenue":"$153.4M","src":"Q3'26 call, release and deck"}]},"credit":{"borrowers":[{"q":"Q1'25","product":"Personal loans","fico":743,"income":"$158K","src":"Q1'25 call"},{"q":"Q1'25","product":"Student loans","fico":769,"income":"$134K","src":"Q1'25 call"},{"q":"Q2'25","product":"Personal loans","fico":743,"income":"$161K","src":"Q2'25 call"},{"q":"Q2'25","product":"Student loans","fico":768,"income":"$136K","src":"Q2'25 call"},{"q":"Q3'25","product":"Personal loans","fico":745,"income":"$157K","src":"Q3'25 call"},{"q":"Q3'25","product":"Student loans","fico":773,"income":"$157K","src":"Q3'25 call"},{"q":"Q4'25","product":"Personal loans","fico":746,"income":"$158K","src":"Q4'25 call"},{"q":"Q4'25","product":"Student loans","fico":765,"income":"$149K","src":"Q4'25 call"},{"q":"Q1'26","product":"Personal loans","fico":745,"income":"$154K","src":"Q1'26 call and deck"},{"q":"Q1'26","product":"Student loans","fico":767,"income":"$161K","src":"Q1'26 call and deck"},{"q":"Q2'26","product":"Personal loans","fico":742,"income":"$150K","src":"Q2'26 deck"},{"q":"Q2'26","product":"Student loans","fico":760,"income":"$157K","src":"Q2'26 deck"},{"q":"Q3'26","product":"Personal loans","fico":743,"income":"$150K","src":"Q3'26 deck"},{"q":"Q3'26","product":"Student loans","fico":761,"income":"$154K","src":"Q3'26 deck"}],"borrowersNote":"Home-loan borrower FICO and income are not disclosed in these files.","profile":[{"text":"For loans held on the balance sheet, SoFi lends only to high-prime and super-prime borrowers with strong cash flow and FICO scores.","quote":"For loans that we hold on our balance sheet, we focus exclusively on high prime and super prime borrowers with strong cash flow and FICO scores.","src":"Q3'25 call"},{"text":"Underwriting looks at each borrower's cash flow and ability to repay, supported by efficient digital data collection.","quote":"We use tried-and-true underwriting techniques to assess each individual borrower's cash flow and their ability to repay the loan","src":"Q3'25 call; Q3'26 deck"},{"text":"High earners: personal-loan borrowers average about $150-161K income and FICO 742-746, and student-loan borrowers about $134-161K and FICO 760-773.","quote":"We continue to attract above-average earners","src":"Q1'25-Q3'26 calls and decks; quote from Q3'26 call"},{"text":"The core personal-loan target is prime credit-card revolvers refinancing card debt at up to half the rate. The prime-revolver card debt pool is about $700B+ (Q2'25), described in Q4'25 as nearly $1T, and SoFi has about 15% of the prime personal-loan segment.","quote":"we are already leaders in the personal loan market with roughly 15% of the prime segment","src":"Q2'25 and Q4'25 calls"},{"text":"Credit box: SoFi underwrites across eight tiers. When early-warning indicators turned red it stopped lending in tiers 6-8 and lent only through tier 5, to hold life-of-loan losses near 8%.","quote":"We can underwrite across eight different tiers.","src":"Q1'25 call"},{"text":"The term 'HENRY' (High Earners, Not Rich Yet) does not appear in the transcripts or presentations. The closest wording is 'above-average earners' and 'high prime and super prime'.","quote":"","src":"n/a"}],"metrics":[{"metric":"PL all-in annualized NCO (excl. impact of late-stage DQ loan sales)","value":"3.4%","detail":"Down about 80bps YoY and 30bps QoQ.","src":"Q3'26 call"},{"metric":"PL NCO, on-balance sheet (incl. DQ sales)","value":"2.26%","detail":"Read from the Q3'26 deck NCO chart; not stated on the call. Q2'26 was 2.62% and Q1'26 3.03%.","src":"Q3'26 deck (chart)"},{"metric":"PL on-balance-sheet 90-day delinquency","value":"0.42% (42bps)","detail":"In line with Q2'26 and Q3'25.","src":"Q3'26 call"},{"metric":"SL annualized NCO","value":"0.63% (63bps)","detail":"Down 6bps YoY and up 2bps QoQ. SL 90-day delinquency is 13bps.","src":"Q3'26 call"},{"metric":"PL vintage comparison","value":"4.71% vs 6.62%","detail":"At 33% remaining unpaid principal, the Q4'22-Q4'25 vintages have 4.71% cumulative net losses vs 6.62% for the 2017 vintage. The gap is 191bps and has widened for 9 straight quarters (Q2'26: 4.15% vs 5.87%, 172bps).","src":"Q3'26 deck"},{"metric":"Q1'20-Q2'26 PL cohort","value":"6.7% of paid-off principal","detail":"$92.4B originated, 38% ($34.8B) still outstanding, $3.8B cumulative net losses (4.2% of total originations). The remaining balance would need losses near 10% to push the cohort above 8%.","src":"Q3'26 deck"},{"metric":"Maximum loss tolerance","value":"7-8% life-of-loan","detail":"'The data continues to support our 7%-8% net cumulative loss assumption for personal loans... although we continue to trend below these levels.' The Q3'26 forward-looking statements cite 'loss rates below 8%'.","src":"Q1'25-Q1'26 calls; Q3'26 deck"},{"metric":"PL risk-adjusted margin","value":"~7.6%","detail":"WAC 12.8% + origination fee yield 1.4% - funding cost 3.1% - annualized losses 3.4%. Q2'26 was ~6.1%.","src":"Q3'26 call"},{"metric":"Late-stage delinquent PL sales","value":"~$90M/quarter","detail":"Consistent every quarter. Selling before charge-off adds value through recoveries while SoFi keeps servicing.","src":"Q1'25-Q2'26 calls"}],"history":[{"q":"Q1'25","pl_allin_nco":"4.8%","pl_nco":"3.31%","pl_dq90":"0.46%","sl_nco":"0.47%","src":"Q1'25 call"},{"q":"Q2'25","pl_allin_nco":"4.5%","pl_nco":"2.83%","pl_dq90":"0.42%","sl_nco":"0.94% (servicer change / purchased portfolio)","src":"Q2'25 call"},{"q":"Q3'25","pl_allin_nco":"4.2%","pl_nco":"2.60%","pl_dq90":"0.43%","sl_nco":"0.69%","src":"Q3'25 call"},{"q":"Q4'25","pl_allin_nco":"4.4%","pl_nco":"2.80%","pl_dq90":"0.52%","sl_nco":"0.76%","src":"Q4'25 call"},{"q":"Q1'26","pl_allin_nco":"4.4%","pl_nco":"3.03%","pl_dq90":"0.47%","sl_nco":"0.65%","src":"Q1'26 call"},{"q":"Q2'26","pl_allin_nco":"3.7%","pl_nco":"2.62%","pl_dq90":"0.40%","sl_nco":"0.61%","src":"Q2'26 call"},{"q":"Q3'26","pl_allin_nco":"3.4%","pl_nco":"2.26% (deck chart)","pl_dq90":"0.42%","sl_nco":"0.63%","src":"Q3'26 call and deck"}],"historyNote":"The Q4'25 rise in the balance-sheet NCO was put down to mix: more LPB meant fewer new loans retained, so the held portfolio was more seasoned. 'Adjusting for this seasoning, underlying credit trends actually improved' (Q4'25 call).","outsideBox":[{"text":"Until early 2025 the vast majority of LPB loans were within SoFi's prime credit box but above what it wanted on its balance sheet. SoFi said it could also serve buyers who want near-prime loans with a higher WAC.","src":"Q1'25 call"},{"text":"Noto said that if LPB can deliver loans 'meaningfully outside the credit box, say 600-680, then the revenue stream there is going to be even much, much larger'. He called the Edge Focus deal 'a piece of that'.","src":"Q1'25 call"},{"text":"In Q2'25 SoFi 'meaningfully increased the proportion of loans that are near prime with higher WAC', monetizing more of the roughly $100B of loan applications it declines each year. It called this 'a whole new frontier'.","src":"Q2'25 call"},{"text":"SoFi 'continue[s] to increase the loan platform business near-term volume that is outside of our traditional credit box'. In 2025 partners leaned in further amid private-credit concerns, a 'flight to quality'.","src":"Q3'25 call"},{"text":"Debt outside the traditional credit box 'could be refinanced through our loan platform business', on top of the roughly $1T prime card-debt opportunity.","src":"Q4'25 call"},{"text":"The credit profile of borrowers is one reason volume goes to LPB rather than the balance sheet. The 2026 decks list 'Opportunity to serve more members, including those outside SoFi's credit box'. Applicants who fit neither SoFi's criteria nor its loan types are sent through LPB Referrals.","src":"Q1'26 call; Q1'26-Q3'26 decks"}]}};
+const thEsc = t => String(t??'').replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const thUl = a => a && a.length ? `<ul>${a.map(x=>`<li>${thEsc(typeof x==='string'?x:(x.text||x.label||''))}${x.quote&&x.quote!==x.text?`<q style="display:block;font-style:italic;color:var(--text-secondary);margin-top:3px">${thEsc(x.quote)}</q>`:''}${x.src?` <span class="card-sub">(${thEsc(x.src)})</span>`:''}</li>`).join('')}</ul>` : '';
+
+function flywheel(){
+  const F_ = THESIS.flywheel||{}, steps = F_.steps||[], n = steps.length, c = C();
+  // circular loop: nodes around a circle, arrows between consecutive nodes
+  const W=560, Hh=520, cx=W/2, cy=Hh/2, R_=190, r=58;
+  const pt = (i,rad) => { const a=-Math.PI/2 + i*2*Math.PI/n; return [cx+rad*Math.cos(a), cy+rad*Math.sin(a)]; };
+  const wrap = (t,max=16) => { const w=String(t).split(' '), out=[]; let l=''; w.forEach(x=>{ if((l+' '+x).trim().length>max){ out.push(l.trim()); l=x; } else l+=' '+x; }); if(l.trim()) out.push(l.trim()); return out.slice(0,4); };
+  let arcs='', nodes='';
+  for(let i=0;i<n;i++){
+    const a0=-Math.PI/2+i*2*Math.PI/n + 0.30, a1=-Math.PI/2+(i+1)*2*Math.PI/n - 0.30;
+    const x0=cx+R_*Math.cos(a0), y0=cy+R_*Math.sin(a0), x1=cx+R_*Math.cos(a1), y1=cy+R_*Math.sin(a1);
+    arcs += `<path d="M${x0.toFixed(1)},${y0.toFixed(1)} A${R_},${R_} 0 0 1 ${x1.toFixed(1)},${y1.toFixed(1)}" fill="none" stroke="${c.s2}" stroke-width="3" marker-end="url(#fwA)" opacity=".85"/>`;
+    const [x,y]=pt(i,R_), lines=wrap(steps[i].label);
+    nodes += `<g><circle cx="${x}" cy="${y}" r="${r}" fill="var(--card-bg)" stroke="${c.s2}" stroke-width="2"/>
+      <text x="${x}" y="${y-r+16}" text-anchor="middle" font-size="11" font-weight="700" fill="${c.s2}">${i+1}</text>
+      ${lines.map((l,k)=>`<text x="${x}" y="${y-((lines.length-1)*7)+k*14+6}" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--text-primary)">${thEsc(l)}</text>`).join('')}</g>`;
+  }
+  const center = `<circle cx="${cx}" cy="${cy}" r="92" fill="var(--accent-light)"/><text x="${cx}" y="${cy-10}" text-anchor="middle" font-size="15" font-weight="800" fill="var(--text-primary)">Financial Services</text><text x="${cx}" y="${cy+10}" text-anchor="middle" font-size="15" font-weight="800" fill="var(--text-primary)">Productivity Loop</text><text x="${cx}" y="${cy+32}" text-anchor="middle" font-size="11" fill="var(--text-secondary)">higher lifetime value per member</text>`;
+  const svg = `<svg class="fw-svg" viewBox="0 0 ${W} ${Hh}" role="img" aria-label="SoFi Financial Services Productivity Loop"><defs><marker id="fwA" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="${c.s2}"/></marker></defs>${center}${arcs}${nodes}</svg>`;
+  document.getElementById('v-flywheel').innerHTML = `
+    <div class="th-grid">
+      <div class="card"><div class="card-h"><span class="card-t">The flywheel</span><span class="card-sub">${thEsc(F_.tagline||"SoFi's Financial Services Productivity Loop (FSPL)")}</span></div>${svg}${F_.kpi?`<div class="ec-hl" style="padding-top:6px">${thEsc(F_.kpi)}</div>`:''}</div>
+      <div class="card"><div class="card-h"><span class="card-t">How the loop works</span></div><ol class="fw-steps">${steps.map(s_=>`<li><b>${thEsc(s_.label)}</b>${thEsc(s_.text)}</li>`).join('')}</ol></div>
+    </div>
+    <div class="card"><div class="card-h"><span class="card-t">What Anthony Noto repeats on every call</span><span class="card-sub">recurring themes, with the calls where they come up</span></div>
+      <div class="th-cards">${(F_.themes||[]).map(t=>`<div class="th-card"><h5>${thEsc(t.theme)}</h5><p>${thEsc(t.text)}</p>${t.quote?`<q>${thEsc(t.quote)}</q>`:''}<div class="calls">${(t.calls||[]).map(q=>`<span>${thEsc(q)}</span>`).join('')}</div></div>`).join('')}</div></div>
+    <div class="src">Source: SoFi investor presentation (FSPL slide) and earnings call transcripts Q1'25–Q3'26.</div>`;
+}
+
+function lpbView(){
+  const L_ = THESIS.lpb||{}, c = C();
+  const how = L_.how||[];
+  const flow = `<div class="flow">${how.map((h,i)=>`${i?'<div class="ar">→</div>':''}<div class="nd"><div class="n">${i+1}</div><b>${thEsc(h.label)}</b><span>${thEsc(h.text)}</span></div>`).join('')}</div>`;
+  // where an originated loan can go
+  const ch = [['Balance sheet','SoFi keeps the loan and earns net interest income'],['Loan sales','Whole loans sold to asset buyers'],['Securitizations','Pooled and sold to investors'],['Loan Platform Business','Originated for a partner to its criteria; SoFi earns fees, keeps servicing and the member'],['LPB referrals','Applicants outside SoFi\'s criteria referred to third parties']];
+  const y0=30, gap=62, W=1060;
+  const map = `<svg viewBox="0 0 ${W} ${y0+gap*ch.length+10}" role="img" aria-label="Where a SoFi loan goes">
+    <defs><marker id="lpA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="${c.s2}"/></marker></defs>
+    <rect x="10" y="${y0+gap*2-24}" width="170" height="60" rx="10" fill="var(--accent-light)" stroke="${c.s2}"/>
+    <text x="95" y="${y0+gap*2+2}" text-anchor="middle" font-size="13" font-weight="700" fill="var(--text-primary)">Member applies</text>
+    <text x="95" y="${y0+gap*2+20}" text-anchor="middle" font-size="11" fill="var(--text-secondary)">SoFi app · underwriting</text>
+    <rect x="250" y="${y0+gap*2-24}" width="180" height="60" rx="10" fill="var(--card-bg)" stroke="${c.s2}" stroke-width="2"/>
+    <text x="340" y="${y0+gap*2+2}" text-anchor="middle" font-size="13" font-weight="700" fill="var(--text-primary)">SoFi originates</text>
+    <text x="340" y="${y0+gap*2+20}" text-anchor="middle" font-size="11" fill="var(--text-secondary)">routed to the best channel</text>
+    <line x1="180" y1="${y0+gap*2+6}" x2="246" y2="${y0+gap*2+6}" stroke="${c.s2}" stroke-width="2.5" marker-end="url(#lpA)"/>
+    ${ch.map((x,i)=>{ const y=y0+gap*i, hl=i===3; return `<path d="M430,${y0+gap*2+6} C480,${y0+gap*2+6} 480,${y+6} 530,${y+6}" fill="none" stroke="${hl?c.pos:c.grey}" stroke-width="${hl?3:2}" marker-end="url(#lpA)"/>
+      <rect x="536" y="${y-18}" width="${W-546}" height="48" rx="9" fill="${hl?'rgba(0,196,154,0.10)':'var(--main-bg)'}" stroke="${hl?c.pos:'var(--border)'}" stroke-width="${hl?2:1}"/>
+      <text x="552" y="${y+2}" font-size="13" font-weight="700" fill="var(--text-primary)">${thEsc(x[0])}</text>
+      <text x="552" y="${y+20}" font-size="11.5" fill="var(--text-secondary)">${thEsc(x[1])}</text>`; }).join('')}
+  </svg>`;
+  const parts = L_.partners||[];
+  const vol = (L_.volume||[]).filter(v=>v.volume);
+  document.getElementById('v-lpb').innerHTML = `
+    <div class="card"><div class="card-h"><span class="card-t">How the Loan Platform Business works</span><span class="card-sub">SoFi originates for partners and keeps the member</span></div>${flow}</div>
+    <div class="card"><div class="card-h"><span class="card-t">Where an originated loan goes</span><span class="card-sub">LPB is one of five channels (highlighted)</span></div><div class="lpb-map">${map}</div></div>
+    <div class="card"><div class="card-h"><span class="card-t">Partners and commitments</span><span class="card-sub">as disclosed on calls and releases</span></div>
+        <div class="tbl-wrap"><table class="metrics-table ave-t"><thead><tr><th style="text-align:left">Partner</th><th style="text-align:left">Asset</th><th>Amount</th><th style="text-align:left">Term · start</th><th style="text-align:left">Source</th></tr></thead><tbody>${
+          parts.map(x=>`<tr><td>${thEsc(x.partner)}${x.notes?`<div class="card-sub" style="white-space:normal;max-width:520px">${thEsc(x.notes)}</div>`:''}</td><td style="text-align:left">${thEsc(x.asset)}</td><td>${thEsc(x.amount)}</td><td style="text-align:left">${thEsc([x.term,x.start].filter(Boolean).join(' · '))}</td><td style="text-align:left" class="card-sub">${thEsc(x.src)}</td></tr>`).join('')}</tbody></table></div></div>
+    <div class="th-grid">
+        <div class="card"><div class="card-h"><span class="card-t">How much is committed</span></div><div class="ec-sec">${L_.committed?.summary?`<p style="margin:0 0 8px;font-size:13px;line-height:1.5"><b>${thEsc(L_.committed.summary)}</b></p>`:''}${thUl(L_.committed?.statements)}</div></div>
+        <div class="card"><div class="card-h"><span class="card-t">Economics</span></div><div class="ec-sec">${thUl(L_.economics)}</div></div>
+    </div>
+    ${vol.length?`<div class="card"><div class="card-h"><span class="card-t">LPB origination volume</span><span class="card-sub">US$B per quarter, as stated</span></div><div class="card-b"><div class="chart short"><canvas id="c-lpbvol"></canvas></div></div>
+      <div class="tbl-wrap"><table class="metrics-table ave-t"><thead><tr><th style="text-align:left">US$</th>${vol.map(v=>`<th>${thEsc(v.q)}</th>`).join('')}</tr></thead><tbody>
+        <tr><td>LPB originations</td>${vol.map(v=>`<td>${thEsc(v.volume)}</td>`).join('')}</tr>
+        <tr><td>LPB revenue</td>${vol.map(v=>`<td>${thEsc(v.revenue||'–')}</td>`).join('')}</tr></tbody></table></div></div>`:''}
+    <div class="src">Source: SoFi earnings call transcripts Q1'25–Q3'26 and investor presentations (Lending Platform Capabilities slide).</div>`;
+  if(vol.length){
+    const num = v => { const m_=String(v).replace(/,/g,'').match(/([\d.]+)\s*(B|billion|M|million)?/i); if(!m_) return null; const x=+m_[1]; return /^m/i.test(m_[2]||'') ? x/1000 : x; };
+    mk('c-lpbvol',{type:'bar',data:{labels:vol.map(v=>v.q),datasets:[{label:'LPB originations',data:vol.map(v=>num(v.volume)),backgroundColor:c.s2,borderRadius:3,maxBarThickness:40,tip:v=>isN(v)?'$'+v.toFixed(1)+'B':'–'}]},options:{...baseOpts({yTick:v=>'$'+v+'B'}),animation:false,plugins:{...baseOpts().plugins,legend:{display:false}}}});
+  }
+}
+
+function creditView(){
+  const K = THESIS.credit||{}, c = C();
+  const bands = [[300,579,'Poor','#F05252'],[580,669,'Fair','#ED7D31'],[670,739,'Good','#E8B90C'],[740,799,'Very good','#70AD47'],[800,850,'Exceptional','#00A86B']];
+  const pos = v => (v-300)/(850-300)*100;
+  const rows = K.borrowers||[];
+  const latest = {}; rows.forEach(r_=>{ const k=r_.product; if(!latest[k] || qOrd(r_.q)>qOrd(latest[k].q)) latest[k]=r_; });
+  function qOrd(q){ return +String(q).slice(3,5)*10 + +String(q)[1]; }
+  const lat = Object.values(latest).filter(r_=>isN(+r_.fico));
+  // labels alternate left / right of their marker so close scores don't overlap
+  const marks = lat.map((r_,i)=>`<div class="mk" style="left:${pos(+r_.fico)}%;transform:translateX(${i%2?'-1px':'calc(-100% + 1px)'});align-items:${i%2?'flex-start':'flex-end'}"><span>${thEsc(r_.product)} · ${r_.fico}</span><i style="height:${i%2?14:30}px"></i></div>`).join('');
+  const fico = `<div class="fico"><div class="marks">${marks}</div>
+    <div class="bar">${bands.map(b=>`<div style="width:${(b[1]-b[0]+1)/551*100}%;background:${b[3]}">${b[2]}</div>`).join('')}</div>
+    <div class="ticks">${[300,580,670,740,800,850].map(t=>`<span style="left:${pos(t)}%">${t}</span>`).join('')}</div></div>
+    <div class="fico-leg">${bands.map(b=>`<div style="border-color:${b[3]}"><b>${b[2]}</b>${b[0]}–${b[1]}</div>`).join('')}</div>`;
+  const qs = [...new Set(rows.map(r_=>r_.q))].sort((a,b)=>qOrd(a)-qOrd(b));
+  const prods = [...new Set(rows.map(r_=>r_.product))];
+  const cell = (q,pr,k) => { const r_=rows.find(x=>x.q===q&&x.product===pr); return r_&&r_[k]!=null&&r_[k]!=='' ? thEsc(r_[k]) : NA; };
+  const trend = qs.length ? `<div class="tbl-wrap"><table class="metrics-table ave-t"><thead><tr><th style="text-align:left">Weighted average</th>${qs.map(q=>`<th>${q}</th>`).join('')}</tr></thead><tbody>${
+    prods.map(pr=>`<tr><td>${thEsc(pr)} · FICO</td>${qs.map(q=>`<td>${cell(q,pr,'fico')}</td>`).join('')}</tr><tr class="sub"><td>${thEsc(pr)} · income</td>${qs.map(q=>`<td>${cell(q,pr,'income')}</td>`).join('')}</tr>`).join('')}</tbody></table></div>` : '';
+  document.getElementById('v-credit').innerHTML = `
+    <div class="card"><div class="card-h"><span class="card-t">FICO traffic light</span><span class="card-sub">where SoFi's borrowers sit · latest quarter, weighted average</span></div>${fico}</div>
+    <div class="card"><div class="card-h"><span class="card-t">Who SoFi lends to</span><span class="card-sub">borrower characteristics</span></div>
+      <div class="bw">${lat.map(r_=>`<div><div class="l">${thEsc(r_.product)} · ${thEsc(r_.q)}</div><div class="v">${thEsc(r_.fico)}</div><div class="s">weighted average FICO${r_.income?` · income ${thEsc(r_.income)}`:''}</div></div>`).join('')}</div>
+      <div class="ec-sec">${thUl((K.profile||[]).filter(x=>x.src!=='n/a'))}</div></div>
+    ${trend?`<div class="card"><div class="card-h"><span class="card-t">Borrower characteristics by quarter</span><span class="card-sub">${thEsc(K.borrowersNote||'')}</span></div>${trend}</div>`:''}
+    ${(K.history||[]).length?`<div class="card"><div class="card-h"><span class="card-t">Charge-offs and delinquencies by quarter</span><span class="card-sub" style="white-space:normal">${thEsc(K.historyNote||'')}</span></div><div class="tbl-wrap"><table class="metrics-table ave-t"><thead><tr><th style="text-align:left">As stated</th>${K.history.map(h=>`<th>${thEsc(h.q)}</th>`).join('')}</tr></thead><tbody>${
+      [['pl_allin_nco','Personal loans · all-in NCO (ex-DQ sales)'],['pl_nco','Personal loans · NCO rate'],['pl_dq90','Personal loans · 90-day delinquency'],['sl_nco','Student loans · NCO rate']].map(([k,l])=>`<tr><td>${l}</td>${K.history.map(h=>`<td style="white-space:normal">${thEsc(h[k]||'–')}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`:''}
+    <div class="th-grid">
+      <div class="card"><div class="card-h"><span class="card-t">Credit performance</span><span class="card-sub">latest disclosed</span></div>
+        <div class="tbl-wrap"><table class="metrics-table ave-t"><tbody>${(K.metrics||[]).map(m_=>`<tr><td style="white-space:normal">${thEsc(m_.metric)}<div class="card-sub" style="white-space:normal">${thEsc(m_.detail||'')} ${m_.src?'('+thEsc(m_.src)+')':''}</div></td><td style="font-weight:700">${thEsc(m_.value)}</td></tr>`).join('')}</tbody></table></div></div>
+      <div class="card"><div class="card-h"><span class="card-t">Outside SoFi's credit box</span><span class="card-sub">served through LPB and referrals</span></div><div class="ec-sec">${thUl(K.outsideBox)}</div></div>
+    </div>
+    <div class="src">FICO ranges as defined by FICO (300–850). Borrower data: SoFi investor presentations ("Borrower Characteristics") and earnings calls; credit metrics as disclosed by SoFi.</div>`;
+}
+
+/* =====================================================================
    EARNINGS — call summaries (previous) and what to watch (next)
    ===================================================================== */
 // Summaries of SoFi's earnings releases and calls (local transcripts and releases in Sofi/).
@@ -2549,13 +2626,15 @@ document.getElementById('stmtSeg').addEventListener('click',e=>{ const b=e.targe
 /* =====================================================================
    BOOT
    ===================================================================== */
-const RENDER={mem,prod,seg,cp,orig,ann};
+const RENDER={mem,prod,seg,cp,orig};
 const VIEWS={
   resumen:[stats,overview,guide,outlook],
   crecimiento:[mem,prod,tech],
   segmentos:[seg,cp,fee],
   lending:[orig,nco,nim,cap],
-  anual:[ann,prof,annm],
+  flywheel:[flywheel],
+  lpb:[lpbView],
+  credit:[creditView],
 };
 /* =====================================================================
    COMPANIES — registry and navigation
@@ -2564,7 +2643,7 @@ const COMPANIES = [
   { ticker:'SOFI', name:'SoFi Technologies, Inc.', exchange:'NASDAQ', sector:'Fintech · Digital banking',
     short:'SoFi Technologies', tint:'0,162,199',
     logo:{src:'Sofi/logo-mark.svg', text:'SoFi', bg:'#2E75B6'},
-    meta:[['Last report',"Q3'26 · Oct 27, 2026"],['2026 adj. revenue guidance','$5.04B'],['2027 adj. EPS guidance','$0.90']] },
+    quote:()=>MKT },
 ];
 const logoHTML = (c,size) => c.logo.src
   ? `<span class="logo-c ${size}"><img src="${c.logo.src}" alt="${c.name}"></span>`
@@ -2592,7 +2671,8 @@ function showCompany(ticker){
   document.getElementById('coLogo').innerHTML=c.logo.src?`<span class="glass"><img src="${c.logo.src}" alt="${c.name}"></span>`:logoHTML(c,'sm');
   document.getElementById('coName').textContent=c.short||c.name;
   document.getElementById('coTags').innerHTML=[`<span class="chip tk-chip">${c.ticker}</span>`,`<span class="chip">${c.exchange}</span>`,`<span class="chip">${c.sector}</span>`].join('');
-  document.getElementById('coMeta').innerHTML=c.meta.map(([l,v])=>`<div class="meta"><span class="l">${l}</span><span class="v">${v}</span></div>`).join('');
+  const qt=c.quote&&c.quote(), up=qt&&qt.chg>=0;
+  document.getElementById('coMeta').innerHTML = qt ? `<div class="px"><div class="px-v">$${qt.price.toFixed(2)}<span class="px-c ${up?'pos':'neg'}">${up?'▲':'▼'} ${up?'+':'−'}${Math.abs(qt.chg).toFixed(2)} (${up?'+':'−'}${Math.abs(qt.chgPct).toFixed(2)}%)</span></div><div class="px-s">${c.exchange}: ${c.ticker} · ${qt.asOf}${qt.time?' '+qt.time:''} · Interactive Brokers</div></div>` : '';
   document.getElementById('page-companies').classList.remove('active');
   document.getElementById('page-company').classList.add('active');
   if(location.hash!=='#'+ticker) location.hash=ticker;
