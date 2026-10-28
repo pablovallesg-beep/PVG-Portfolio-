@@ -123,6 +123,9 @@ html.mobile .nav-item .ic-desk{display:block}
 .tk-name{color:var(--text-secondary);font-size:13px}
 .top-meta{margin-left:auto;display:flex;gap:18px;align-items:center;flex-wrap:wrap}
 .meta{display:flex;flex-direction:column;align-items:flex-end}
+.co-title .nm{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.px-in{font-size:14px;font-weight:700;letter-spacing:0;font-variant-numeric:tabular-nums;color:var(--text-primary);display:inline-flex;align-items:baseline;gap:6px}
+.px-in .px-c{font-size:12px;font-weight:700}
 .px{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
 .px-v{font-size:26px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:10px}
 .px-c{font-size:13px;font-weight:700;letter-spacing:0}
@@ -223,6 +226,7 @@ html.mobile .dcf-top{grid-template-columns:minmax(0,1fr)}
 .gr-src a:hover{color:var(--accent)}
 .metrics-table td.gr-note{font-size:11px;color:var(--text-tertiary);white-space:normal;min-width:260px;max-width:460px;text-align:left}
 .ec-pick{flex-wrap:wrap}
+.ec-pick:empty{display:none}
 .ec-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;padding:16px 20px 4px}
 .ec-head h3{margin:0;font-size:20px;letter-spacing:-.02em}
 .ec-head .d{font-size:12px;color:var(--text-tertiary)}
@@ -239,6 +243,31 @@ html.mobile .ec-grid{grid-template-columns:minmax(0,1fr)}
 .ec-sec li{font-size:13px;line-height:1.5;margin:4px 0;color:var(--text-primary)}
 .ec-q{display:inline-block;min-width:52px;margin-right:8px;padding:1px 7px;border-radius:9px;background:var(--accent-light);color:var(--accent);font-size:11px;font-weight:700;text-align:center}
 .ec-tl li{list-style:none;margin:8px 0}
+.tp-wrap{display:grid;grid-template-columns:250px minmax(0,1fr);gap:16px;align-items:start}
+html.mobile .tp-wrap,.tp-wrap.narrow{grid-template-columns:minmax(0,1fr)}
+@media (max-width:900px){.tp-wrap{grid-template-columns:minmax(0,1fr)}}
+.tp-list{display:flex;flex-direction:column;gap:2px;background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);padding:6px;position:sticky;top:12px}
+.tp-list button{display:flex;align-items:center;justify-content:space-between;gap:8px;border:0;background:transparent;border-radius:7px;padding:8px 10px;font:500 12.5px 'Figtree',sans-serif;color:var(--text-secondary);cursor:pointer;text-align:left}
+.tp-list button:hover{background:var(--main-bg);color:var(--text-primary)}
+.tp-list button.on{background:var(--accent-light);color:var(--accent);font-weight:700}
+.tp-list i{font-style:normal;font-size:11px;font-weight:700;min-width:22px;text-align:center;padding:1px 6px;border-radius:9px;background:var(--main-bg);color:var(--text-tertiary)}
+.tp-list button.on i{background:var(--card-bg);color:var(--accent)}
+.tl{padding:6px 20px 14px 30px;position:relative}
+.tl::before{content:"";position:absolute;left:24px;top:14px;bottom:18px;width:2px;background:var(--border)}
+.tl-q{position:relative;margin:4px 0;border-bottom:1px solid var(--border)}
+.tl-q:last-child{border-bottom:0}
+.tl-q summary{list-style:none;display:flex;align-items:center;gap:10px;padding:10px 0;cursor:pointer}
+.tl-q summary::-webkit-details-marker{display:none}
+.tl-dot{position:absolute;left:-10px;width:10px;height:10px;border-radius:50%;background:var(--card-bg);border:2px solid var(--accent)}
+.tl-q[open] .tl-dot{background:var(--accent)}
+.tl-d{font-size:12px;color:var(--text-tertiary)}
+.tl-n{margin-left:auto;font-size:11px;color:var(--text-tertiary)}
+.tl-q summary:hover .tl-n{color:var(--accent)}
+.tl-b{padding:0 0 12px 4px}
+.tl-b ul{margin:0;padding-left:18px}
+.tl-b li{font-size:13px;line-height:1.55;margin:5px 0;color:var(--text-secondary)}
+.tl-b li b{color:var(--text-primary);font-weight:600}
+.tl-g{margin:10px 0 2px;font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--accent)}
 .ec-tl{padding-left:0 !important}
 .ec-tgt td:first-child{font-weight:600}
 .th-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:16px}
@@ -2689,10 +2718,21 @@ const EARN = (() => {
     } else {
       const used = TOPICS.filter(t=>Q.some(q=>(EARN_DATA.quarters[q].points||[]).some(p=>p.topic===t)));
       if(!used.includes(st.topic)) st.topic = used[0];
-      pick.innerHTML = used.map(t=>`<button data-v="${esc(t)}" class="${t===st.topic?'on':''}">${esc(t)}</button>`).join('');
-      const rows = Q.map(q=>({q, items:(EARN_DATA.quarters[q].points||[]).filter(p=>p.topic===st.topic), g: st.topic==='Guidance & outlook' ? (EARN_DATA.quarters[q].guidance||[]) : []}));
-      document.getElementById('ecBody').innerHTML = `<div class="card"><div class="card-h"><span class="card-t">${esc(st.topic)}</span><span class="card-sub">newest call first</span></div>
-        <div class="ec-sec"><ul class="ec-tl">${rows.map(r=>[...r.items.map(x=>x.text), ...r.g].map(t=>`<li><span class="ec-q">${r.q}</span>${esc(t)}</li>`).join('')).join('')}</ul></div></div>`;
+      pick.innerHTML = '';                       // topics live in the side list
+      const count = t => Q.reduce((n,q)=>n+(EARN_DATA.quarters[q].points||[]).filter(p=>p.topic===t).length,0);
+      const rows = Q.map(q=>({q, d:EARN_DATA.quarters[q], items:(EARN_DATA.quarters[q].points||[]).filter(p=>p.topic===st.topic),
+        g: st.topic==='Guidance & outlook' ? (EARN_DATA.quarters[q].guidance||[]) : []})).filter(r=>r.items.length||r.g.length);
+      // first clause of each point in bold, the rest as detail
+      const pt = t => { const m_=String(t).match(/^(.{20,140}?[.;:])\s(.+)$/); return m_ ? `<b>${esc(m_[1])}</b> ${esc(m_[2])}` : esc(t); };
+      document.getElementById('ecBody').innerHTML = `<div class="tp-wrap">
+        <nav class="tp-list">${used.map(t=>`<button data-v="${esc(t)}" class="${t===st.topic?'on':''}"><span>${esc(t)}</span><i>${count(t)}</i></button>`).join('')}</nav>
+        <div class="card tp-main"><div class="card-h"><span class="card-t">${esc(st.topic)}</span><span class="card-sub">${rows.length} calls · newest first · click a quarter to open or close</span></div>
+          <div class="tl">${rows.map((r,i)=>`<details class="tl-q" ${i<2?'open':''}>
+            <summary><span class="tl-dot"></span><span class="ec-q">${r.q}</span><span class="tl-d">${esc(r.d.date||'')}</span><span class="tl-n">${r.items.length+r.g.length} point${r.items.length+r.g.length>1?'s':''}</span></summary>
+            <div class="tl-b">${r.items.length?`<ul>${r.items.map(x=>`<li>${pt(x.text)}</li>`).join('')}</ul>`:''}
+              ${r.g.length?`<div class="tl-g">Guidance given on this call</div><ul>${r.g.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}</div>
+          </details>`).join('')}</div></div></div>`;
+      document.querySelectorAll('.tp-list button').forEach(b=>b.addEventListener('click',()=>{ st.topic=b.dataset.v; save(); render(); }));
     }
   }
   function next(){
@@ -2778,10 +2818,12 @@ function showCompany(ticker){
   const t=c.tint||'46,117,182', top=document.querySelector('#page-company .topbar');
   tintVars(t).forEach(([k,v])=>top.style.setProperty(k,v));
   document.getElementById('coLogo').innerHTML=c.logo.src?`<span class="glass"><img src="${c.logo.src}" alt="${c.name}"></span>`:logoHTML(c,'sm');
-  document.getElementById('coName').textContent=c.short||c.name;
   document.getElementById('coTags').innerHTML=[`<span class="chip tk-chip">${c.ticker}</span>`,`<span class="chip">${c.exchange}</span>`,`<span class="chip">${c.sector}</span>`].join('');
   const qt=c.quote&&c.quote(), up=qt&&qt.chg>=0;
-  document.getElementById('coMeta').innerHTML = qt ? `<div class="px"><div class="px-v">$${qt.price.toFixed(2)}<span class="px-c ${up?'pos':'neg'}">${up?'▲':'▼'} ${up?'+':'−'}${Math.abs(qt.chg).toFixed(2)} (${up?'+':'−'}${Math.abs(qt.chgPct).toFixed(2)}%)</span></div><div class="px-s">${c.exchange}: ${c.ticker} · ${qt.asOf}${qt.time?' '+qt.time:''} · Interactive Brokers</div></div>` : '';
+  document.getElementById('coMeta').innerHTML = '';
+  // price and daily change sit next to the company name
+  const pxHTML = qt ? `<span class="px-in" title="${c.exchange}: ${c.ticker} · ${qt.asOf}${qt.time?' '+qt.time:''} · Interactive Brokers">$${qt.price.toFixed(2)}<span class="px-c ${up?'pos':'neg'}">${up?'▲':'▼'} ${up?'+':'−'}${Math.abs(qt.chgPct).toFixed(2)}%</span></span>` : '';
+  document.getElementById('coName').innerHTML=`<span>${c.short||c.name}</span>${pxHTML}`;
   document.getElementById('page-companies').classList.remove('active');
   document.getElementById('page-company').classList.add('active');
   if(location.hash!=='#'+ticker) location.hash=ticker;
