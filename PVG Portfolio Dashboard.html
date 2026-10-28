@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PVG Portfolio Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root{
+  --sidebar-bg:#141C2B; --sidebar-hover:#1E2D44; --sidebar-active:#243346; --sidebar-text:#8899AA;
+  --main-bg:#F3F5F8; --card-bg:#FFFFFF; --border:#E4E8EE;
+  --text-primary:#141C2B; --text-secondary:#6B7A8D; --text-tertiary:#9AACBE;
+  --accent:#2E75B6; --accent-light:#EBF4FF;
+  --positive:#00C49A; --positive-bg:rgba(0,196,154,0.10);
+  --negative:#F05252; --negative-bg:rgba(240,82,82,0.10);
+  --neutral-color:#8899AA; --neutral-bg:rgba(107,122,141,0.08);
+  --warning:#ED7D31; --warning-bg:rgba(237,125,49,0.10);
+  --chart-grid:#EDF0F5; --series-1:#141C2B;
+  --radius:10px; --radius-sm:6px;
+  --shadow:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --main-bg:#0F1520; --card-bg:#172031; --border:#253248;
+    --text-primary:#E8EDF4; --text-secondary:#A3B1C2; --text-tertiary:#71829A;
+    --accent-light:rgba(46,117,182,0.16); --chart-grid:#223047; --series-1:#C9D6E6;
+  }
+}
+:root[data-theme="dark"]{
+  --main-bg:#0F1520; --card-bg:#172031; --border:#253248;
+  --text-primary:#E8EDF4; --text-secondary:#A3B1C2; --text-tertiary:#71829A;
+  --accent-light:rgba(46,117,182,0.16); --chart-grid:#223047; --series-1:#C9D6E6;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Figtree',system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--main-bg);color:var(--text-primary);font-size:13px;-webkit-font-smoothing:antialiased}
+.app{display:grid;grid-template-columns:220px minmax(0,1fr);min-height:100vh}
+
+/* Sidebar */
+.sidebar{background:var(--sidebar-bg);color:var(--sidebar-text);padding:20px 12px;display:flex;flex-direction:column;gap:4px}
+.brand{color:#E8EDF4;font-weight:700;font-size:14px;padding:0 10px 18px;letter-spacing:-.2px}
+.brand span{display:block;font-size:11px;font-weight:500;color:var(--sidebar-text);margin-top:2px}
+.side-label{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;padding:10px 10px 6px}
+.co{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 10px;border-radius:var(--radius-sm);cursor:pointer;color:var(--sidebar-text);border:0;background:none;font:inherit;text-align:left;width:100%}
+.co:hover{background:var(--sidebar-hover)}
+.co.active{background:var(--sidebar-active);color:#E8EDF4}
+.co b{font-weight:700;font-size:13px}
+.co small{font-size:11px;opacity:.8}
+.co.soon{opacity:.45;cursor:default}
+.co.soon:hover{background:none}
+
+/* Main */
+.main{min-width:0;display:flex;flex-direction:column}
+.topbar{background:var(--card-bg);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.tk{font-size:15px;font-weight:700}
+.tk-name{color:var(--text-secondary);font-size:13px}
+.top-meta{margin-left:auto;display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.meta{display:flex;flex-direction:column;align-items:flex-end}
+.meta .l{font-size:11px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.06em}
+.meta .v{font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
+.theme-btn{border:1px solid var(--border);background:var(--main-bg);color:var(--text-secondary);border-radius:var(--radius-sm);padding:5px 10px;font:500 12px 'Figtree',sans-serif;cursor:pointer}
+.tabs{display:flex;gap:2px;padding:0 24px;background:var(--card-bg);border-bottom:1px solid var(--border);overflow-x:auto}
+.tab{border:0;background:none;padding:12px 14px;font:500 13px 'Figtree',sans-serif;color:var(--text-secondary);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
+.tab:hover{color:var(--text-primary)}
+.tab.active{color:var(--text-primary);font-weight:600;border-bottom-color:var(--accent)}
+.view{display:none;padding:20px 24px 40px;flex-direction:column;gap:16px}
+.view.active{display:flex}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.stat{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px}
+.stat .l{font-size:11px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.06em}
+.stat .v{font-size:20px;font-weight:700;letter-spacing:-.5px;line-height:1;margin:8px 0 6px;font-variant-numeric:tabular-nums}
+.stat .s{font-size:11.5px;color:var(--text-secondary);font-variant-numeric:tabular-nums}
+
+/* Cards */
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.span-2{grid-column:span 2}
+.card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.card-h{padding:14px 20px 12px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--border)}
+.card-t{font-size:13px;font-weight:600}
+.card-sub{font-size:11px;color:var(--text-tertiary);font-weight:400;margin-left:4px}
+.ctrls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ctrl-l{font-size:11px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.06em}
+.seg{display:inline-flex;background:var(--main-bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:3px}
+.seg button{border:0;background:none;font:500 12px 'Figtree',sans-serif;color:var(--text-secondary);padding:4px 10px;border-radius:4px;cursor:pointer}
+.seg button.on{background:var(--card-bg);color:var(--text-primary);font-weight:600;box-shadow:var(--shadow)}
+.card-b{padding:16px 20px}
+.chart{position:relative;height:300px}
+.chart.short{height:220px}
+.chart.tall{height:340px}
+.src{font-size:10px;font-style:italic;color:var(--text-tertiary);background:var(--main-bg);border-top:1px solid var(--border);padding:8px 20px;margin-top:auto;line-height:1.5}
+.prose{font-size:13px;color:var(--text-secondary);line-height:1.6}
+.prose strong{color:var(--text-primary)}
+
+/* Tables */
+.tbl-wrap{overflow-x:auto;border-top:1px solid var(--border)}
+.metrics-table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.metrics-table th{padding:8px 14px;text-align:right;font-size:11px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.06em;background:var(--main-bg);border-bottom:1px solid var(--border);white-space:nowrap}
+.metrics-table th:first-child{text-align:left}
+.metrics-table td{padding:9px 14px;text-align:right;font-size:13px;border-bottom:1px solid var(--border);white-space:nowrap}
+.metrics-table td:first-child{text-align:left;font-weight:600}
+.metrics-table tr:last-child td{border-bottom:0}
+.metrics-table tbody tr:hover td{background:var(--main-bg)}
+.metrics-table tr.sub td{font-size:11px;padding-top:4px;padding-bottom:6px}
+.metrics-table tr.sub td:first-child{font-weight:400;color:var(--text-tertiary);padding-left:26px}
+.metrics-table tr.total td{font-weight:700;border-top:1px solid var(--border)}
+.metrics-table tr.grp td{font-size:10.5px;font-weight:700;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.07em;background:var(--main-bg);padding:6px 14px}
+.metrics-table th.fc,.metrics-table td.fc{background:rgba(46,117,182,0.05);border-left:1px solid rgba(46,117,182,0.25)}
+.key{display:inline-block;width:14px;height:3px;border-radius:2px;margin-right:8px;vertical-align:middle}
+.g{font-style:italic}
+.pos{color:var(--positive)} .neg{color:var(--negative)} .neu{color:var(--text-tertiary)}
+.cs{color:var(--accent)}
+.na{color:var(--text-tertiary)}
+.derived{text-decoration:underline dashed;text-underline-offset:3px;text-decoration-color:var(--text-tertiary)}
+
+/* Insight */
+.insight{background:var(--accent-light);border-left:3px solid var(--accent);border-radius:var(--radius-sm);padding:12px 16px;font-size:12.5px;color:var(--text-secondary);line-height:1.6}
+.insight strong{color:var(--text-primary)}
+
+@media (max-width:820px){
+  .app{grid-template-columns:1fr}
+  .sidebar{flex-direction:row;align-items:center;overflow-x:auto;padding:10px 16px;gap:6px}
+  .brand{padding:0 10px 0 0}
+  .brand span,.side-label{display:none}
+  .co{width:auto;white-space:nowrap}
+  .grid{grid-template-columns:1fr}
+  .span-2{grid-column:auto}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .topbar,.tabs{padding-left:16px;padding-right:16px}
+  .view{padding:16px 16px 32px}
+  .card-h,.card-b{padding-left:16px;padding-right:16px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">PVG Portfolio<span>Dashboard de posiciones</span></div>
+    <div class="side-label">Portafolio</div>
+    <button class="co active"><b>SOFI</b><small>Fintech</small></button>
+    <button class="co soon" disabled><b>+ Empresa</b><small>próximamente</small></button>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div>
+        <div class="tk">SOFI</div>
+        <div class="tk-name">SoFi Technologies, Inc. · NASDAQ</div>
+      </div>
+      <div class="top-meta">
+        <div class="meta"><span class="l">Último reporte</span><span class="v">Q3'26 · Oct 27, 2026</span></div>
+        <div class="meta"><span class="l">Guía 2026 ingreso aj.</span><span class="v">$5.04B</span></div>
+        <div class="meta"><span class="l">Guía 2027 EPS aj.</span><span class="v">$0.90</span></div>
+        <button class="theme-btn" id="themeBtn" aria-label="Cambiar tema">Tema</button>
+      </div>
+    </header>
+    <nav class="tabs" role="tablist">
+      <button class="tab active" data-tab="resumen">Resumen</button>
+      <button class="tab" data-tab="crecimiento">Miembros y productos</button>
+      <button class="tab" data-tab="segmentos">Segmentos</button>
+      <button class="tab" data-tab="lending">Originación y crédito</button>
+      <button class="tab" data-tab="anual">Histórico anual</button>
+    </nav>
+
+    <!-- ============ RESUMEN ============ -->
+    <section class="view active" id="v-resumen">
+      <div class="stats" id="stats"></div>
+      <div class="grid">
+        <div class="card span-2">
+          <div class="card-h">
+            <div><span class="card-t">Ingreso neto ajustado y margen EBITDA ajustado</span><span class="card-sub">(US$M · %)</span></div>
+          </div>
+          <div class="card-b"><div class="chart tall"><canvas id="c-ov"></canvas></div></div>
+          <div class="tbl-wrap" id="t-ov"></div>
+          <div class="src">Fuente: SoFi, releases de resultados Q1–Q3'26 (Tablas 2 y 6) y 10-K 2025. Q4'26G = guía anual 2026 (Oct 27, 2026) menos acumulado 9M'26 (subrayado punteado = derivado). EPS ajustado Q4'25 de la llamada de resultados (sin ajustes en 2025).</div>
+        </div>
+
+        <div class="card">
+          <div class="card-h">
+            <div><span class="card-t">Evolución de la guía 2026</span><span class="card-sub">(US$B)</span></div>
+          </div>
+          <div class="card-b"><div class="chart short"><canvas id="c-guide"></canvas></div></div>
+          <div class="tbl-wrap" id="t-guide"></div>
+          <div class="src">Fuente: llamada Q4'25 (Ene 30, 2026) y releases Q1–Q3'26. En Jul'26 la guía de ingreso fue un rango de $4.75–4.85B; se grafica el punto medio. En Abr'26 la guía se mantuvo.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-h">
+            <div><span class="card-t">2025 real vs guía 2026 y 2027</span><span class="card-sub">(US$B)</span></div>
+          </div>
+          <div class="card-b"><div class="chart short"><canvas id="c-out"></canvas></div></div>
+          <div class="tbl-wrap" id="t-out"></div>
+          <div class="src">Fuente: 10-K 2025 y release Q3'26 (Oct 27, 2026). 2026G y 2027G son guía de la administración; utilidad neta y EPS son ajustados.</div>
+        </div>
+      </div>
+      <div class="insight" id="ins-resumen"></div>
+    </section>
+
+    <!-- ============ CRECIMIENTO ============ -->
+    <section class="view" id="v-crecimiento">
+      <div class="grid">
+        <div class="card span-2">
+          <div class="card-h">
+            <div><span class="card-t">Miembros, productos y productos por miembro</span><span class="card-sub" id="u-mem">(miles · x)</span></div>
+            <div class="ctrls"><span class="ctrl-l">Vista</span>
+              <div class="seg" data-ctl="mem"><button class="on" data-v="lvl">Nivel</button><button data-v="g">Crecimiento</button><button data-v="add">Altas netas</button></div>
+            </div>
+          </div>
+          <div class="card-b"><div class="chart tall"><canvas id="c-mem"></canvas></div></div>
+          <div class="tbl-wrap" id="t-mem"></div>
+          <div class="src">Fuente: SoFi, release Q3'26, Tabla 5 (métricas de la compañía). Altas netas = cambio trimestral en el total reportado.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-h">
+            <div><span class="card-t">Productos por segmento</span><span class="card-sub" id="u-prod">(miles)</span></div>
+            <div class="ctrls"><span class="ctrl-l">Vista</span>
+              <div class="seg" data-ctl="prod"><button class="on" data-v="lvl">Miles</button><button data-v="cs">Mezcla</button></div>
+            </div>
+          </div>
+          <div class="card-b"><div class="chart"><canvas id="c-prod"></canvas></div></div>
+          <div class="tbl-wrap" id="t-prod"></div>
+          <div class="src">Fuente: SoFi, release Q3'26, Tabla 5.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-h">
+            <div><span class="card-t">Cuentas de Technology Platform</span><span class="card-sub">(millones)</span></div>
+          </div>
+          <div class="card-b"><div class="chart"><canvas id="c-tech"></canvas></div></div>
+          <div class="tbl-wrap" id="t-tech"></div>
+          <div class="src">Fuente: SoFi, release Q3'26, Tabla 5. La caída de Q4'25 refleja la salida de un cliente grande que dejó la plataforma antes del 31 de dic. de 2025.</div>
+        </div>
+      </div>
+      <div class="insight" id="ins-crec"></div>
+    </section>
+
+    <!-- ============ SEGMENTOS ============ -->
+    <section class="view" id="v-segmentos">
+      <div class="grid">
+        <div class="card span-2">
+          <div class="card-h">
+            <div><span class="card-t">Ingreso neto por segmento</span><span class="card-sub" id="u-seg">(US$M)</span></div>
+            <div class="ctrls"><span class="ctrl-l">Vista</span>
+              <div class="seg" data-ctl="seg"><button class="on" data-v="lvl">US$M</button><button data-v="g">Crecimiento</button><button data-v="cs">Mezcla</button></div>
+            </div>
+          </div>
+          <div class="card-b"><div class="chart tall"><canvas id="c-seg"></canvas></div></div>
+          <div class="tbl-wrap" id="t-seg"></div>
+          <div class="src">Fuente: SoFi, release Q3'26, Tabla 6. Ingreso GAAP por segmento. Corporate/Other incluye la eliminación de ingresos intercompañía de Technology Platform. La mezcla se calcula sobre la suma de los tres segmentos (sin Corporate/Other).</div>
+        </div>
+
+        <div class="card">
+          <div class="card-h">
+            <div><span class="card-t">Utilidad de contribución por segmento</span><span class="card-sub" id="u-cp">(US$M)</span></div>
+            <div class="ctrls"><span class="ctrl-l">Vista</span>
+              <div class="seg" data-ctl="cp"><button class="on" data-v="lvl">US$M</button><button data-v="m">Margen</button></div>
+            </div>
+          </div>
+          <div class="card-b"><div class="chart"><canvas id="c-cp"></canvas></div></div>
+          <div class="tbl-wrap" id="t-cp"></div>
+          <div class="src">Fuente: SoFi, release Q3'26, Tabla 6. Margen de contribución = utilidad de contribución / ingreso neto GAAP del segmento.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-h">
+            <div><span class="card-t">Ingreso por comisiones (fee-based)</span><span class="card-sub">(US$M · % del ingreso)</span></div>
+          </div>
+          <div class="card-b"><div class="chart"><canvas id="c-fee"></canvas></div></div>
+          <div class="tbl-wrap" id="t-fee"></div>
+          <div class="src">Fuente: releases Q1–Q3'26 (Tabla 7). Q4'25 de la llamada de resultados (Ene 30, 2026), redondeado a US$M (subrayado punteado). % sobre ingreso neto GAAP.</div>
+        </div>
+      </div>
+      <div class="insight" id="ins-seg"></div>
+    </section>
+
+    <!-- ============ LENDING ============ -->
+    <section class="view" id="v-lending">
+      <div class="grid">
+        <div class="card span-2">
+          <div class="card-h">
+            <div><span class="card-t">Originaciones por producto</span><span class="card-sub" id="u-orig">(US$M)</span></div>
+            <div class="ctrls"><span class="ctrl-l">Vista</span>
+              <div class="seg" data-ctl="orig"><button class="on" data-v="lvl">US$M</button><button data-v="g">Crecimiento</button><button data-v="cs">Mezcla</button></div>
+            </div>
+          </div>
+          <div class="card-b"><div class="chart tall"><canvas id="c-orig"></canvas></div></div>
+          <div class="tbl-wrap" id="t-orig"></div>
+          <div class="src">Fuente: releases Q1–Q3'26 ("Lending – Originations"). Incluye originaciones del Loan Platform Business. Q4'25 derivado: total 2025 del 10-K menos 9M'25 (subrayado punteado). Small business se incluye en el total a partir de Q3'26 ($27M).</div>
+        </div>
+
+        <div class="card">
+          <div class="card-h">
+            <div><span class="card-t">Tasa de castigos netos anualizada</span><span class="card-sub">(% del saldo promedio)</span></div>
+          </div>
+          <div class="card-b"><div class="chart"><canvas id="c-nco"></canvas></div></div>
+          <div class="tbl-wrap" id="t-nco"></div>
+          <div class="src">Fuente: releases Q1–Q3'26 (Tabla 8, "Analysis of Charge-Offs"); Q4'25 de la llamada de resultados. Tasas sobre préstamos en balance; incluyen el efecto de ventas de cartera morosa.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-h">
+            <div><span class="card-t">Margen financiero y depósitos</span><span class="card-sub">(% · US$B)</span></div>
+          </div>
+          <div class="card-b"><div class="chart"><canvas id="c-nim"></canvas></div></div>
+          <div class="tbl-wrap" id="t-nim"></div>
+          <div class="src">Fuente: releases Q1–Q3'26 (Tablas 3 y 4); Q4'25 de la llamada de resultados. Depósitos al cierre del periodo; los releases de 2026 no reportan depósitos trimestrales de 2025 salvo el cierre de año.</div>
+        </div>
+
+        <div class="card span-2">
+          <div class="card-h">
+            <div><span class="card-t">Capital y valor en libros</span><span class="card-sub">(% · US$ por acción)</span></div>
+          </div>
+          <div class="tbl-wrap" id="t-cap"></div>
+          <div class="src">Fuente: releases Q1–Q3'26 (Tabla 9 y conciliación de valor tangible). CET1 de SoFi Technologies, estimado; mínimo requerido con colchón de conservación: 7.0%.</div>
+        </div>
+      </div>
+      <div class="insight" id="ins-lend"></div>
+    </section>
+
+    <!-- ============ ANUAL ============ -->
+    <section class="view" id="v-anual">
+      <div class="grid">
+        <div class="card span-2">
+          <div class="card-h">
+            <div><span class="card-t">Ingreso neto por segmento y guía</span><span class="card-sub" id="u-ann">(US$B)</span></div>
+            <div class="ctrls"><span class="ctrl-l">Vista</span>
+              <div class="seg" data-ctl="ann"><button class="on" data-v="lvl">US$B</button><button data-v="cs">Mezcla</button></div>
+            </div>
+          </div>
+          <div class="card-b"><div class="chart tall"><canvas id="c-ann"></canvas></div></div>
+          <div class="tbl-wrap" id="t-ann"></div>
+          <div class="src">Fuente: 10-K 2023, 2024 y 2025; guía del release Q3'26. Segmentos en ingreso GAAP; la guía solo existe a nivel ingreso neto ajustado consolidado, por eso 2026G y 2027G se muestran como total.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-h">
+            <div><span class="card-t">EBITDA ajustado y utilidad neta</span><span class="card-sub">(US$B)</span></div>
+          </div>
+          <div class="card-b"><div class="chart"><canvas id="c-prof"></canvas></div></div>
+          <div class="tbl-wrap" id="t-prof"></div>
+          <div class="src">Fuente: 10-K 2023–2025; guía del release Q3'26. La utilidad neta GAAP 2024 incluye un beneficio fiscal de $258M por liberación de reserva de valuación.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-h">
+            <div><span class="card-t">Miembros, originaciones y depósitos</span><span class="card-sub">(millones · US$B)</span></div>
+          </div>
+          <div class="card-b"><div class="chart"><canvas id="c-annm"></canvas></div></div>
+          <div class="tbl-wrap" id="t-annm"></div>
+          <div class="src">Fuente: 10-K 2023–2025. Depósitos 2021 no incluidos en los 10-K disponibles.</div>
+        </div>
+      </div>
+      <div class="insight" id="ins-anual"></div>
+    </section>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   DATA — SoFi (US$M salvo indicación). Fuentes en cada tarjeta.
+   ===================================================================== */
+const Q = ["Q3'24","Q4'24","Q1'25","Q2'25","Q3'25","Q4'25","Q1'26","Q2'26","Q3'26"];
+const D = {
+  rev:     [697.1, 734.1, 771.8, 854.9, 961.6,1025.1,1100.4,1218.7,1385.1],
+  adjRev:  [689.4, 739.1, 770.7, 858.2, 949.6,1012.8,1087.2,1205.6,1371.1],
+  ebitda:  [186.2, 198.0, 210.3, 249.1, 276.9, 317.6, 339.9, 357.8, 469.8],
+  ni:      [ 60.7, 332.5,  71.1,  97.3, 139.4, 173.5, 166.7, 156.6, 241.0],
+  adjNi:   [ null,  null,  71.1,  97.3, 139.4, 173.5, 166.7, 160.4, 243.0],
+  adjEps:  [ null,  null,  0.06,  0.08,  0.11,  0.13,  0.12,  0.12,  0.18],
+  nii:     [431.0, 470.2, 498.7, 517.8, 585.1, 617.3, 693.0, 788.2, 929.5],
+  // segmentos (ingreso GAAP y utilidad de contribución)
+  lendRev: [396.2, 417.8, 413.4, 443.5, 493.4, 498.7, 642.4, 724.8, 821.3],
+  techRev: [102.5, 102.8, 103.4, 109.8, 114.6, 122.4,  75.1,  84.5,  87.4],
+  fsRev:   [238.3, 256.5, 303.1, 362.5, 419.6, 456.7, 428.5, 466.3, 525.1],
+  corpRev: [-40.0, -43.0, -48.2, -60.9, -66.0, -52.7, -45.7, -56.9, -48.7],
+  lendCp:  [238.9, 246.0, 238.9, 244.7, 261.6, 271.7, 382.4, 399.0, 454.9],
+  techCp:  [ 33.0,  32.1,  30.9,  33.2,  32.4,  47.9,  12.0,  11.8,  14.2],
+  fsCp:    [ 99.8, 114.9, 148.3, 188.2, 225.6, 230.8, 195.6, 212.7, 261.0],
+  fee:     [ null,  null, 315.4, 377.5, 408.7, 443.0, 386.8, 472.3, 570.6],
+  // métricas (miles)
+  members: [9373, 10127, 10916, 11746, 12642, 13651, 14706, 15814, 17074],
+  products:[13651,14745, 15915, 17142, 18553, 20168, 22159, 24381, 26672],
+  lendProd:[1891, 2010, 2130, 2280, 2463, 2633, 2831, 3093, 3430],
+  fsProd:  [11760,12735,13786, 14862, 16090, 17535, 19328, 21288, 23242],
+  techAcc: [160.2,167.7,158.4,160.0,157.9,128.5,132.9,134.8,140.4],   // millones
+  // originaciones (US$M)
+  oPL:     [null,null,5536.8,6968.7,7488.9,7501.1, 8340.2,10718.4,12622.1],
+  oSL:     [null,null,1191.5, 993.3,1491.7,1861.4, 2613.7, 2686.8, 2922.1],
+  oHL:     [null,null, 517.8, 798.9, 944.7,1127.7, 1224.7, 1393.4, 1361.0],
+  oSB:     [null,null,    0,     0,     0,     0,      0,      0,   27.1],
+  // crédito y balance
+  ncoPL:   [null,null,3.31,2.83,2.60,2.80,3.03,2.62,2.26],
+  ncoSL:   [null,null,0.47,0.94,0.69,0.76,0.65,0.61,0.63],
+  ncoTot:  [null,null,null,null,1.90,null,null,null,1.62],
+  nim:     [null,null,6.01,5.86,5.84,5.72,5.94,5.98,6.14],
+  deposits:[null,25.98,null,null,null,37.51,40.24,45.54,51.33],     // US$B
+  cet1:    [null,null,15.3,14.3,20.0,null,21.1,18.7,16.9],
+  tbvps:   [null,null,4.58,4.72,5.97,null,7.21,7.34,7.48],
+};
+const DERIVED = { fee:[5], orig:[5] };
+
+// Guía implícita Q4'26 = guía 2026 − 9M'26
+const G26 = {adjRev:5040, ebitda:1660, adjNi:840, eps:0.61};
+const NINE26 = {adjRev:3663.9, ebitda:1167.5, adjNi:570.1, eps:0.43};
+const Q4G = {adjRev:G26.adjRev-NINE26.adjRev, ebitda:G26.ebitda-NINE26.ebitda, adjNi:G26.adjNi-NINE26.adjNi};
+
+const GUIDE = [
+  {d:"Ene'26", ev:"Q4'25", rev:4.655, revTxt:'≈$4.655', ebitda:1.60, ni:825, eps:0.60, mem:'≥30%'},
+  {d:"Abr'26", ev:"Q1'26", rev:4.655, revTxt:'≈$4.655', ebitda:1.60, ni:825, eps:0.60, mem:'≥30%'},
+  {d:"Jul'26", ev:"Q2'26", rev:4.80,  revTxt:'$4.75–4.85', ebitda:1.60, ni:825, eps:0.60, mem:'≥30%'},
+  {d:"Oct'26", ev:"Q3'26", rev:5.04,  revTxt:'≈$5.04', ebitda:1.66, ni:840, eps:0.61, mem:'≥30%'},
+];
+
+const Y = ['2021','2022','2023','2024','2025','2026G','2027G'];
+const A = {
+  rev:    [984.9,1573.5,2122.8,2674.9,3613.4,null,null],
+  adjRev: [1010.3,1540.5,2073.9,2606.2,3591.4,5040,6400],
+  lend:   [738.3,1140.0,1370.6,1485.2,1848.9,null,null],
+  tech:   [194.9, 315.1, 352.3, 395.2, 450.2,null,null],
+  fs:     [ 58.1, 167.7, 436.5, 821.5,1542.0,null,null],
+  ebitda: [ 30.2, 143.3, 431.7, 666.5,1053.9,1660,2240],
+  ni:     [-483.9,-320.4,-300.7,498.7,481.3,null,null],
+  adjNi:  [null,-320.4,-53.6,227.2,481.3,840,1280],
+  adjEps: [null,-0.40,-0.10,0.15,0.39,0.61,0.90],
+  members:[3.460,5.223,7.542,10.127,13.651,null,null],
+  products:[5.173,7.895,11.142,14.745,20.168,null,null],
+  orig:   [12658.7,12985.4,17428.6,23216.0,36422.5,null,null],
+  deposits:[null,7.34,18.62,25.98,37.51,null,null],
+  nim:    [3.95,5.40,5.88,5.80,5.85,null,null],
+};
+const AFC = 5; // primer índice de guía
+
+/* =====================================================================
+   FORMATO (por tipo de dato)
+   ===================================================================== */
+const NA = '<span class="na">–</span>';
+const isN = v => v!==null && v!==undefined && !Number.isNaN(v);
+const NM = '<span class="na">n/m</span>';
+const nf0 = new Intl.NumberFormat('en-US',{maximumFractionDigits:0});
+const F = {
+  m:  v => !isN(v) ? NA : v<0 ? `(${nf0.format(Math.abs(v))})` : nf0.format(v),
+  k:  v => !isN(v) ? NA : v<0 ? `(${nf0.format(Math.abs(v))})` : nf0.format(v),
+  b1: v => !isN(v) ? NA : (v<0?'(':'')+'$'+Math.abs(v).toFixed(1)+(v<0?')':''),
+  b2: v => !isN(v) ? NA : (v<0?'(':'')+'$'+Math.abs(v).toFixed(2)+(v<0?')':''),
+  ps: v => !isN(v) ? NA : (v<0?'($'+Math.abs(v).toFixed(2)+')':'$'+v.toFixed(2)),
+  p:  v => !isN(v) ? NA : (v*100).toFixed(1)+'%',
+  r2: v => !isN(v) ? NA : v.toFixed(2)+'%',
+  r1: v => !isN(v) ? NA : v.toFixed(1)+'%',
+  x2: v => !isN(v) ? NA : v.toFixed(2)+'x',
+  mm1:v => !isN(v) ? NA : v.toFixed(1),
+  cs: v => !isN(v) ? NA : `<span class="cs">${(v*100).toFixed(1)}%</span>`,
+  g:  v => {
+    if(Number.isNaN(v)) return NM;
+    if(!isN(v)) return NA;
+    const pct=v*100, cls=Math.abs(pct)<0.05?'neu':pct>0?'pos':'neg';
+    const s=Math.abs(pct)<0.05?'0.0%':(pct>0?'+':'−')+Math.abs(pct).toFixed(1)+'%';
+    return `<span class="g ${cls}">${s}</span>`;
+  },
+  pp: v => {
+    if(!isN(v)) return NA;
+    const cls=Math.abs(v)<0.05?'neu':v>0?'pos':'neg';
+    return `<span class="g ${cls}">${Math.abs(v)<0.05?'0.0':(v>0?'+':'−')+Math.abs(v).toFixed(1)} pp</span>`;
+  },
+  // Tasa de castigos: bajar es bueno
+  ppInv: v => {
+    if(!isN(v)) return NA;
+    const cls=Math.abs(v)<0.05?'neu':v<0?'pos':'neg';
+    return `<span class="g ${cls}">${Math.abs(v)<0.05?'0.0':(v>0?'+':'−')+Math.abs(v).toFixed(2)} pp</span>`;
+  },
+};
+// base ≤ 0 → NaN, que se muestra como n/m
+const yoy = (a,i,lag=4) => (i>=lag && isN(a[i]) && isN(a[i-lag])) ? (a[i-lag]>0 ? a[i]/a[i-lag]-1 : NaN) : null;
+const yoyArr = (a,lag=4) => a.map((_,i)=>yoy(a,i,lag));
+const div = (a,b) => a.map((v,i)=> isN(v)&&isN(b[i])&&b[i]!==0 ? v/b[i] : null);
+const add = (...arrs) => arrs[0].map((_,i)=> arrs.every(a=>isN(a[i])) ? arrs.reduce((s,a)=>s+a[i],0) : null);
+const diff = a => a.map((v,i)=> i>0 && isN(v) && isN(a[i-1]) ? v-a[i-1] : null);
+
+/* =====================================================================
+   TABLAS
+   ===================================================================== */
+// rows: {label, data, fmt, cls, color, derived:[idx]} · fc: índice desde donde es pronóstico
+function renderTable(id, heads, rows, fc){
+  const th = '<th></th>' + heads.map((h,i)=>`<th class="${fc!==undefined&&i>=fc?'fc':''}">${h}</th>`).join('');
+  const body = rows.map(r=>{
+    if(r.cls==='grp') return `<tr class="grp"><td colspan="${heads.length+1}">${r.label}</td></tr>`;
+    const key = r.color ? `<span class="key" style="background:${r.color}"></span>` : '';
+    const tds = r.data.map((v,i)=>{
+      let s = F[r.fmt](v);
+      if(r.derived && r.derived.includes(i) && isN(v)) s = `<span class="derived">${s}</span>`;
+      return `<td class="${fc!==undefined&&i>=fc?'fc':''}">${s}</td>`;
+    }).join('');
+    return `<tr class="${r.cls||''}"><td>${key}${r.label}</td>${tds}</tr>`;
+  }).join('');
+  document.getElementById(id).innerHTML = `<table class="metrics-table"><thead><tr>${th}</tr></thead><tbody>${body}</tbody></table>`;
+}
+
+/* =====================================================================
+   CHART HELPERS
+   ===================================================================== */
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const C = () => ({ s1:css('--series-1'), s2:'#2E75B6', s3:'#5B9BD5', s4:'#70AD47', s5:'#ED7D31', s6:'#833C00', s7:'#7030A0', s8:'#A9D18E', grey:'#B8C4D2', total:'#6B7A8D', pos:'#00C49A', neg:'#F05252', grid:css('--chart-grid') });
+function alpha(hex,a){ const h=hex.replace('#',''); const n=parseInt(h.length===3?h.split('').map(c=>c+c).join(''):h,16); return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`; }
+const fmtTipM = v => isN(v) ? (v<0?'($'+nf0.format(-v)+'M)':'$'+nf0.format(v)+'M') : '–';
+const fmtTipB = v => isN(v) ? (v<0?'($'+(-v).toFixed(1)+'B)':'$'+v.toFixed(1)+'B') : '–';
+const fmtTipG = v => isN(v) ? (v>0?'+':v<0?'−':'')+Math.abs(v*100).toFixed(1)+'%' : '–';
+
+const fzone = {
+  id:'fzone',
+  beforeDatasetsDraw(ch, _a, o){
+    if(o.from===undefined || o.from===null) return;
+    const {ctx, chartArea:a, scales:{x}} = ch;
+    const step = x.getPixelForValue(1)-x.getPixelForValue(0);
+    const x0 = x.getPixelForValue(o.from) - step/2;
+    ctx.save();
+    ctx.fillStyle='rgba(46,117,182,0.06)';
+    ctx.fillRect(x0, a.top, a.right-x0, a.bottom-a.top);
+    ctx.fillStyle='#2E75B6'; ctx.font='600 10px Figtree, sans-serif';
+    ctx.fillText(o.label||'Guía', x0+6, a.top+12);
+    ctx.restore();
+  }
+};
+Chart.register(fzone);
+
+function baseOpts(o={}){
+  const c=C();
+  const tick={font:{family:'Figtree',size:11}, color:'#9AACBE', maxRotation:0};
+  const opts={
+    responsive:true, maintainAspectRatio:false, animation:{duration:300},
+    interaction:{mode:'index', intersect:false},
+    plugins:{
+      legend:{labels:{font:{family:'Figtree',size:11}, color:'#6B7A8D', usePointStyle:true, pointStyleWidth:18, boxHeight:3}},
+      tooltip:{backgroundColor:'#141C2B', titleFont:{family:'Figtree',size:11}, bodyFont:{family:'Figtree',size:12}, padding:10, cornerRadius:8,
+        callbacks:{label: ctx => `${ctx.dataset.label}: ${(ctx.dataset.tip||fmtTipM)(ctx.raw)}`}},
+      fzone:{from:o.fc, label:o.fcLabel}
+    },
+    scales:{
+      x:{stacked:!!o.stacked, grid:{color:c.grid, drawTicks:false, display:false}, border:{display:false}, ticks:tick},
+      y:{stacked:!!o.stacked, grid:{color:c.grid, drawTicks:false}, border:{display:false}, ticks:{...tick, callback:o.yTick||(v=>v)}, min:o.yMin, max:o.yMax}
+    }
+  };
+  if(o.y1) opts.scales.y1={position:'right', grid:{display:false}, border:{display:false}, ticks:{...tick, callback:o.y1Tick}, min:o.y1Min, max:o.y1Max};
+  return opts;
+}
+const axM = v => v<0 ? '($'+nf0.format(-v)+'M)' : '$'+nf0.format(v)+'M';
+const axB = (v,d) => v<0 ? '($'+(-v).toFixed(d)+'B)' : '$'+v.toFixed(d)+'B';
+const charts={};
+function mk(id,cfg){ if(charts[id]) charts[id].destroy(); charts[id]=new Chart(document.getElementById(id),cfg); addYAxisDrag(charts[id]); }
+function addYAxisDrag(chart){
+  const el=chart.canvas; if(el._drag) return; el._drag=true;
+  let drag=false,y0=0,r={};
+  el.addEventListener('mousedown',e=>{ const ch=Chart.getChart(el); drag=true; y0=e.clientY; r={min:ch.scales.y.min,max:ch.scales.y.max}; });
+  document.addEventListener('mousemove',e=>{ if(!drag) return; const ch=Chart.getChart(el); if(!ch) return;
+    const h=ch.chartArea.bottom-ch.chartArea.top, s=((e.clientY-y0)/h)*(r.max-r.min);
+    ch.options.scales.y.min=r.min+s; ch.options.scales.y.max=r.max+s; ch.update('none'); });
+  document.addEventListener('mouseup',()=>{drag=false;});
+  el.addEventListener('dblclick',()=>{ const ch=Chart.getChart(el); if(!ch) return; delete ch.options.scales.y.min; delete ch.options.scales.y.max; ch.update(); });
+}
+const line = (label,data,color,extra={}) => ({type:'line',label,data,borderColor:color,backgroundColor:color,borderWidth:2,pointRadius:3,pointHoverRadius:5,tension:0.1,spanGaps:true,...extra});
+const bar = (label,data,color,extra={}) => ({type:'bar',label,data,backgroundColor:color,borderRadius:3,maxBarThickness:42,...extra});
+
+/* =====================================================================
+   STATE (modos de vista)
+   ===================================================================== */
+const S = {mem:'lvl', prod:'lvl', seg:'lvl', cp:'lvl', orig:'lvl', ann:'lvl'};
+document.querySelectorAll('.seg').forEach(seg=>{
+  seg.addEventListener('click',e=>{
+    const b=e.target.closest('button'); if(!b) return;
+    seg.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+    S[seg.dataset.ctl]=b.dataset.v; RENDER[seg.dataset.ctl]();
+  });
+});
+
+/* =====================================================================
+   RESUMEN
+   ===================================================================== */
+const L = Q.length-1;
+function stats(){
+  const st=[
+    ['Ingreso neto ajustado', '$'+nf0.format(D.adjRev[L])+'M', `${F.g(yoy(D.adjRev,L))} YoY · Q3'26`],
+    ['EBITDA ajustado', '$'+nf0.format(D.ebitda[L])+'M', `Margen ${F.p(D.ebitda[L]/D.adjRev[L])} · ${F.g(yoy(D.ebitda,L))} YoY`],
+    ['Utilidad neta GAAP', '$'+nf0.format(D.ni[L])+'M', `${F.g(yoy(D.ni,L))} YoY · margen ${F.p(D.ni[L]/D.rev[L])}`],
+    ['EPS ajustado diluido', F.ps(D.adjEps[L]), `vs ${F.ps(D.adjEps[L-4])} en Q3'25 · ${F.g(yoy(D.adjEps,L))}`],
+    ['Miembros', (D.members[L]/1000).toFixed(2)+'M', `${F.g(yoy(D.members,L))} YoY · +${nf0.format(D.members[L]-D.members[L-1])}k en el trimestre`],
+    ['Productos', (D.products[L]/1000).toFixed(2)+'M', `${F.g(yoy(D.products,L))} YoY · ${(D.products[L]/D.members[L]).toFixed(2)} por miembro`],
+    ['Depósitos', '$'+D.deposits[L].toFixed(1)+'B', `+$${(D.deposits[L]-D.deposits[L-1]).toFixed(1)}B en el trimestre`],
+    ['Valor tangible / acción', F.ps(D.tbvps[L]), `${F.g(yoy(D.tbvps,L))} YoY · CET1 ${D.cet1[L].toFixed(1)}%`],
+  ];
+  document.getElementById('stats').innerHTML = st.map(s=>`<div class="stat"><div class="l">${s[0]}</div><div class="v">${s[1]}</div><div class="s">${s[2]}</div></div>`).join('');
+}
+function overview(){
+  const c=C();
+  const labels=[...Q,"Q4'26G"];
+  const rev=[...D.adjRev, Q4G.adjRev];
+  const eb=[...D.ebitda, Q4G.ebitda];
+  const mg=div(eb,rev);
+  const fc=Q.length;
+  mk('c-ov',{data:{labels,datasets:[
+    line('Margen EBITDA aj.', mg, c.s5, {yAxisID:'y1', tip:v=>F.p(v), order:0, segment:{borderDash:ctx=>ctx.p1DataIndex>=fc?[5,4]:undefined}}),
+    bar('Ingreso neto ajustado', rev, rev.map((_,i)=>i>=fc?alpha(c.s1,0.5):c.s1), {order:1}),
+    bar('EBITDA ajustado', eb, eb.map((_,i)=>i>=fc?alpha(c.s2,0.5):c.s2), {order:1}),
+  ]}, options:baseOpts({fc, fcLabel:'Guía implícita', yTick:axM, y1:true, y1Tick:v=>(v*100).toFixed(0)+'%', y1Min:0, y1Max:0.5})});
+  const ni=[...D.ni,null], adjNi=[...D.adjNi,Q4G.adjNi], eps=[...D.adjEps,null];
+  renderTable('t-ov', labels, [
+    {label:'Ingreso neto ajustado', data:rev, fmt:'m', color:c.s1, derived:[fc]},
+    {label:'Crecimiento YoY', data:rev.map((_,i)=>yoy(rev,i)), fmt:'g', cls:'sub'},
+    {label:'EBITDA ajustado', data:eb, fmt:'m', color:c.s2, derived:[fc]},
+    {label:'Margen EBITDA aj.', data:mg, fmt:'p', cls:'sub', color:c.s5},
+    {label:'Utilidad neta GAAP', data:ni, fmt:'m'},
+    {label:'Utilidad neta ajustada', data:adjNi, fmt:'m', derived:[fc]},
+    {label:'Margen neto aj.', data:div(adjNi,rev), fmt:'p', cls:'sub'},
+    {label:'EPS ajustado diluido', data:eps, fmt:'ps'},
+  ], fc);
+}
+function guide(){
+  const c=C();
+  mk('c-guide',{data:{labels:GUIDE.map(g=>g.d),datasets:[
+    line('Ingreso neto aj.', GUIDE.map(g=>g.rev), c.s1, {stepped:'before', tip:fmtTipB2}),
+    line('EBITDA aj.', GUIDE.map(g=>g.ebitda), c.s2, {stepped:'before', tip:fmtTipB2}),
+  ]}, options:baseOpts({yTick:v=>axB(v,1), yMin:0})});
+  const t=document.getElementById('t-guide');
+  t.innerHTML=`<table class="metrics-table"><thead><tr><th>Fecha</th><th>Ingreso aj.</th><th>EBITDA aj.</th><th>Utilidad aj. (US$M)</th><th>EPS aj.</th></tr></thead><tbody>${
+    GUIDE.map((g,i)=>{ const prev=GUIDE[i-1]; const up=(k)=> prev && g[k]>prev[k] ? ' <span class="g pos">▲</span>' : '';
+      return `<tr><td>${g.d} <span class="na" style="font-weight:400">· ${g.ev}</span></td><td>${g.revTxt}B${up('rev')}</td><td>$${g.ebitda.toFixed(2)}B${up('ebitda')}</td><td>${nf0.format(g.ni)}${up('ni')}</td><td>${F.ps(g.eps)}${up('eps')}</td></tr>`; }).join('')
+  }</tbody></table>`;
+}
+const fmtTipB2 = v => isN(v)?'$'+v.toFixed(2)+'B':'–';
+function outlook(){
+  const c=C();
+  const labels=['2025A','2026G','2027G'];
+  const rev=[3591.4,5040,6400], eb=[1053.9,1660,2240], ni=[481.3,840,1280], eps=[0.39,0.61,0.90];
+  const a=(col)=>[col, alpha(col,0.5), alpha(col,0.5)];
+  mk('c-out',{type:'bar',data:{labels,datasets:[
+    bar('Ingreso neto aj.', rev.map(v=>v/1000), a(c.s1), {tip:fmtTipB}),
+    bar('EBITDA aj.', eb.map(v=>v/1000), a(c.s2), {tip:fmtTipB}),
+    bar('Utilidad neta aj.', ni.map(v=>v/1000), a(c.s3), {tip:fmtTipB}),
+  ]}, options:baseOpts({fc:1, fcLabel:'Guía', yTick:v=>'$'+v.toFixed(0)+'B'})});
+  renderTable('t-out', labels, [
+    {label:'Ingreso neto ajustado', data:rev, fmt:'m', color:c.s1},
+    {label:'Crecimiento YoY', data:rev.map((v,i)=>i? v/rev[i-1]-1 : yoy(A.adjRev,4,1)), fmt:'g', cls:'sub'},
+    {label:'EBITDA ajustado', data:eb, fmt:'m', color:c.s2},
+    {label:'Margen', data:div(eb,rev), fmt:'p', cls:'sub'},
+    {label:'Utilidad neta ajustada', data:ni, fmt:'m', color:c.s3},
+    {label:'Margen', data:div(ni,rev), fmt:'p', cls:'sub'},
+    {label:'EPS ajustado', data:eps, fmt:'ps'},
+    {label:'Crecimiento YoY', data:eps.map((v,i)=>i? v/eps[i-1]-1 : yoy(A.adjEps,4,1)), fmt:'g', cls:'sub'},
+  ], 1);
+}
+
+/* =====================================================================
+   CRECIMIENTO
+   ===================================================================== */
+function mem(){
+  const c=C(), m=S.mem, ppm=div(D.products,D.members);
+  let ds, opts, unit;
+  if(m==='lvl'){
+    unit='(miles · productos por miembro)';
+    ds=[ line('Productos por miembro', ppm, c.s5, {yAxisID:'y1', tip:v=>v.toFixed(2)+'x', order:0}),
+         bar('Miembros', D.members, c.s1, {tip:v=>nf0.format(v)+'k', order:1}),
+         bar('Productos', D.products, c.s2, {tip:v=>nf0.format(v)+'k', order:1}) ];
+    opts=baseOpts({yTick:v=>(v/1000).toFixed(0)+'M', y1:true, y1Tick:v=>v.toFixed(2)+'x', y1Min:1.3, y1Max:1.65});
+  } else if(m==='g'){
+    unit='(% YoY)';
+    ds=[ line('Miembros', yoyArr(D.members), c.s1, {tip:fmtTipG}), line('Productos', yoyArr(D.products), c.s2, {tip:fmtTipG}) ];
+    opts=baseOpts({yTick:v=>(v*100).toFixed(0)+'%', yMin:0, yMax:0.6});
+  } else {
+    unit='(miles añadidos en el trimestre)';
+    ds=[ bar('Miembros', diff(D.members), c.s1, {tip:v=>nf0.format(v)+'k'}), bar('Productos', diff(D.products), c.s2, {tip:v=>nf0.format(v)+'k'}) ];
+    opts=baseOpts({yTick:v=>nf0.format(v)+'k'});
+  }
+  document.getElementById('u-mem').textContent=unit;
+  mk('c-mem',{data:{labels:Q,datasets:ds},options:opts});
+  const rows = m==='add' ? [
+    {label:'Miembros añadidos', data:diff(D.members), fmt:'k', color:c.s1},
+    {label:'Productos añadidos', data:diff(D.products), fmt:'k', color:c.s2},
+  ] : [
+    {label:'Miembros', data:D.members, fmt:'k', color:c.s1},
+    {label:'Crecimiento YoY', data:yoyArr(D.members), fmt:'g', cls:'sub'},
+    {label:'Productos', data:D.products, fmt:'k', color:c.s2},
+    {label:'Crecimiento YoY', data:yoyArr(D.products), fmt:'g', cls:'sub'},
+    ...(m==='lvl'?[{label:'Productos por miembro', data:ppm, fmt:'x2', color:c.s5}]:[]),
+  ];
+  renderTable('t-mem', Q, rows);
+}
+function prod(){
+  const c=C(), m=S.prod, tot=add(D.lendProd,D.fsProd);
+  const cs=m==='cs';
+  const L1=cs?div(D.lendProd,tot):D.lendProd, F1=cs?div(D.fsProd,tot):D.fsProd;
+  document.getElementById('u-prod').textContent=cs?'(% del total de productos)':'(miles)';
+  mk('c-prod',{type:'bar',data:{labels:Q,datasets:[
+    bar('Servicios Financieros', F1, c.s2, {tip:cs?(v=>F.p(v)):(v=>nf0.format(v)+'k')}),
+    bar('Lending', L1, c.s1, {tip:cs?(v=>F.p(v)):(v=>nf0.format(v)+'k')}),
+  ]}, options:baseOpts({stacked:true, yTick:cs?(v=>(v*100).toFixed(0)+'%'):(v=>(v/1000).toFixed(0)+'M'), yMin:0, yMax:cs?1:undefined})});
+  renderTable('t-prod', Q, cs ? [
+    {label:'Servicios Financieros', data:F1, fmt:'cs', color:c.s2},
+    {label:'Lending', data:L1, fmt:'cs', color:c.s1},
+  ] : [
+    {label:'Servicios Financieros', data:D.fsProd, fmt:'k', color:c.s2},
+    {label:'Crecimiento YoY', data:yoyArr(D.fsProd), fmt:'g', cls:'sub'},
+    {label:'Lending', data:D.lendProd, fmt:'k', color:c.s1},
+    {label:'Crecimiento YoY', data:yoyArr(D.lendProd), fmt:'g', cls:'sub'},
+    {label:'Total', data:tot, fmt:'k', cls:'total'},
+  ]);
+}
+function tech(){
+  const c=C();
+  mk('c-tech',{type:'bar',data:{labels:Q,datasets:[bar('Cuentas habilitadas', D.techAcc, c.s3, {tip:v=>v.toFixed(1)+'M'})]},
+    options:baseOpts({yTick:v=>v+'M', yMin:0})});
+  renderTable('t-tech', Q, [
+    {label:'Cuentas (millones)', data:D.techAcc, fmt:'mm1', color:c.s3},
+    {label:'Crecimiento YoY', data:yoyArr(D.techAcc), fmt:'g', cls:'sub'},
+  ]);
+}
+
+/* =====================================================================
+   SEGMENTOS
+   ===================================================================== */
+function seg(){
+  const c=C(), m=S.seg;
+  const segs=[['Lending',D.lendRev,c.s1],['Servicios Financieros',D.fsRev,c.s2],['Technology Platform',D.techRev,c.s3]];
+  const segTot=add(D.lendRev,D.fsRev,D.techRev);
+  let ds, opts, unit, rows;
+  if(m==='lvl'){
+    unit='(US$M)';
+    ds=[...segs.map(([l,d,col])=>bar(l,d,col)), bar('Corporate/Other',D.corpRev,c.grey), line('Ingreso neto total',D.rev,c.total,{borderDash:[5,4],pointRadius:0,type:'line'})];
+    opts=baseOpts({stacked:true, yTick:axM});
+    opts.scales.y.stacked=true;
+    rows=[...segs.map(([l,d,col])=>[{label:l,data:d,fmt:'m',color:col},{label:'Crecimiento YoY',data:yoyArr(d),fmt:'g',cls:'sub'}]).flat(),
+      {label:'Corporate/Other',data:D.corpRev,fmt:'m',color:c.grey},
+      {label:'Ingreso neto total (GAAP)',data:D.rev,fmt:'m',cls:'total'},
+      {label:'Crecimiento YoY',data:yoyArr(D.rev),fmt:'g',cls:'sub'}];
+  } else if(m==='g'){
+    unit='(% YoY)';
+    ds=[...segs.map(([l,d,col])=>line(l,yoyArr(d),col,{tip:fmtTipG})), line('Ingreso neto total',yoyArr(D.rev),c.total,{borderDash:[5,4],tip:fmtTipG})];
+    opts=baseOpts({yTick:v=>(v*100).toFixed(0)+'%', yMin:-0.4, yMax:1.0});
+    rows=[...segs.map(([l,d,col])=>({label:l,data:yoyArr(d),fmt:'g',color:col})), {label:'Ingreso neto total',data:yoyArr(D.rev),fmt:'g',cls:'total'}];
+  } else {
+    unit='(% del ingreso de segmentos)';
+    ds=segs.map(([l,d,col])=>bar(l,div(d,segTot),col,{tip:v=>F.p(v)}));
+    opts=baseOpts({stacked:true, yTick:v=>(v*100).toFixed(0)+'%', yMin:0, yMax:1});
+    rows=segs.map(([l,d,col])=>({label:l,data:div(d,segTot),fmt:'cs',color:col}));
+  }
+  // en la vista nivel, la línea de total no debe apilarse
+  if(m==='lvl') ds[ds.length-1].stack='total';
+  document.getElementById('u-seg').textContent=unit;
+  mk('c-seg',{data:{labels:Q,datasets:ds},options:opts});
+  renderTable('t-seg',Q,rows);
+}
+function cp(){
+  const c=C(), m=S.cp;
+  const segs=[['Lending',D.lendCp,D.lendRev,c.s1],['Servicios Financieros',D.fsCp,D.fsRev,c.s2],['Technology Platform',D.techCp,D.techRev,c.s3]];
+  const mg=m==='m';
+  document.getElementById('u-cp').textContent=mg?'(% del ingreso del segmento)':'(US$M)';
+  const ds=segs.map(([l,cpv,rv,col])=> mg ? line(l,div(cpv,rv),col,{tip:v=>F.p(v)}) : bar(l,cpv,col));
+  mk('c-cp',{data:{labels:Q,datasets:ds},options:baseOpts(mg?{yTick:v=>(v*100).toFixed(0)+'%',yMin:0,yMax:0.8}:{yTick:axM})});
+  renderTable('t-cp',Q, segs.map(([l,cpv,rv,col])=> mg
+    ? {label:l,data:div(cpv,rv),fmt:'p',color:col}
+    : [{label:l,data:cpv,fmt:'m',color:col},{label:'Margen',data:div(cpv,rv),fmt:'p',cls:'sub'}]).flat());
+}
+function fee(){
+  const c=C(), pct=div(D.fee,D.rev);
+  const Qs=Q.slice(2), f=D.fee.slice(2), p=pct.slice(2);
+  mk('c-fee',{data:{labels:Qs,datasets:[
+    line('% del ingreso neto', p, c.s5, {yAxisID:'y1', tip:v=>F.p(v), order:0}),
+    bar('Ingreso por comisiones', f, c.s4, {order:1}),
+  ]},options:baseOpts({yTick:axM, yMin:0, y1:true, y1Tick:v=>(v*100).toFixed(0)+'%', y1Min:0, y1Max:0.6})});
+  renderTable('t-fee',Qs,[
+    {label:'Ingreso por comisiones',data:f,fmt:'m',color:c.s4,derived:[3]},
+    {label:'Crecimiento YoY',data:D.fee.map((_,i)=>yoy(D.fee,i)).slice(2),fmt:'g',cls:'sub'},
+    {label:'% del ingreso neto',data:p,fmt:'cs',color:c.s5},
+  ]);
+}
+
+/* =====================================================================
+   LENDING Y CRÉDITO
+   ===================================================================== */
+const Q7=Q.slice(2);
+function orig(){
+  const c=C(), m=S.orig;
+  const sl=a=>a.slice(2);
+  const tot=add(D.oPL,D.oSL,D.oHL,D.oSB).slice(2);
+  const prods=[['Préstamos personales',sl(D.oPL),c.s1],['Préstamos estudiantiles',sl(D.oSL),c.s2],['Hipotecarios',sl(D.oHL),c.s3],['Small business',sl(D.oSB),c.s4]];
+  let ds,opts,unit,rows;
+  const dv=DERIVED.orig.map(i=>i-2);
+  if(m==='lvl'){
+    unit='(US$M)';
+    ds=prods.map(([l,d,col])=>bar(l,d,col));
+    opts=baseOpts({stacked:true,yTick:axM});
+    rows=[...prods.map(([l,d,col])=>({label:l,data:d,fmt:'m',color:col,derived:dv})),
+      {label:'Total originaciones',data:tot,fmt:'m',cls:'total',derived:dv}];
+  } else if(m==='g'){
+    unit='(% YoY)';
+    const yo=a=>a.map((_,i)=>i>=4?a[i]/a[i-4]-1:null);
+    ds=[...prods.slice(0,3).map(([l,d,col])=>line(l,yo(d),col,{tip:fmtTipG})), line('Total',yo(tot),c.total,{borderDash:[5,4],tip:fmtTipG})];
+    opts=baseOpts({yTick:v=>(v*100).toFixed(0)+'%',yMin:0});
+    rows=[...prods.slice(0,3).map(([l,d,col])=>({label:l,data:yo(d),fmt:'g',color:col})),{label:'Total',data:yo(tot),fmt:'g',cls:'total'}];
+  } else {
+    unit='(% del total originado)';
+    ds=prods.map(([l,d,col])=>bar(l,div(d,tot),col,{tip:v=>F.p(v)}));
+    opts=baseOpts({stacked:true,yTick:v=>(v*100).toFixed(0)+'%',yMin:0,yMax:1});
+    rows=prods.map(([l,d,col])=>({label:l,data:div(d,tot),fmt:'cs',color:col}));
+  }
+  document.getElementById('u-orig').textContent=unit;
+  mk('c-orig',{data:{labels:Q7,datasets:ds},options:opts});
+  renderTable('t-orig',Q7,rows);
+}
+function nco(){
+  const c=C(), sl=a=>a.slice(2);
+  mk('c-nco',{data:{labels:Q7,datasets:[
+    line('Préstamos personales',sl(D.ncoPL),c.s1,{tip:v=>v.toFixed(2)+'%'}),
+    line('Préstamos estudiantiles',sl(D.ncoSL),c.s2,{tip:v=>v.toFixed(2)+'%'}),
+  ]},options:baseOpts({yTick:v=>v.toFixed(1)+'%',yMin:0,yMax:4})});
+  const yoyPP=a=>a.map((v,i)=>i>=4&&isN(v)&&isN(a[i-4])?v-a[i-4]:null);
+  renderTable('t-nco',Q7,[
+    {label:'Préstamos personales',data:sl(D.ncoPL),fmt:'r2',color:c.s1},
+    {label:'vs año anterior',data:yoyPP(sl(D.ncoPL)),fmt:'ppInv',cls:'sub'},
+    {label:'Préstamos estudiantiles',data:sl(D.ncoSL),fmt:'r2',color:c.s2},
+    {label:'Total préstamos',data:sl(D.ncoTot),fmt:'r2'},
+  ]);
+}
+function nim(){
+  const c=C();
+  const dep=D.deposits.slice(1), lab=Q.slice(1), n=D.nim.slice(1);
+  mk('c-nim',{data:{labels:lab,datasets:[
+    line('Margen financiero (NIM)',n,c.s5,{yAxisID:'y1',tip:v=>v.toFixed(2)+'%',order:0}),
+    bar('Depósitos',dep,c.s2,{tip:v=>'$'+v.toFixed(1)+'B',order:1}),
+  ]},options:baseOpts({yTick:v=>axB(v,0),yMin:0,y1:true,y1Tick:v=>v.toFixed(1)+'%',y1Min:5,y1Max:6.5})});
+  renderTable('t-nim',lab,[
+    {label:'Depósitos (US$B)',data:dep,fmt:'b1',color:c.s2},
+    {label:'Margen financiero',data:n,fmt:'r2',color:c.s5},
+  ]);
+}
+function cap(){
+  renderTable('t-cap',Q7,[
+    {label:'CET1 (SoFi Technologies)',data:D.cet1.slice(2),fmt:'r1'},
+    {label:'Valor en libros tangible / acción',data:D.tbvps.slice(2),fmt:'ps'},
+    {label:'Crecimiento YoY',data:D.tbvps.map((_,i)=>yoy(D.tbvps,i)).slice(2),fmt:'g',cls:'sub'},
+  ]);
+}
+
+/* =====================================================================
+   ANUAL
+   ===================================================================== */
+function ann(){
+  const c=C(), m=S.ann, cs=m==='cs';
+  const segTot=add(A.lend,A.fs,A.tech);
+  const b=a=>a.map(v=>isN(v)?v/1000:null);
+  let ds,opts,rows;
+  if(!cs){
+    const gTot=A.adjRev.map((v,i)=>i>=AFC?v/1000:null);
+    ds=[bar('Lending',b(A.lend),c.s1,{tip:fmtTipB}),bar('Servicios Financieros',b(A.fs),c.s2,{tip:fmtTipB}),bar('Technology Platform',b(A.tech),c.s3,{tip:fmtTipB}),
+        bar('Guía ingreso neto aj.',gTot,alpha(c.s1,0.45),{tip:fmtTipB}),
+        line('Ingreso neto ajustado',b(A.adjRev),c.total,{borderDash:[5,4],pointRadius:3,tip:fmtTipB,stack:'t'})];
+    opts=baseOpts({stacked:true,fc:AFC,fcLabel:'Guía',yTick:v=>axB(v,0),yMin:0});
+    rows=[{label:'Lending',data:A.lend,fmt:'m',color:c.s1},{label:'Crecimiento YoY',data:yoyArr(A.lend,1),fmt:'g',cls:'sub'},
+      {label:'Servicios Financieros',data:A.fs,fmt:'m',color:c.s2},{label:'Crecimiento YoY',data:yoyArr(A.fs,1),fmt:'g',cls:'sub'},
+      {label:'Technology Platform',data:A.tech,fmt:'m',color:c.s3},{label:'Crecimiento YoY',data:yoyArr(A.tech,1),fmt:'g',cls:'sub'},
+      {label:'Ingreso neto GAAP',data:A.rev,fmt:'m',cls:'total'},
+      {label:'Ingreso neto ajustado',data:A.adjRev,fmt:'m',color:c.total},{label:'Crecimiento YoY',data:yoyArr(A.adjRev,1),fmt:'g',cls:'sub'}];
+  } else {
+    ds=[['Lending',A.lend,c.s1],['Servicios Financieros',A.fs,c.s2],['Technology Platform',A.tech,c.s3]].map(([l,d,col])=>bar(l,div(d,segTot).slice(0,AFC),col,{tip:v=>F.p(v)}));
+    opts=baseOpts({stacked:true,yTick:v=>(v*100).toFixed(0)+'%',yMin:0,yMax:1});
+    rows=[['Lending',A.lend,c.s1],['Servicios Financieros',A.fs,c.s2],['Technology Platform',A.tech,c.s3]].map(([l,d,col])=>({label:l,data:div(d,segTot).slice(0,AFC),fmt:'cs',color:col}));
+  }
+  document.getElementById('u-ann').textContent=cs?'(% del ingreso de segmentos)':'(US$B)';
+  const labels=cs?Y.slice(0,AFC):Y;
+  mk('c-ann',{data:{labels,datasets:ds},options:opts});
+  renderTable('t-ann',labels,rows,cs?undefined:AFC);
+}
+function prof(){
+  const c=C(), b=a=>a.map(v=>isN(v)?v/1000:null);
+  const niPlot=A.ni.map((v,i)=>i<AFC?v:A.adjNi[i]);
+  mk('c-prof',{type:'bar',data:{labels:Y,datasets:[
+    bar('EBITDA ajustado',b(A.ebitda),A.ebitda.map((_,i)=>i>=AFC?alpha(c.s2,0.5):c.s2),{tip:fmtTipB}),
+    bar('Utilidad neta (GAAP; guía = ajustada)',b(niPlot),niPlot.map((v,i)=>{const col=v>=0?c.pos:c.neg;return i>=AFC?alpha(col,0.5):col;}),{tip:fmtTipB}),
+  ]},options:baseOpts({fc:AFC,fcLabel:'Guía',yTick:v=>axB(v,1)})});
+  renderTable('t-prof',Y,[
+    {label:'EBITDA ajustado',data:A.ebitda,fmt:'m',color:c.s2},
+    {label:'Margen',data:div(A.ebitda,A.adjRev),fmt:'p',cls:'sub'},
+    {label:'Utilidad neta GAAP',data:A.ni,fmt:'m'},
+    {label:'Utilidad neta ajustada',data:A.adjNi,fmt:'m'},
+    {label:'EPS ajustado',data:A.adjEps,fmt:'ps'},
+  ],AFC);
+}
+function annm(){
+  const c=C(), n=AFC, lab=Y.slice(0,n);
+  mk('c-annm',{data:{labels:lab,datasets:[
+    line('Miembros (M)',A.members.slice(0,n),c.s5,{yAxisID:'y1',tip:v=>v.toFixed(1)+'M',order:0}),
+    bar('Originaciones',A.orig.slice(0,n).map(v=>v/1000),c.s1,{tip:fmtTipB,order:1}),
+    bar('Depósitos',A.deposits.slice(0,n),c.s2,{tip:fmtTipB,order:1}),
+  ]},options:baseOpts({yTick:v=>axB(v,0),yMin:0,y1:true,y1Tick:v=>v+'M',y1Min:0})});
+  renderTable('t-annm',lab,[
+    {label:'Miembros (millones)',data:A.members.slice(0,n),fmt:'mm1',color:c.s5},
+    {label:'Crecimiento YoY',data:yoyArr(A.members,1).slice(0,n),fmt:'g',cls:'sub'},
+    {label:'Originaciones (US$M)',data:A.orig.slice(0,n),fmt:'m',color:c.s1},
+    {label:'Depósitos (US$B)',data:A.deposits.slice(0,n),fmt:'b1',color:c.s2},
+    {label:'Margen financiero',data:A.nim.slice(0,n),fmt:'r2'},
+  ]);
+}
+
+/* =====================================================================
+   INSIGHTS (calculados de los datos)
+   ===================================================================== */
+function insights(){
+  const segTot=D.lendRev[L]+D.fsRev[L]+D.techRev[L];
+  const mgNow=D.ebitda[L]/D.adjRev[L], mgPrev=D.ebitda[L-4]/D.adjRev[L-4];
+  document.getElementById('ins-resumen').innerHTML=`<strong>Q3'26 fue el trimestre más fuerte de la serie: ingreso ajustado ${fmtTipG(yoy(D.adjRev,L))} YoY y margen EBITDA de ${F.p(mgNow)} (vs ${F.p(mgPrev)} un año antes).</strong> La guía 2026 de ingreso ajustado se subió dos veces en el año ($4.655B → $5.04B) y la nueva guía implica un Q4'26 de ~$${nf0.format(Q4G.adjRev)}M (${fmtTipG(Q4G.adjRev/D.adjRev[5]-1)} YoY). Para 2027 la administración espera $6.4B (+27%) y EPS ajustado de $0.90.`;
+  document.getElementById('ins-crec').innerHTML=`<strong>Los productos crecen más rápido que los miembros (${fmtTipG(yoy(D.products,L))} vs ${fmtTipG(yoy(D.members,L))}), así que los productos por miembro subieron de ${(D.products[L-4]/D.members[L-4]).toFixed(2)} a ${(D.products[L]/D.members[L]).toFixed(2)}.</strong> Q3'26 tuvo récord de altas: +${nf0.format(D.members[L]-D.members[L-1])}k miembros y +${nf0.format(D.products[L]-D.products[L-1])}k productos. Servicios Financieros es ${F.p(D.fsProd[L]/D.products[L])} de los productos; las cuentas de Technology Platform siguen ${fmtTipG(yoy(D.techAcc,L))} YoY por la salida del cliente grande, aunque crecieron trimestre a trimestre.`;
+  document.getElementById('ins-seg').innerHTML=`<strong>Lending volvió a ser el motor: ${fmtTipG(yoy(D.lendRev,L))} YoY a $${nf0.format(D.lendRev[L])}M, ${F.p(D.lendRev[L]/segTot)} del ingreso de segmentos, con margen de contribución de ${F.p(D.lendCp[L]/D.lendRev[L])}.</strong> Servicios Financieros creció ${fmtTipG(yoy(D.fsRev,L))} pero su margen bajó a ${F.p(D.fsCp[L]/D.fsRev[L])} desde ${F.p(D.fsCp[L-4]/D.fsRev[L-4])}. Technology Platform cayó ${fmtTipG(yoy(D.techRev,L))} YoY (según la empresa, +18% excluyendo al cliente que salió). Las comisiones llegaron a ${F.p(D.fee[L]/D.rev[L])} del ingreso.`;
+  const o=add(D.oPL,D.oSL,D.oHL,D.oSB);
+  document.getElementById('ins-lend').innerHTML=`<strong>Originaciones récord de $${(o[L]/1000).toFixed(1)}B (${fmtTipG(yoy(o,L))} YoY) mientras el castigo neto de préstamos personales bajó a ${D.ncoPL[L].toFixed(2)}% desde ${D.ncoPL[L-4].toFixed(2)}% un año antes.</strong> El margen financiero subió a ${D.nim[L].toFixed(2)}% y los depósitos a $${D.deposits[L].toFixed(1)}B. Punto a vigilar: el CET1 bajó de ${D.cet1[L-2].toFixed(1)}% en Q1'26 a ${D.cet1[L].toFixed(1)}% conforme crecen los activos ponderados por riesgo (aún muy por encima del mínimo de 7.0%).`;
+  document.getElementById('ins-anual').innerHTML=`<strong>De una pérdida neta de $${nf0.format(-A.ni[0])}M en 2021 a una utilidad de $${nf0.format(A.ni[4])}M en 2025, con margen EBITDA ajustado subiendo de ${F.p(A.ebitda[0]/A.adjRev[0])} a ${F.p(A.ebitda[4]/A.adjRev[4])}.</strong> Servicios Financieros pasó de ${F.p(A.fs[0]/(A.lend[0]+A.fs[0]+A.tech[0]))} a ${F.p(A.fs[4]/(A.lend[4]+A.fs[4]+A.tech[4]))} del ingreso de segmentos. La guía 2027 implica margen EBITDA de ${F.p(A.ebitda[6]/A.adjRev[6])} y margen neto ajustado de ${F.p(A.adjNi[6]/A.adjRev[6])}.`;
+}
+
+/* =====================================================================
+   BOOT
+   ===================================================================== */
+const RENDER={mem,prod,seg,cp,orig,ann};
+const VIEWS={
+  resumen:[stats,overview,guide,outlook],
+  crecimiento:[mem,prod,tech],
+  segmentos:[seg,cp,fee],
+  lending:[orig,nco,nim,cap],
+  anual:[ann,prof,annm],
+};
+let current='resumen';
+function renderView(v){ VIEWS[v].forEach(fn=>fn()); }
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===t));
+  document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id==='v-'+t.dataset.tab));
+  current=t.dataset.tab; renderView(current);
+  try{ localStorage.setItem('pvg-tab',current); }catch(e){}
+}));
+document.getElementById('themeBtn').addEventListener('click',()=>{
+  const r=document.documentElement;
+  const dark = r.dataset.theme ? r.dataset.theme==='dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  r.dataset.theme = dark ? 'light' : 'dark';
+  try{ localStorage.setItem('pvg-theme',r.dataset.theme); }catch(e){}
+  renderView(current);
+});
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>renderView(current));
+try{ const th=localStorage.getItem('pvg-theme'); if(th) document.documentElement.dataset.theme=th; }catch(e){}
+insights();
+try{ const t=localStorage.getItem('pvg-tab'); if(t && VIEWS[t]) { document.querySelector(`.tab[data-tab="${t}"]`).click(); } else renderView(current); }catch(e){ renderView(current); }
+</script>
+</body>
+</html>
