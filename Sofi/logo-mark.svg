@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="59.8 1 22 22" width="128" height="128">
+  <!-- Símbolo de SoFi (3x3 puntos) redibujado con la geometría de logo.svg -->
+  <g fill="#00a2c7">
+    <circle cx="63.3" cy="4.5" r="3.5"/>
+    <circle cx="70.8" cy="4.5" r="3.5"/>
+    <circle cx="63.3" cy="12" r="3.5"/>
+    <circle cx="78.3" cy="12" r="3.5"/>
+    <circle cx="70.8" cy="19.5" r="3.5"/>
+    <circle cx="78.3" cy="19.5" r="3.5"/>
+  </g>
+  <g fill="none" stroke="#00a2c7" stroke-width="1">
+    <circle cx="78.3" cy="4.5" r="3"/>
+    <circle cx="70.8" cy="12" r="3"/>
+    <circle cx="63.3" cy="19.5" r="3"/>
+  </g>
+</svg>
