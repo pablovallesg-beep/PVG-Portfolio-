@@ -197,6 +197,22 @@ html.mobile .nav-item .ic-desk{display:block}
 .xl tr.sec .chev svg{width:12px;height:12px}
 .xl tr.sec.closed td{border-bottom-color:var(--border)}
 .xl tr.subh .chev{color:var(--accent)}
+.dcf-top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:16px}
+@media (max-width:1100px){.dcf-top{grid-template-columns:minmax(0,1fr)}}
+html.mobile .dcf-top{grid-template-columns:minmax(0,1fr)}
+.dcf-in{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:2px 18px;padding:12px 20px 16px}
+.dcf-in label{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12.5px;color:var(--text-secondary);padding:5px 0;border-bottom:1px solid var(--border)}
+.dcf-in label.calc{color:var(--text-primary);font-weight:600}
+.dcf-in input{width:84px;text-align:right;font:600 12.5px 'Figtree',sans-serif;font-variant-numeric:tabular-nums;border:1px solid #E8D98A;background:var(--inp-bg,#FFF4CC);color:var(--inp-fg,#5C4A00);border-radius:5px;padding:3px 6px}
+.dcf-in .v{font-weight:700;font-variant-numeric:tabular-nums}
+.dcf-t td,.dcf-t th{padding:7px 12px;font-size:12.5px}
+.dcf-t td:first-child{font-weight:500}
+.dcf-t tr.tot td{font-weight:700;border-top:1px solid var(--text-tertiary)}
+.dcf-t tr.dk td{font-weight:800;background:var(--accent-light)}
+.dcf-t tr.sub td{font-size:11px;font-style:italic;color:var(--text-secondary)}
+.dcf-t tr.sub td:first-child{padding-left:26px;font-weight:400}
+.dcf-t th.p,.dcf-t td.p{background:var(--proj)}
+.dcf-t td.tv,.dcf-t th.tv{background:var(--accent-light);border-left:1px solid rgba(46,117,182,.3)}
 .ave-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .ave-cards{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
 .ave-cards .chart{height:230px}
@@ -619,6 +635,7 @@ html.mobile .xl-wrap{max-height:calc(100vh - 190px)}
       <button class="tab vtab active" data-vtab="model">Model</button>
       <button class="tab vtab" data-vtab="ave">Actual vs Estimates</button>
       <button class="tab vtab" data-vtab="guidance">Guidance Revisions</button>
+      <button class="tab vtab" data-vtab="dcf">DCF</button>
     </nav>
       <section class="view active" id="vv-model">
         <div class="card">
@@ -648,6 +665,16 @@ html.mobile .xl-wrap{max-height:calc(100vh - 190px)}
           <div class="tbl-wrap" id="aveScore"></div></div>
         <div id="aveCards" class="ave-cards"></div>
         <div class="src" id="aveSrc"></div>
+      </section>
+      <section class="view" id="vv-dcf">
+        <div class="dcf-top">
+          <div class="card"><div class="card-h"><span class="card-t">Market value</span><span class="card-sub" id="dcfPx"></span></div><div class="tbl-wrap" id="dcfMkt"></div></div>
+          <div class="card"><div class="card-h"><span class="card-t">Assumptions</span><span class="card-sub">yellow cells are editable</span></div><div class="dcf-in" id="dcfIn"></div></div>
+        </div>
+        <div class="card"><div class="card-h"><span class="card-t">Trading multiples by year</span><span class="card-sub">at the current price · adjusted figures as SoFi reports them</span></div><div class="tbl-wrap" id="dcfMult"></div></div>
+        <div class="card"><div class="card-h"><span class="card-t">FCFF · exit EV/EBITDA</span><span class="card-sub">discounted at WACC</span></div><div class="tbl-wrap" id="dcfFF"></div></div>
+        <div class="card"><div class="card-h"><span class="card-t">FCFE · exit P/E</span><span class="card-sub">discounted at cost of equity</span></div><div class="tbl-wrap" id="dcfFE"></div></div>
+        <div class="src" id="dcfSrc"></div>
       </section>
       <section class="view" id="vv-guidance">
         <div class="placeholder"><h2>Guidance Revisions</h2><p>How SoFi's guidance has moved over time: first guide, each raise or cut, and the final result for every period. In progress.</p></div>
@@ -2227,6 +2254,118 @@ const AVE = (() => {
 })();
 ['aveFreq','aveBench','aveGuide'].forEach((id,i)=>document.getElementById(id).addEventListener('click',e=>{ const b=e.target.closest('button'); if(b) AVE.set(['freq','bench','guide'][i], b.dataset.v); }));
 
+/* =====================================================================
+   DCF — trading multiples, FCFF (exit EV/EBITDA) and FCFE (exit P/E)
+   ===================================================================== */
+// Price from Interactive Brokers (realtime snapshot); shares outstanding from the Q3'26 release balance sheet.
+const MKT = {price:16.86, asOf:'Oct 28, 2026', src:'Interactive Brokers, realtime last trade', shares:1296.617, sharesSrc:"shares outstanding at Sep 30, 2026 (Q3'26 release)"};
+const DCF = (() => {
+  const DEF = {price:MKT.price, shares:MKT.shares, rf:4.25, beta:1.80, erp:5.50, kd:null, tax:22, exitEV:null, exitPE:null};
+  let st = {...DEF};
+  try{ Object.assign(st, JSON.parse(localStorage.getItem('pvg-dcf')||'{}')); }catch(e){}
+  const save = () => { try{ localStorage.setItem('pvg-dcf', JSON.stringify(st)); }catch(e){} };
+  const VAL_DATE = new Date('2026-10-28');
+  const yrs = l => (new Date('20'+l.slice(-2)+'-12-31') - VAL_DATE)/(365*864e5);
+  const m = v => F.m(v), x = v => isN(v)&&v>0 ? v.toFixed(1)+'x' : NM, pc = v => isN(v) ? (v*100).toFixed(1)+'%' : NA;
+  function calc(){
+    const Q=MODEL.Q, Y=MODEL.Y;
+    const last = [...Q].reverse().find(q=>!q.proj && isN(q.totA));        // latest reported balance sheet
+    const stub = Q.find(q=>q.proj);                                         // remaining quarter of the current year
+    const years = Y.filter(y=>y.lab>='FY2023');
+    const fut = Y.filter(y=>y.proj && !y.lab.includes('2026'));             // full projected years after the current one
+    const debt = (last.debt||0)+(last.resid||0), cash = last.cash, netDebt = debt-cash;
+    const mcap = st.price*st.shares, ev = mcap+netDebt;
+    const fy25 = Y.find(y=>y.lab==='FY2025');
+    const intDebt = o => (o.expSec||0)+(o.expCorp||0);   // interest on warehouse, securitization and corporate debt
+    const kdDef = fy25 && debt ? intDebt(fy25)/((Y.find(y=>y.lab==='FY2024').debt+fy25.debt)/2)*100 : 6;
+    const kd = isN(st.kd) ? st.kd : +kdDef.toFixed(2);
+    const t = st.tax/100, ke = (st.rf + st.beta*st.erp)/100, kdAT = kd/100*(1-t);
+    const wE = mcap/(mcap+debt), wD = debt/(mcap+debt), wacc = wE*ke + wD*kdAT;
+    const y27 = Y.find(y=>y.lab==='FY2027E');
+    const exitEV = isN(st.exitEV) ? st.exitEV : +(ev/y27.ebitda).toFixed(1);
+    const exitPE = isN(st.exitPE) ? st.exitPE : +(st.price/y27.adjEps).toFixed(1);
+    // cash flows: stub (share of Q4 still ahead of the valuation date) + full projected years
+    const stubFrac = Math.max(0, Math.min(1, (new Date('20'+stub.lab.slice(-3,-1)+'-12-31')-VAL_DATE)/864e5/stub.days));
+    const flows = [{lab:stub.lab+' (stub)', o:stub, f:stubFrac, t:yrs(stub.lab.slice(0,-1))}, ...fut.map(y=>({lab:y.lab, o:y, f:1, t:yrs(y.lab.slice(0,-1))}))];
+    flows.forEach(c=>{ const o=c.o; c.fcfe=o.fcf*c.f; c.fcff=(o.fcf+intDebt(o)*(1-t))*c.f; c.dfW=1/Math.pow(1+wacc,c.t); c.dfE=1/Math.pow(1+ke,c.t); });
+    const lastY = fut[fut.length-1], tT = yrs(lastY.lab.slice(0,-1));
+    const tvFF = exitEV*lastY.ebitda, tvFE = exitPE*lastY.adjNI;
+    const ff = {pv: flows.reduce((s,c)=>s+c.fcff*c.dfW,0), cum: flows.reduce((s,c)=>s+c.fcff,0), tv:tvFF, pvTV: tvFF/Math.pow(1+wacc,tT)};
+    ff.ev = ff.pv+ff.pvTV; ff.eq = ff.ev-netDebt; ff.ps = ff.eq/st.shares;
+    const fe = {pv: flows.reduce((s,c)=>s+c.fcfe*c.dfE,0), cum: flows.reduce((s,c)=>s+c.fcfe,0), tv:tvFE, pvTV: tvFE/Math.pow(1+ke,tT)};
+    fe.eq = fe.pv+fe.pvTV; fe.ps = fe.eq/st.shares; fe.ev = fe.eq+netDebt;
+    return {intDebt, last, years, flows, lastY, debt, cash, netDebt, mcap, ev, kd, kdDef, ke, kdAT, wE, wD, wacc, exitEV, exitPE, ff, fe, t};
+  }
+  function render(){
+    const r = calc(), c = C(), intDebt = r.intDebt;
+    document.getElementById('dcfPx').textContent = `${MKT.src} · ${MKT.asOf}`;
+    document.getElementById('dcfMkt').innerHTML = `<table class="metrics-table dcf-t"><tbody>
+      <tr><td>Share price</td><td>$${st.price.toFixed(2)}</td></tr>
+      <tr><td>× Shares outstanding (M)</td><td>${F.m(st.shares)}</td></tr>
+      <tr class="tot"><td>Market capitalization</td><td>${m(r.mcap)}</td></tr>
+      <tr><td>+ Debt (incl. residual interests) · ${r.last.lab}</td><td>${m(r.debt)}</td></tr>
+      <tr><td>− Cash and cash equivalents · ${r.last.lab}</td><td>(${F.m(r.cash)})</td></tr>
+      <tr><td>= Net debt</td><td>${m(r.netDebt)}</td></tr>
+      <tr class="dk"><td>Enterprise value</td><td>${m(r.ev)}</td></tr></tbody></table>`;
+    const inp = (k,l,v,step) => `<label>${l}<input type="number" step="${step}" data-k="${k}" value="${v}"></label>`;
+    const out = (l,v) => `<label class="calc">${l}<span class="v">${v}</span></label>`;
+    document.getElementById('dcfIn').innerHTML =
+      inp('price','Share price (US$)',st.price,0.01) + inp('shares','Shares outstanding (M)',st.shares,0.1) +
+      inp('rf','Risk-free rate (%)',st.rf,0.05) + inp('beta','Beta',st.beta,0.05) + inp('erp','Equity risk premium (%)',st.erp,0.1) +
+      out('Cost of equity (CAPM)', pc(r.ke)) +
+      inp('kd','Pre-tax cost of debt (%)',r.kd,0.05) + inp('tax','Tax rate (%)',st.tax,0.5) + out('After-tax cost of debt', pc(r.kdAT)) +
+      out('Weights equity / debt', `${(r.wE*100).toFixed(0)}% / ${(r.wD*100).toFixed(0)}%`) + out('WACC', pc(r.wacc)) +
+      inp('exitEV','Exit EV/EBITDA (x)',r.exitEV,0.5) + inp('exitPE','Exit P/E (x)',r.exitPE,0.5);
+    // Multiples by year
+    const ys = r.years, hd = ys.map(y=>`<th class="${y.proj?'p':''}">${y.lab}</th>`).join('');
+    const row = (l,f,cls='') => `<tr class="${cls}"><td>${l}</td>${ys.map(y=>`<td class="${y.proj?'p':''}">${f(y)}</td>`).join('')}</tr>`;
+    const prev = y => r.years[r.years.indexOf(y)-1] || MODEL.Y.find(z=>z.lab==='FY'+(+y.lab.slice(2,6)-1));
+    const g = (a,b) => isN(a)&&isN(b)&&b>0 ? F.g(a/b-1) : NM;
+    document.getElementById('dcfMult').innerHTML = `<table class="metrics-table dcf-t"><thead><tr><th>US$M</th>${hd}</tr></thead><tbody>
+      ${row('Adjusted net revenue', y=>m(y.adjRev), 'tot')}${row('YoY growth', y=>g(y.adjRev, prev(y)?.adjRev), 'sub')}
+      ${row('Adjusted EBITDA', y=>m(y.ebitda), 'tot')}${row('Margin', y=>pc(y.ebitda/y.adjRev), 'sub')}
+      ${row('Adjusted diluted EPS (US$)', y=>F.ps(y.adjEps), 'tot')}${row('YoY growth', y=>g(y.adjEps, prev(y)?.adjEps), 'sub')}
+      ${row('EV / revenue', y=>x(r.ev/y.adjRev), 'dk')}
+      ${row('EV / EBITDA', y=>x(r.ev/y.ebitda), 'dk')}
+      ${row('P / E', y=>x(st.price/y.adjEps), 'dk')}
+    </tbody></table>`;
+    // FCFF / FCFE tables
+    const tbl = (id, kind) => {
+      const fl = r.flows, R_ = kind==='ff' ? r.ff : r.fe, rate = kind==='ff' ? r.wacc : r.ke;
+      const hd = fl.map(c=>`<th class="p">${c.lab}</th>`).join('') + `<th class="tv">Terminal · ${r.lastY.lab}</th>`;
+      const line = (l, f, tv='', cls='') => `<tr class="${cls}"><td>${l}</td>${fl.map(c=>`<td class="p">${f(c)}</td>`).join('')}<td class="tv">${tv}</td></tr>`;
+      const ffRows = kind==='ff'
+        ? line('FCFE (CFO excl. loans held for sale − capex)', c=>m(c.o.fcf*c.f)) + line('+ After-tax interest on debt', c=>m(intDebt(c.o)*(1-r.t)*c.f)) + line('Free cash flow to the firm (FCFF)', c=>m(c.fcff), '', 'tot')
+        : line('Net income (adjusted)', c=>m(c.o.adjNI*c.f)) + line('Free cash flow to equity (FCFE)', c=>m(c.fcfe), '', 'tot');
+      const tvRow = kind==='ff'
+        ? line('Terminal value = exit EV/EBITDA × EBITDA', ()=>'', `${r.exitEV.toFixed(1)}x × ${F.m(r.lastY.ebitda)} = ${m(R_.tv)}`)
+        : line('Terminal value = exit P/E × net income', ()=>'', `${r.exitPE.toFixed(1)}x × ${F.m(r.lastY.adjNI)} = ${m(R_.tv)}`);
+      const df = kind==='ff' ? 'dfW' : 'dfE';
+      const tT = Math.pow(1+rate, -yrsT());
+      function yrsT(){ return (new Date('20'+r.lastY.lab.slice(4,6)+'-12-31') - new Date('2026-10-28'))/(365*864e5); }
+      const v = (l,val,cls='') => `<tr class="${cls}"><td>${l}</td><td colspan="${fl.length+1}" style="text-align:left">${val}</td></tr>`;
+      const up = R_.ps/st.price-1;
+      document.getElementById(id).innerHTML = `<table class="metrics-table dcf-t"><thead><tr><th>US$M</th>${hd}</tr></thead><tbody>
+        ${ffRows}${tvRow}
+        ${line('Years from valuation date', c=>c.t.toFixed(2), yrsT().toFixed(2), 'sub')}
+        ${line(`Discount factor @ ${pc(rate)}`, c=>c[df].toFixed(3), tT.toFixed(3), 'sub')}
+        ${line('Present value', c=>m((kind==='ff'?c.fcff:c.fcfe)*c[df]), m(R_.pvTV), 'tot')}
+        ${v('Cash generated to '+r.lastY.lab+' (undiscounted) + terminal value', `${m(R_.cum)} + ${m(R_.tv)} = <b>${m(R_.cum+R_.tv)}</b>`)}
+        ${v('PV of cash flows + PV of terminal value', `${m(R_.pv)} + ${m(R_.pvTV)} = <b>${m(kind==='ff'?R_.ev:R_.eq)}</b> &nbsp;<span class="card-sub">(terminal value ${pc(R_.pvTV/(R_.pv+R_.pvTV))} of the total)</span>`)}
+        ${kind==='ff' ? v('Enterprise value − net debt = equity value', `${m(R_.ev)} − ${m(r.netDebt)} = <b>${m(R_.eq)}</b>`) : ''}
+        ${v('Value per share', `<b>$${R_.ps.toFixed(2)}</b> vs $${st.price.toFixed(2)} &nbsp;<span class="g ${up>=0?'pos':'neg'}">${up>=0?'+':'−'}${Math.abs(up*100).toFixed(1)}% ${up>=0?'upside':'downside'}</span>`, 'dk')}
+      </tbody></table>`;
+    };
+    tbl('dcfFF','ff'); tbl('dcfFE','fe');
+    document.getElementById('dcfSrc').textContent = `Price: ${MKT.src}, ${MKT.asOf}. Shares: ${MKT.sharesSrc}. Net debt uses corporate debt (warehouse, securitization and convertible facilities plus residual interests) less cash and cash equivalents at ${r.last.lab}; deposits are funding for the bank and are not treated as debt. Revenue, EBITDA and EPS are SoFi's adjusted figures (actuals) and the Model tab (estimates). FCFE = cash from operations excluding loans held for sale, less capex, from the Model's cash flow statement; FCFF adds back after-tax interest on that debt (securitizations, warehouses and corporate borrowings). The ${r.flows[0].lab} counts only the part of the quarter after the valuation date (${MKT.asOf}); cash flows are discounted from each period end. Default exit multiples equal today's FY2027E multiples; default pre-tax cost of debt = FY2025 interest on debt / average debt (${r.kdDef.toFixed(2)}%). Beta, risk-free rate and equity risk premium are assumptions to edit.`;
+  }
+  document.getElementById('dcfIn').addEventListener('change', e=>{
+    const k=e.target.dataset.k; if(!k) return;
+    const v=parseFloat(e.target.value); st[k]=isNaN(v)?DEF[k]:v; save(); render();
+  });
+  return {render, reset(){ st={...DEF}; save(); render(); }};
+})();
+
 let modelRendered=false;
 function renderModel(){ if(modelRendered) return; MODEL.render(); modelRendered=true; }
 document.getElementById('hideSubs').addEventListener('change',e=>MODEL.setHideSubs(e.target.checked));
@@ -2306,6 +2445,7 @@ function showMain(m){
   try{ localStorage.setItem('pvg-main',m); }catch(e){}
   if(m==='valuation' && vtab==='model') renderModel();
   if(m==='valuation' && vtab==='ave') AVE.render();
+  if(m==='valuation' && vtab==='dcf') DCF.render();
   renderView(current);
 }
 document.querySelectorAll('.mtab').forEach(t=>t.addEventListener('click',()=>showMain(t.dataset.main)));
@@ -2316,6 +2456,7 @@ function showVtab(v){
   try{ localStorage.setItem('pvg-vtab',v); }catch(e){}
   if(v==='model' && mainTab==='valuation') renderModel();
   if(v==='ave' && mainTab==='valuation') AVE.render();
+  if(v==='dcf' && mainTab==='valuation') DCF.render();
 }
 document.querySelectorAll('.vtab').forEach(t=>t.addEventListener('click',()=>showVtab(t.dataset.vtab)));
 document.querySelectorAll('#m-earnings .tab').forEach(t=>t.addEventListener('click',()=>{
