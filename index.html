@@ -71,12 +71,53 @@ html.mobile .nav-item .ic-desk{display:block}
 .co-card:hover{border-color:var(--accent);transform:translateY(-1px)}
 .co-card{padding:22px 16px}
 .co-card .nm{font-size:13px;font-weight:600;line-height:1.3}
+/* Glass company cards: brand-tinted glow behind a frosted medallion */
+.co-card.gl{position:relative;overflow:hidden;gap:14px;padding:26px 16px 20px;border-radius:16px;
+  background:radial-gradient(90% 60% at 50% 22%,var(--tint-a),transparent 70%),var(--card-bg);
+  transition:border-color .2s,transform .2s,box-shadow .2s}
+.co-card.gl:hover{border-color:var(--tint);transform:translateY(-3px);box-shadow:0 14px 30px -12px var(--tint-d),var(--shadow)}
+.co-card.gl:hover .glass{transform:scale(1.04)}
+.co-card .glass{width:76px;height:76px;transition:transform .25s}
 
 /* Main */
 .main{min-width:0;display:flex;flex-direction:column}
 .back{border:0;background:none;color:var(--text-secondary);font:500 12px 'Figtree',sans-serif;cursor:pointer;padding:4px 8px 4px 0}
 .back:hover{color:var(--accent)}
-.co-id{display:flex;align-items:center;gap:12px}
+.co-id{display:flex;align-items:center;gap:14px;position:relative}
+/* Company identity: Apple-style glass medallion over a soft brand-tinted glow */
+.topbar{position:relative;overflow:hidden}
+.topbar::before{content:"";position:absolute;left:60px;top:50%;width:260px;height:180px;transform:translateY(-50%);
+  background:radial-gradient(closest-side,var(--tint-a,rgba(46,117,182,.18)),transparent);pointer-events:none;filter:blur(8px)}
+.topbar > *{position:relative}
+.glass{position:relative;display:inline-flex;align-items:center;justify-content:center;flex:none;width:56px;height:56px;border-radius:50%;
+  background:
+    radial-gradient(120% 90% at 30% 0%,rgba(255,255,255,.95),rgba(255,255,255,.35) 55%,rgba(255,255,255,.18)),
+    linear-gradient(160deg,var(--tint-b,rgba(46,117,182,.25)),rgba(255,255,255,0) 70%);
+  -webkit-backdrop-filter:blur(18px) saturate(180%);backdrop-filter:blur(18px) saturate(180%);
+  border:1px solid rgba(255,255,255,.7);
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.95),inset 0 -6px 12px var(--tint-c,rgba(46,117,182,.12)),
+    0 8px 22px -6px var(--tint-d,rgba(46,117,182,.35)),0 2px 5px rgba(20,28,43,.08)}
+.glass::after{content:"";position:absolute;left:14%;right:14%;top:5%;height:42%;border-radius:50% 50% 45% 45%/60% 60% 40% 40%;
+  background:linear-gradient(180deg,rgba(255,255,255,.75),rgba(255,255,255,0));pointer-events:none}
+.glass img{position:relative;width:50%;height:50%;object-fit:contain;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.12))}
+:root[data-theme="dark"] .glass{background:
+    radial-gradient(120% 90% at 30% 0%,rgba(255,255,255,.22),rgba(255,255,255,.06) 55%,rgba(255,255,255,.03)),
+    linear-gradient(160deg,var(--tint-b,rgba(46,117,182,.3)),rgba(255,255,255,0) 70%);
+  border-color:rgba(255,255,255,.16);box-shadow:inset 0 1px 1px rgba(255,255,255,.28),inset 0 -6px 12px var(--tint-c),0 8px 24px -6px var(--tint-d),0 2px 6px rgba(0,0,0,.35)}
+:root[data-theme="dark"] .glass::after{background:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,0))}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .glass{background:
+      radial-gradient(120% 90% at 30% 0%,rgba(255,255,255,.22),rgba(255,255,255,.06) 55%,rgba(255,255,255,.03)),
+      linear-gradient(160deg,var(--tint-b,rgba(46,117,182,.3)),rgba(255,255,255,0) 70%);
+    border-color:rgba(255,255,255,.16);box-shadow:inset 0 1px 1px rgba(255,255,255,.28),inset 0 -6px 12px var(--tint-c),0 8px 24px -6px var(--tint-d),0 2px 6px rgba(0,0,0,.35)}
+  :root:not([data-theme="light"]) .glass::after{background:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,0))}
+}
+.co-title{display:flex;flex-direction:column;gap:5px;min-width:0}
+.co-title .nm{font-size:19px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+.co-tags{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;height:20px;padding:0 8px;border-radius:10px;font-size:11px;font-weight:600;letter-spacing:.02em;
+  color:var(--text-secondary);background:var(--neutral-bg);border:1px solid var(--border)}
+.chip.tk-chip{color:var(--tint,var(--accent));background:var(--tint-e,var(--accent-light));border-color:transparent;font-weight:700;letter-spacing:.05em}
 .topbar{background:var(--card-bg);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
 .tk{font-size:15px;font-weight:700}
 .tk-name{color:var(--text-secondary);font-size:13px}
@@ -114,7 +155,7 @@ html.mobile .nav-item .ic-desk{display:block}
 .xl tr.hA th{top:0;height:26px}
 .xl tr.hB th{top:26px;height:24px}
 .xl tr.hC th{top:50px;height:20px;font-size:10px;font-weight:500;color:var(--text-tertiary);border-bottom:2px solid var(--text-tertiary)}
-.xl th.band{text-align:center;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff;border-right:0}
+.xl th.band{text-align:left;padding-left:10px;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff;border-right:0}
 .xl th.band-a{background:var(--band-a)}
 .xl th.band-p{background:var(--band-p)}
 .xl th.co-name{font-size:12.5px;font-weight:700}
@@ -127,9 +168,12 @@ html.mobile .nav-item .ic-desk{display:block}
 /* body */
 .xl td.p{background:var(--proj)}
 .xl td.inp{background:var(--inp-bg);color:var(--inp-fg)}
-.xl tr.sec td{background:var(--sec-bg);font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-primary);height:24px;border-bottom:1px solid var(--text-tertiary)}
+.xl tr.sec td{background:var(--sec-bg);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-primary);height:34px;border-bottom:2px solid var(--accent);cursor:pointer;user-select:none}
+.xl tr.sec:hover td{background:var(--sec-hover,var(--accent-light))}
+.xl tr.sec td.c-lab{padding-left:10px !important}
+.xl tr.sec .sec-n{margin-left:10px;font-size:10.5px;font-weight:600;letter-spacing:.02em;text-transform:none;color:var(--text-tertiary)}
 .xl tr.sec td.c-lab{background:var(--sec-bg)}
-.xl tr.spacer td{height:10px;border-right:0;border-bottom:0;background:var(--card-bg)}
+.xl tr.spacer td{height:22px;border-right:0;border-bottom:0;background:var(--card-bg)}
 .xl tr.spacer td.p{background:var(--card-bg)}
 .xl tbody tr:not(.sec):not(.spacer) td.c-lab{padding-left:22px}
 .xl tr.b td{font-weight:600}
@@ -144,6 +188,26 @@ html.mobile .nav-item .ic-desk{display:block}
 .xl .ol{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;padding:0;margin-right:7px;vertical-align:-2px;border:1px solid var(--text-tertiary);border-radius:2px;background:var(--card-bg);color:var(--text-secondary);font:700 11px/1 'Figtree',sans-serif;cursor:pointer}
 .xl .ol:hover{border-color:var(--accent);color:var(--accent)}
 .xl .ol-sp{display:inline-block;width:14px;margin-right:7px}
+/* Chevron toggles for sections, line items and sub-groups */
+.xl .chev{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;padding:0;margin:0 6px 0 -2px;vertical-align:-3px;border:0;border-radius:4px;background:transparent;color:var(--text-tertiary);cursor:pointer;transition:background .15s,color .15s}
+.xl .chev svg{width:10px;height:10px;transition:transform .18s ease}
+.xl .chev[aria-expanded="false"] svg{transform:rotate(-90deg)}
+.xl .chev:hover{background:var(--accent-light);color:var(--accent)}
+.xl tr.sec .chev{width:20px;height:20px;margin-right:8px;color:var(--accent)}
+.xl tr.sec .chev svg{width:12px;height:12px}
+.xl tr.sec.closed td{border-bottom-color:var(--border)}
+.xl tr.subh .chev{color:var(--accent)}
+.stmt-seg{display:inline-flex;padding:3px;border-radius:10px;background:var(--main-bg);border:1px solid var(--border);gap:2px}
+.stmt-seg button{border:0;background:transparent;padding:7px 16px;border-radius:7px;font:600 13px 'Figtree',sans-serif;color:var(--text-secondary);cursor:pointer;white-space:nowrap}
+.stmt-seg button:hover{color:var(--text-primary)}
+.stmt-seg button.on{background:var(--card-bg);color:var(--text-primary);box-shadow:0 1px 3px rgba(0,0,0,.10)}
+.stmt-head{display:flex;align-items:baseline;gap:10px;padding:14px 20px 10px}
+.stmt-title{font-size:20px;font-weight:700;letter-spacing:-.02em}
+.stmt-empty{padding:56px 20px;text-align:center;color:var(--text-secondary);font-size:13.5px;border-top:1px solid var(--border)}
+.stmt-empty b{display:block;font-size:15px;color:var(--text-primary);margin-bottom:6px}
+html.mobile .stmt-seg{display:flex;width:100%}
+html.mobile .stmt-seg button{flex:1;padding:7px 6px;font-size:12px}
+html.mobile .stmt-title{font-size:17px}
 .xl tbody tr.ind:not(.sub) td.c-lab{padding-left:30px}
 .xl td.bt{color:var(--accent);background:var(--proj)}
 .xl tr.b td.bt,.xl tr.tot td.bt{color:var(--accent)}
@@ -157,6 +221,8 @@ html.mobile .nav-item .ic-desk{display:block}
 .xl tr.hB th.btc{line-height:1.05}
 .xl th.band .ol.ol-txt{width:auto;height:18px;padding:0 8px;margin:0 0 0 12px;font-size:10px;font-weight:600;letter-spacing:.03em;text-transform:none;border-radius:9px}
 .xl th.band .ol{background:transparent;color:#fff;border-color:rgba(255,255,255,0.7);margin-right:8px}
+.xl th.band-q{padding:0 6px;letter-spacing:.04em;white-space:nowrap}
+.xl th.band-q .ol{margin:0 0 0 6px}
 .xl th.band .ol:hover{background:rgba(255,255,255,0.15);color:#fff}
 .xl .colx{width:46px;min-width:46px;max-width:46px;padding:0 4px;text-align:center}
 .xl td.colx{background:var(--main-bg)}
@@ -242,6 +308,9 @@ html.mobile .stat{padding:12px}
 html.mobile .stat .v{font-size:18px}
 html.mobile .topbar{padding:10px 16px;gap:10px}
 html.mobile .back{white-space:nowrap}
+html.mobile .glass{width:46px;height:46px}
+html.mobile .co-title .nm{font-size:16px}
+html.mobile .topbar::before{left:30px;width:200px}
 html.mobile .top-meta{margin-left:0;width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 html.mobile .meta{align-items:flex-start;min-width:0}
 html.mobile .meta .l{white-space:normal;line-height:1.3}
@@ -307,41 +376,23 @@ html.mobile .xl-wrap{max-height:calc(100vh - 190px)}
       <div class="co-id">
         <button class="back" id="backBtn">← Companies</button>
         <span id="coLogo"></span>
-        <div>
-          <div class="tk" id="coTicker"></div>
-          <div class="tk-name" id="coName"></div>
+        <div class="co-title">
+          <div class="nm" id="coName"></div>
+          <div class="co-tags" id="coTags"></div>
         </div>
       </div>
       <div class="top-meta" id="coMeta"></div>
     </header>
     <nav class="tabs" role="tablist">
       <button class="mtab active" data-main="tesis">Thesis</button>
-      <button class="mtab" data-main="modelo">Model</button>
       <button class="mtab" data-main="earnings">Earnings</button>
+      <button class="mtab" data-main="valuation">Valuation</button>
     </nav>
 
     <!-- ============ TESIS ============ -->
     <div class="mview active" id="m-tesis">
       <section class="view active">
         <div class="placeholder"><h2>Investment thesis</h2><p>The thesis for the position will go here: why we own it, catalysts, risks and what would make us change our mind. In progress.</p></div>
-      </section>
-    </div>
-
-    <!-- ============ MODELO ============ -->
-    <div class="mview" id="m-modelo">
-      <section class="view active">
-        <div class="card">
-          <div class="card-h">
-            <div><span class="card-t">Income statement</span><span class="card-sub">(US$M unless noted · KPIs in thousands)</span></div>
-            <div class="ctrls">
-              <div class="legend"><span><i style="background:#FFF4CC"></i>Input / assumption</span><span><i style="background:rgba(46,117,182,0.12)"></i>Projected</span><span><sup style="color:var(--warning)">*</sup> Derived (FY − 9M)</span><span><u>123</u> Derived from rounded disclosure</span></div>
-              <div class="tbtns"><button class="tbtn" id="olExpand">+ Expand all</button><button class="tbtn" id="olCollapse">− Collapse all</button></div>
-              <label class="chk"><input type="checkbox" id="hideSubs"> Hide growth and common-size rows</label>
-            </div>
-          </div>
-          <div class="xl-wrap" id="modelTable"></div>
-          <div class="src">Source: SoFi 10-Qs (Q1'23–Q2'26), Q1–Q3'26 earnings releases (Tables 1, 2, 4 and 7), 2023–2025 10-Ks and earnings calls (2025–2026). Standard layout: total revenue and its breakdown → cost of revenue → gross income → operating expenses → operating income → non-operating items → EBT → taxes → net income → EBITDA bridge → adjusted EBITDA. Revenue is shown by type (interest and noninterest income) and then by segment, as SoFi reports it (10-Q segment notes and Table 6; Corporate/Other absorbs funds-transfer-pricing differences and intercompany eliminations, and SoFi's allocation methodology changed over time). Projected segment split: Lending and Financial Services keep the prior period's share of net interest income, Lending noninterest income = loan origination/sales/servicing, Financial Services noninterest income = LPB + other fee income + crypto, Technology Platform = technology revenue + prior intercompany fees, Corporate/Other is the balancing item. SoFi has no cost of revenue or non-operating line: interest expense and gains on debt are reported inside net revenue. Costs are shown as negatives. 2022 quarters and FY2022 are not shown; they are the base for YoY growth. * Q4'23, Q4'24 and Q4'25 = full year per the 10-K less nine months. Q1–Q2'23 LPB fees and referrals are split pro rata from the reported referral totals (dotted underline); 2022 quarters likewise. FY2026E = Q1–Q3'26 actuals + Q4'26E; FY2027E = sum of projected quarters; FY2028E–FY2030E are annual-only projections anchored to SoFi's medium-term guidance (Jan-26: ≥30% adj. net revenue CAGR and 38–42% adj. EPS CAGR 2025–28) and 2030 ambitions (100M products, ~50M members). Yellow cells are projection inputs. Use "+ projected at the time" on an actual block to add, next to each past period, a blue column with what this model would have projected using only data through the prior period: net adds, growth rates, yields, take rates and cost ratios of the prior period carried forward (FY2023 would need FY2021 data). Growth above ±1,000% or on a negative base is shown as n/m.</div>
-        </div>
       </section>
     </div>
 
@@ -547,6 +598,40 @@ html.mobile .xl-wrap{max-height:calc(100vh - 190px)}
       <div class="insight" id="ins-anual"></div>
     </section>
     </div>
+
+    <!-- ============ VALUATION ============ -->
+    <div class="mview" id="m-valuation">
+    <nav class="subtabs" role="tablist">
+      <button class="tab vtab active" data-vtab="model">Model</button>
+      <button class="tab vtab" data-vtab="ave">Actual vs Estimates</button>
+      <button class="tab vtab" data-vtab="guidance">Guidance Revisions</button>
+    </nav>
+      <section class="view active" id="vv-model">
+        <div class="card">
+          <div class="card-h">
+            <div class="stmt-seg" id="stmtSeg" role="tablist">
+              <button data-stmt="is" class="on">Income statement</button>
+              <button data-stmt="bs">Balance sheet</button>
+              <button data-stmt="cf">Cash flow statement</button>
+            </div>
+            <div class="ctrls">
+              <div class="legend"><span><i style="background:#FFF4CC"></i>Input / assumption</span><span><i style="background:rgba(46,117,182,0.12)"></i>Projected</span><span><sup style="color:var(--warning)">*</sup> Derived (FY − 9M)</span><span><u>123</u> Derived from rounded disclosure</span></div>
+              <div class="tbtns"><button class="tbtn" id="olExpand">+ Expand all</button><button class="tbtn" id="olCollapse">− Collapse all</button></div>
+              <label class="chk"><input type="checkbox" id="hideSubs"> Hide growth and common-size rows</label>
+            </div>
+          </div>
+          <div class="stmt-head"><span class="stmt-title" id="stmtTitle">Income statement</span><span class="card-sub" id="stmtSub">US$M unless noted · KPIs in thousands</span></div>
+          <div class="xl-wrap" id="modelTable"></div>
+        </div>
+      </section>
+      <section class="view" id="vv-ave">
+        <div class="placeholder"><h2>Actual vs Estimates</h2><p>Reported results against our model and consensus estimates, quarter by quarter: beats, misses and the size of each surprise. In progress.</p></div>
+      </section>
+      <section class="view" id="vv-guidance">
+        <div class="placeholder"><h2>Guidance Revisions</h2><p>How SoFi's guidance has moved over time: first guide, each raise or cut, and the final result for every period. In progress.</p></div>
+      </section>
+    </div>
+
   </div>
 </div>
 
@@ -1197,6 +1282,35 @@ const MODEL = (() => {
     sF_non: [17661,17438,20795,19208, 23064,23415,25146,30043, 30838,36903,84165,96183, 129920,169211,215963,248931, 200803,217226,243841, 75102,101668,248089,764025],
     sC_nii: [-5303,-4199,-9824,-20632, -23074,-15396,-13926,17002, 15968,-6412,-40030,-35851, -35507,-48426,-46951,-35688, -35338,-35177,-23062, -39958,-35394,-66325,-166572],
     sC_non: [-1690,-4653,-1615,-1349, -837,-3702,-6008,9254, 53634,-7245,59,-7175, -12653,-12508,-19032,-17057, -10343,-21728,-25647, -9307,-1293,39273,-61250],
+    // Balance sheet: period-end balances (US$K) from the 10-Q / 10-K balance sheets and the Q3'26 release (Table 3).
+    // FY columns = December balance. Q1'22 from the Q1'22 10-Q (securitization investments shown in investment securities, as SoFi did from 2023); Q2–Q3'22 not on hand.
+    cash:    [1325135,null,null,1421907,2487778,3015652,2813876,3085020,3693390,2334589,2354965,2538293,2085697,2122502,3246351,4929452,3401020,3126237,2809582,1421907,3085020,2538293,4929452],
+    rcash:   [377077,null,null,424395,489736,485476,483141,530558,454518,397043,614794,171067,630439,592101,500096,427321,360231,439322,789194,424395,530558,171067,427321],
+    inv:     [525210,null,null,396769,360068,548232,579738,701935,973098,1566087,1554285,1895689,2153456,2374810,2512437,2575607,3231227,4225652,4992659,396769,701935,1895689,2575607],
+    hfs:     [7002885,null,null,13557074,15858105,18213667,20993836,15396771,15116482,15893565,17324514,17684892,18226063,20063089,21587350,22862749,25454796,29737289,34014991,13557074,15396771,17684892,22862749],
+    hfiFV:   [0,null,null,0,0,0,0,6725484,6834161,7194762,7876667,8597368,9571457,10741641,11827987,13657578,15336820,16920564,18518655,0,6725484,8597368,13657578],
+    hfiAC:   [219116,null,null,307957,328029,347551,361248,836159,1250231,2172528,1417262,1246458,1296413,1413385,1483950,1516736,1381174,1275529,1208597,307957,836159,1246458,1516736],
+    servR:   [173505,null,null,149854,146514,145663,142654,180469,240752,291329,296127,342128,389780,375006,383526,378178,367902,364318,364617,149854,180469,342128,378178],
+    ppe:     [131537,null,null,170104,180109,191352,201931,216908,228049,246286,266226,287869,316599,354755,386629,416448,448488,496712,558355,170104,216908,287869,416448],
+    gwA:     [1615694,null,null,1622991,1622991,1640679,1393505,1393505,1393505,1393505,1393505,1393505,1393505,1393505,1393505,1393505,1393505,1425015,1425159,1622991,1393505,1393505,1393505],
+    intang:  [505526,null,null,442155,419880,412099,387307,364048,347495,331446,314959,297794,279757,263522,247845,231919,215087,226528,208093,442155,364048,297794,231919],
+    rou:     [112400,null,null,97135,94283,94523,93379,89635,87362,83352,84149,81219,77841,77213,79419,93941,88856,86149,103117,97135,89635,81219,93941],
+    othA:    [258491,null,null,417334,465468,466555,526538,554366,686717,737487,882723,1714669,1328279,1340642,1644355,2177044,2019152,2624233,2773757,417334,554366,1714669,2177044],
+    totA:    [12246576,null,null,19007675,22452961,25561449,27977153,30074858,31305760,32641979,34380176,36250951,37749286,41112171,45293450,50660478,53698258,60947548,67766776,19007675,30074858,36250951,50660478],
+    depI:    [1060324,null,null,7265792,10016404,12672392,15607349,18568993,21550137,22945652,24351778,25861400,27136167,29411104,32805663,37387350,40119699,45416257,51188033,7265792,18568993,25861400,37387350],
+    depN:    [95598,null,null,76504,72037,67681,64624,51670,54457,51311,56008,116804,120361,129570,140736,118045,122998,126903,136989,76504,51670,116804,118045],
+    dep:     [1155922,null,null,7342296,10088441,12740073,15671973,18620663,21604594,22996963,24407786,25978204,27256528,29540674,32946399,37505395,40242697,45543160,51325022,7342296,18620663,25978204,37505395],
+    apOth:   [437319,null,null,516215,554106,632459,566477,549748,554185,535372,569018,556923,674385,676293,759612,743716,729265,923024,1167208,516215,549748,556923,743716],
+    leaseL:  [135955,null,null,117758,114902,115224,113361,108649,105556,100797,101028,97389,93135,91434,93004,106190,100707,104083,116010,117758,108649,97389,106190],
+    debt:    [4916175,null,null,5485882,6125501,6484326,6241386,5233416,2891317,3106629,3180205,3092692,3046145,3942636,2713942,1815162,1813481,3300544,3862925,5485882,5233416,3092692,1815162],
+    resid:   [70532,null,null,17048,15565,11332,10194,7396,4129,724,658,609,579,554,530,520,517,510,474,17048,7396,609,520],
+    totL:    [6715903,null,null,13479199,16898515,19983414,22603391,24519872,25159781,26740485,28258695,29725817,31070772,34251591,36513487,40170983,42886667,49871321,56471639,13479199,24519872,29725817,40170983],
+    pref:    [320374,null,null,320374,320374,320374,320374,320374,320374,0,0,0,0,0,0,0,0,0,0,320374,320374,0,0],
+    cs:      [91,null,null,93,94,94,95,97,105,106,108,109,110,111,120,126,127,128,129,93,97,109,126],
+    apic:    [6509643,null,null,6719826,6778262,6848178,6904869,7039987,7543808,7601687,7751335,7838988,7910058,7994095,9768122,11302668,11471754,11589035,11679736,6719826,7039987,7838988,11302668],
+    aoci:    [-5964,null,null,-8296,-6341,-5119,600,-1209,-2088,-1483,8109,-8365,2828,3593,9548,10979,-2743,-11981,-124762,-8296,-1209,-8365,10979],
+    accDef:  [-1293471,null,null,-1503521,-1537943,-1585492,-1852176,-1804263,-1716220,-1698816,-1638071,-1305598,-1234482,-1137219,-997827,-824278,-657547,-500955,-259966,-1503521,-1804263,-1305598,-824278],
+    eq:      [5210299,null,null,5208102,5234072,5257661,5053388,5234612,5825605,5901494,6121481,6525134,6678514,6860580,8779963,10489495,10811591,11076227,11295137,5208102,5234612,6525134,10489495],
     adjGain:  [0,0,0,0,0,0,0,-14574, -59194,0,-3323,0, 0,0,0,0,0,0,0, 0,-14574,-62517,0],
   };
   const PER_SHARE = {
@@ -1204,7 +1318,8 @@ const MODEL = (() => {
     epsD:   [-0.14,-0.12,-0.09,null,-0.05,-0.06,-0.29,null, 0.02,0.01,0.05,null, 0.06,0.08,0.11,0.13,0.12,0.12,0.18, -0.40,-0.36,0.39,0.39],
     adjEps: [-0.14,-0.12,-0.09,null,-0.05,-0.06,-0.02,null, null,null,null,null, 0.06,0.08,0.11,0.13,0.12,0.12,0.18, -0.40,-0.10,0.15,0.39],
   };
-  const MONEY = new Set(['avgIEA','avgLoans','intLoans','intOther','expSec','expDep','expCorp','expOther','losss','techRev','lpf','crypto','otherNII','prov','tpd','sm','coo','ga','gw','tax','adjRev','da','sbc','ebitda','adjNI','fLPF','fRefLPB','fRefOth','fInterch','fBrok','fOrig','fTech','fCrypto','fOther','shBasic','shDil','adjRestr','adjTrans','adjImp','adjFX','adjSR','adjResid','adjGain','sL_nii','sL_non','sT_nii','sT_non','sF_nii','sF_non','sC_nii','sC_non']);
+  const MONEY = new Set(['avgIEA','avgLoans','intLoans','intOther','expSec','expDep','expCorp','expOther','losss','techRev','lpf','crypto','otherNII','prov','tpd','sm','coo','ga','gw','tax','adjRev','da','sbc','ebitda','adjNI','fLPF','fRefLPB','fRefOth','fInterch','fBrok','fOrig','fTech','fCrypto','fOther','shBasic','shDil','adjRestr','adjTrans','adjImp','adjFX','adjSR','adjResid','adjGain','sL_nii','sL_non','sT_nii','sT_non','sF_nii','sF_non','sC_nii','sC_non',
+    'cash','rcash','inv','hfs','hfiFV','hfiAC','servR','ppe','gwA','intang','rou','othA','totA','depI','depN','dep','apOth','leaseL','debt','resid','totL','pref','cs','apic','aoci','accDef','eq']);
   const pick = i => { const o={}; for(const k in RAW){ const v=RAW[k][i]; o[k]= v===null ? null : MONEY.has(k) ? v/1000 : v; } for(const k in PER_SHARE) o[k]=PER_SHARE[k][i]; return o; };
 
   // ---- Projection assumptions (input cells) ----
@@ -1310,7 +1425,31 @@ const MODEL = (() => {
     o.fLPB = sum(o.fLPF,o.fRefLPB);
     o.fFS = sum(o.fRefOth,o.fInterch,o.fBrok,o.fCrypto??0);
     o.feeTot = sum(o.fLPB,o.fOrig,o.fFS,o.fTech,o.fOther);
+    o.loans = sum(o.hfs,o.hfiFV,o.hfiAC);
+    o.csApic = sum(o.cs,o.apic);
+    o.tangEq = sum(o.eq,isN(o.gwA)?-o.gwA:null,isN(o.intang)?-o.intang:null);
+    o.bsCheck = isN(o.totA)&&isN(o.totL)&&isN(o.eq) ? (Math.round((o.totA-o.totL-(o.pref||0)-o.eq)*1000)/1000 || 0) : null;
     return o;
+  }
+  // Projected balance sheet: assets grow with average interest-earning assets; goodwill, intangibles and
+  // right-of-use assets stay flat; deposits, payables and lease liabilities keep their share of total assets;
+  // equity rolls forward with net income and share-based compensation; debt is the balancing item.
+  const BS_SCALED = ['cash','rcash','inv','hfs','hfiFV','hfiAC','servR','ppe','othA'];
+  function buildBS(o, L){
+    if(!isN(L.totA) || !isN(o.avgIEA) || !isN(L.avgIEA)) return o;
+    o.totA = L.totA*o.avgIEA/L.avgIEA;
+    ['gwA','intang','rou'].forEach(k=>o[k]=L[k]);
+    const fixed = o.gwA+o.intang+o.rou, base = BS_SCALED.reduce((t,k)=>t+(L[k]||0),0);
+    BS_SCALED.forEach(k=>o[k]=(L[k]||0)/base*(o.totA-fixed));
+    o.dep = o.totA*L.dep/L.totA; o.depN = o.dep*L.depN/L.dep; o.depI = o.dep-o.depN;
+    o.apOth = o.totA*L.apOth/L.totA; o.leaseL = o.totA*L.leaseL/L.totA; o.resid = L.resid;
+    o.pref = L.pref||0; o.cs = L.cs; o.aoci = L.aoci;
+    o.apic = L.apic+(o.sbc||0); o.accDef = L.accDef+(o.ni||0);
+    o.eq = o.cs+o.apic+o.aoci+o.accDef;
+    const plug = o.totA-o.dep-o.apOth-o.leaseL-o.resid-o.pref-o.eq;
+    if(plug>=0) o.debt = plug; else { o.debt = 0; o.cash -= plug; o.totA -= plug; }
+    o.totL = o.dep+o.apOth+o.leaseL+o.debt+o.resid;
+    return derive(o);
   }
   const FEE_KEYS = ['fLPF','fRefLPB','fRefOth','fInterch','fBrok','fOrig','fTech','fCrypto','fOther'];
   const ADJ_KEYS = ['adjRestr','adjTrans','adjImp','adjFX','adjSR','adjResid','adjGain'];
@@ -1363,10 +1502,10 @@ const MODEL = (() => {
     o.shBasic=L.shBasic*(1+a.gSh); o.shDil=L.shDil*(1+a.gSh);
     o.adjSh=(L.adjSh||ADJ_SH_Q3_26)*(1+a.gSh);
     o.da=L.da*(1+a.gDA); o.sbc=L.sbc*(1+a.gSBC);
-    Q.push(buildPL(o, L, a, o.days/365));
+    Q.push(buildBS(buildPL(o, L, a, o.days/365), L));
   });
   const Y = YLAB.map((lab,j)=>derive({...pick(QLAB.length+j), days:YDAYS[j], lab, end:'Dec-'+lab.slice(-2)}));
-  const STOCK=['members','lendProd','fsProd','techAcc'];
+  const STOCK=['members','lendProd','fsProd','techAcc','cash','rcash','inv','hfs','hfiFV','hfiAC','servR','ppe','gwA','intang','rou','othA','totA','depI','depN','dep','apOth','leaseL','debt','resid','totL','pref','cs','apic','aoci','accDef','eq'];
   const FLOW=['oPL','oSL','oHL','oSB','lpbVol','intLoans','intOther','expSec','expDep','expCorp','expOther','losss','techRev','lpf','crypto','otherNII','prov','tpd','sm','coo','ga','gw','tax','adjRev','da','sbc','ebitda','adjNI',...FEE_KEYS,...ADJ_KEYS,'sL_nii','sL_non','sT_nii','sT_non','sF_nii','sF_non','sC_nii','sC_non'];
   function yearFrom(qs, lab, end){
     const o={days:qs.reduce((s,q)=>s+q.days,0), lab, end, proj:true, fromQ:true};
@@ -1398,7 +1537,7 @@ const MODEL = (() => {
     o.crypto=(P.crypto??0)*(1+a.gOther); o.otherNII=P.otherNII*(1+a.gOther);
     o.shBasic=P.shBasic*(1+a.gSh); o.shDil=P.shDil*(1+a.gSh); o.adjSh=P.adjSh*(1+a.gSh);
     o.da=P.da*(1+a.gDA); o.sbc=P.sbc*(1+a.gSBC);
-    Y.push(buildPL(o, P, a, 1));
+    Y.push(buildBS(buildPL(o, P, a, 1), P));
     o.end='Dec-'+lab.slice(4,6).replace('20','');
   });
   Y.forEach(y=>{ if(y.lab.startsWith('FY20')) y.end='Dec-'+y.lab.slice(4,6); });
@@ -1432,7 +1571,7 @@ const MODEL = (() => {
     o.crypto=L.crypto??0; o.otherNII=L.otherNII*(1+gr(L.otherNII,L2.otherNII));
     o.shDil=L.shDil??L2.shDil; o.shBasic=L.shBasic??L2.shBasic; o.adjSh=o.shDil;
     o.da=L.da*(1+gr(L.da,L2.da)); o.sbc=L.sbc*(1+gr(L.sbc,L2.sbc));
-    BQ[i]=buildPL(o, L, a, o.days/365);
+    BQ[i]=buildBS(buildPL(o, L, a, o.days/365), L);
   }
   for(let j=2;j<YLAB.length;j++){                 // FY2024 and FY2025 (FY2023 would need FY2021)
     const P=Y[j-1], PP=Y[j-2];
@@ -1455,16 +1594,22 @@ const MODEL = (() => {
     o.crypto=P.crypto??0; o.otherNII=P.otherNII*(1+gr(P.otherNII,PP.otherNII));
     o.shDil=P.shDil; o.shBasic=P.shBasic; o.adjSh=P.shDil;
     o.da=P.da*(1+gr(P.da,PP.da)); o.sbc=P.sbc*(1+gr(P.sbc,PP.sbc));
-    BY[j]=buildPL(o, P, a, 1);
+    BY[j]=buildBS(buildPL(o, P, a, 1), P);
   }
 
   // Displayed blocks
+  const CUR_FY = QLAB[QLAB.length-1][1]==='4' ? YLAB.length-1 : YLAB.length;   // index in Y of the fiscal year in progress
   const BLOCKS = [
     {id:'qa', title:'Quarterly · Actual',    short:'Q · Act.',  proj:false, cols:Q.slice(FIRST_SHOWN_Q, QLAB.length).map((v,k)=>({v, kind:'q', qi:FIRST_SHOWN_Q+k}))},
-    {id:'qp', title:'Quarterly · Projected', short:'Q · Proj.', proj:true,  cols:Q.slice(QLAB.length).map((v,k)=>({v, kind:'q', qi:QLAB.length+k}))},
-    {id:'ya', title:'Annual · Actual',       short:'Y · Act.',  proj:false, cols:Y.slice(FIRST_SHOWN_Y, YLAB.length).map((v,k)=>({v, kind:'y', yi:FIRST_SHOWN_Y+k}))},
-    {id:'yp', title:'Annual · Projected',    short:'Y · Proj.', proj:true,  cols:Y.slice(YLAB.length).map((v,k)=>({v, kind:'y', yi:YLAB.length+k}))},
+    {id:'qp', title:'Estimates Qs', short:'Q · Proj.', proj:true,  cols:Q.slice(QLAB.length).map((v,k)=>({v, kind:'q', qi:QLAB.length+k}))},
+    // The current fiscal year (actual quarters + remaining estimates, e.g. FY2026E) sits with the actual years
+    {id:'ya', title:'Annual · Actual',       short:'Y · Act.',  proj:false, cols:Y.slice(FIRST_SHOWN_Y, CUR_FY+1).map((v,k)=>({v, kind:'y', yi:FIRST_SHOWN_Y+k}))},
+    {id:'yp', title:'Annual · Projected',    short:'Y · Proj.', proj:true,  cols:Y.slice(CUR_FY+1).map((v,k)=>({v, kind:'y', yi:CUR_FY+1+k}))},
   ];
+  // Projected quarters shown by default: only those left in the current fiscal year
+  // (all four of next year once the year is fully reported); the rest open with "+ more quarters".
+  const CUR_YY = QLAB[QLAB.length-1].slice(3,5), LAST_IS_Q4 = QLAB[QLAB.length-1][1]==='4';
+  const qpDefault = BLOCKS[1].cols.filter(c=>LAST_IS_Q4 ? c.v.lab.slice(3,5)===String(+CUR_YY+1).padStart(2,'0') : c.v.lab.slice(3,5)===CUR_YY);
   const yoyBase = c => c.kind==='q' ? Q[c.qi-4] : Y[c.yi-1];
   const prevBase = c => c.kind==='q' ? Q[c.qi-1] : Y[c.yi-1];
   // Input highlighting: quarterly projections (inp) and annual-only projections FY2028E+ (inpY)
@@ -1486,7 +1631,7 @@ const MODEL = (() => {
     {l:'vs first guidance', f:(o)=>{ const g=gh(o.lab,'first',key); return isN(g)&&isN(o[key])?o[key]/g-1:null; }, fmt:'g', u:'%', sub:1},
   ];
 
-  const SEC = t => ({sec:t});
+  const SEC = (t, stmt='is') => ({sec:t, stmt});
   const neg = v => isN(v) ? (v===0 ? 0 : -v) : v;          // costs shown as negatives, Excel style
   const ROWS = [
     SEC('Key performance indicators'),
@@ -1688,36 +1833,77 @@ const MODEL = (() => {
     YOY('feeTot'),
     PCT('% of total net revenue','feeTot','totRev'),
 
-    SEC('Guidance track record: what was projected at the time'),
-    ...GROW('adjRev','Adj. net revenue','m'),
-    ...GROW('ebitda','Adj. EBITDA','m'),
-    ...GROW('adjNI','Adj. net income','m'),
-    ...GROW('adjEps','Adj. diluted EPS','ps'),
-    {l:'Medium-term plan: adj. net revenue (floor)', f:o=>gh(o.lab,'mt','adjRev'), fmt:'m', u:'US$M', b:1},
-    {l:'Actual / model vs plan', f:o=>{ const g=gh(o.lab,'mt','adjRev'); return isN(g)?o.adjRev/g-1:null; }, fmt:'g', u:'%', sub:1},
-    {l:'Medium-term plan: adj. diluted EPS (midpoint)', f:o=>gh(o.lab,'mt','adjEps'), fmt:'ps', u:'US$', b:1},
-    {l:'Actual / model vs plan', f:o=>{ const g=gh(o.lab,'mt','adjEps'); return isN(g)?o.adjEps/g-1:null; }, fmt:'g', u:'%', sub:1},
-    {l:'2030 ambition: members', f:o=>gh(o.lab,'amb','members'), fmt:'k', u:'k', b:1},
-    {l:'Model vs ambition', f:o=>{ const g=gh(o.lab,'amb','members'); return isN(g)?o.members/g-1:null; }, fmt:'g', u:'%', sub:1},
-    {l:'2030 ambition: total products', f:o=>gh(o.lab,'amb','products'), fmt:'k', u:'k', b:1},
-    {l:'Model vs ambition', f:o=>{ const g=gh(o.lab,'amb','products'); return isN(g)?o.products/g-1:null; }, fmt:'g', u:'%', sub:1},
+    SEC('Assets','bs'),
+    {l:'Cash and cash equivalents', f:val('cash'), fmt:'m', u:'US$M'},
+    PCT('% of total assets','cash','totA'),
+    {l:'Restricted cash and equivalents', f:val('rcash'), fmt:'m', u:'US$M'},
+    {l:'Investment securities', f:val('inv'), fmt:'m', u:'US$M'},
+    YOY('inv'),
+    {l:'Loans held for sale (at fair value)', f:val('hfs'), fmt:'m', u:'US$M', ind:1},
+    {l:'Loans held for investment, at fair value', f:o=>o.hfiFV||null, fmt:'m', u:'US$M', ind:1},
+    {l:'Loans held for investment, at amortized cost (net)', f:val('hfiAC'), fmt:'m', u:'US$M', ind:1},
+    {l:'Total loans', f:val('loans'), fmt:'m', u:'US$M', b:1},
+    YOY('loans'),
+    QOQ('loans'),
+    PCT('% of total assets','loans','totA'),
+    {l:'Servicing rights', f:val('servR'), fmt:'m', u:'US$M'},
+    {l:'Property, equipment and software', f:val('ppe'), fmt:'m', u:'US$M'},
+    {l:'Goodwill', f:val('gwA'), fmt:'m', u:'US$M'},
+    {l:'Intangible assets', f:val('intang'), fmt:'m', u:'US$M'},
+    {l:'Operating lease right-of-use assets', f:val('rou'), fmt:'m', u:'US$M'},
+    {l:'Other assets', f:val('othA'), fmt:'m', u:'US$M'},
+    {l:'Total assets', f:val('totA'), fmt:'m', u:'US$M', tot:1, key:1},
+    YOY('totA'),
+    QOQ('totA'),
+    SEC('Liabilities','bs'),
+    {l:'Interest-bearing deposits', f:val('depI'), fmt:'m', u:'US$M', ind:1},
+    {l:'Noninterest-bearing deposits', f:val('depN'), fmt:'m', u:'US$M', ind:1},
+    {l:'Total deposits', f:val('dep'), fmt:'m', u:'US$M', b:1},
+    YOY('dep'),
+    QOQ('dep'),
+    PCT('% of total assets','dep','totA'),
+    {l:'Accounts payable, accruals and other liabilities', f:val('apOth'), fmt:'m', u:'US$M'},
+    {l:'Operating lease liabilities', f:val('leaseL'), fmt:'m', u:'US$M'},
+    {l:'Debt (balancing item in projections)', f:val('debt'), fmt:'m', u:'US$M'},
+    YOY('debt'),
+    PCT('% of total assets','debt','totA'),
+    {l:'Residual interests classified as debt', f:val('resid'), fmt:'m', u:'US$M'},
+    {l:'Total liabilities', f:val('totL'), fmt:'m', u:'US$M', tot:1},
+    YOY('totL'),
+    {l:'Temporary equity: redeemable preferred stock', f:o=>o.pref||null, fmt:'m', u:'US$M'},
+    SEC('Equity','bs'),
+    {l:'Common stock and additional paid-in capital', f:val('csApic'), fmt:'m', u:'US$M'},
+    {l:'Accumulated other comprehensive income (loss)', f:val('aoci'), fmt:'m', u:'US$M'},
+    {l:'Accumulated deficit', f:val('accDef'), fmt:'m', u:'US$M'},
+    {l:'Total equity', f:val('eq'), fmt:'m', u:'US$M', tot:1},
+    YOY('eq'),
+    PCT('% of total assets','eq','totA'),
+    {l:'Total liabilities, temporary equity and equity', f:o=>sum(o.totL,o.pref||0,o.eq), fmt:'m', u:'US$M', tot:1, key:1},
+    {l:'Check: assets − liabilities − equity', f:val('bsCheck'), fmt:'m', u:'US$M', sub:1},
+    SEC('Ratios','bs'),
+    {l:'Loans to deposits', f:ratio('loans','dep'), fmt:'p', u:'%'},
+    {l:'Equity to assets', f:ratio('eq','totA'), fmt:'p', u:'%'},
+    {l:'Tangible equity (equity − goodwill − intangibles)', f:val('tangEq'), fmt:'m', u:'US$M'},
+    YOY('tangEq'),
+    {l:'Return on average equity (annualized)', f:(o,c)=>{ const p=prevBase(c)?.eq; return isN(o.ni)&&isN(o.eq)&&isN(p) ? o.ni*(365/o.days)/((o.eq+p)/2) : null; }, fmt:'p', u:'%'},
+    {l:'Return on average tangible equity (annualized)', f:(o,c)=>{ const p=prevBase(c)?.tangEq; return isN(o.ni)&&isN(o.tangEq)&&isN(p) ? o.ni*(365/o.days)/((o.tangEq+p)/2) : null; }, fmt:'p', u:'%'},
   ];
   // Outline structure: each row knows its section and (for sub-rows) its parent line
   // Sub-heading groups (e.g. "By segment") run until the next sub-heading or a row flagged grpEnd
   let secIdx=-1, parentIdx=-1, grpIdx=-1;
   ROWS.forEach((r,i)=>{
-    if(r.sec){ secIdx=i; parentIdx=-1; grpIdx=-1; r.id='s'+i; return; }
+    if(r.sec){ secIdx=i; parentIdx=-1; grpIdx=-1; r.id='s'+i; r.stmt_=r.stmt; return; }
     if(r.subh) grpIdx=i; else if(r.grpEnd) grpIdx=-1;
     r.grp_ = r.subh ? -1 : grpIdx;
-    r.sec_=secIdx; r.id='r'+i;
+    r.sec_=secIdx; r.id='r'+i; r.stmt_=ROWS[secIdx].stmt;
     if(r.sub){ r.parent=parentIdx; if(parentIdx>=0) ROWS[parentIdx].hasSubs=true; } else parentIdx=i;
   });
 
   // ---- Outline state (persisted) ----
   const ST_KEY='pvg-model-outline';
   let S0={}; try{ S0=JSON.parse(localStorage.getItem(ST_KEY)||'{}'); }catch(e){}
-  const state={ sec:new Set(S0.sec||[]), row:new Set(S0.row||[]), blk:new Set(S0.blk||[]), hideSubs:!!S0.hideSubs, grp:new Set(S0.grp||[]), bt:new Set(S0.bt||[]) };
-  const save=()=>{ try{ localStorage.setItem(ST_KEY, JSON.stringify({sec:[...state.sec],row:[...state.row],blk:[...state.blk],hideSubs:state.hideSubs,grp:[...state.grp],bt:[...state.bt]})); }catch(e){} };
+  const state={ sec:new Set(S0.sec||[]), row:new Set(S0.row||[]), blk:new Set(S0.blk||[]), hideSubs:!!S0.hideSubs, grp:new Set(S0.grp||[]), bt:new Set(S0.bt||[]), qx:new Set(S0.qx||[]), stmt:S0.stmt||'is' };
+  const save=()=>{ try{ localStorage.setItem(ST_KEY, JSON.stringify({sec:[...state.sec],row:[...state.row],blk:[...state.blk],hideSubs:state.hideSubs,grp:[...state.grp],bt:[...state.bt],qx:[...state.qx],stmt:state.stmt})); }catch(e){} };
 
   // ---- Render ----
   const FM = {
@@ -1728,6 +1914,8 @@ const MODEL = (() => {
     ps:   v => !isN(v) ? NA : (v<0?'($'+Math.abs(v).toFixed(2)+')':'$'+v.toFixed(v<0.1&&v>0&&Math.round(v*1000)%10!==0?3:2)),
   };
   const DERIVED_COLS = ["Q4'23","Q4'24","Q4'25"];
+  const CHEV = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.25 6 7.75l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const chev = (kind,id,open,title) => `<button class="chev" data-ol="${kind}" data-id="${id}" title="${title}" aria-expanded="${open}">${CHEV}</button>`;
   const btn = (kind,id,open,title) => `<button class="ol" data-ol="${kind}" data-id="${id}" title="${title}" aria-expanded="${open}">${open?'−':'+'}</button>`;
   function visible(r){
     if(r.grp_>=0 && state.grp.has(ROWS[r.grp_].id)) return false;
@@ -1735,30 +1923,48 @@ const MODEL = (() => {
     if(r.sub) return !secClosed && !state.hideSubs && !state.row.has(ROWS[r.parent]?.id);
     return !secClosed || r.tot;
   }
+  const STMT = {is:['Income statement','US$M unless noted · KPIs in thousands'], bs:['Balance sheet','US$M · period-end balances'], cf:['Cash flow statement','US$M']};
   function render(){
+    document.querySelectorAll('#stmtSeg button').forEach(b=>b.classList.toggle('on',b.dataset.stmt===state.stmt));
+    document.getElementById('stmtTitle').textContent=STMT[state.stmt][0];
+    document.getElementById('stmtSub').textContent=STMT[state.stmt][1];
+    const el0=document.getElementById('modelTable');
+    if(!ROWS.some(r=>r.sec && r.stmt===state.stmt)){
+      el0.innerHTML='<div class="stmt-empty"><b>Cash flow statement</b>Coming next: operating, investing and financing cash flows by quarter and year, with the same layout as the income statement and balance sheet.</div>';
+      return;
+    }
     const gap = '<td class="gap"></td>', gapH = '<th class="gap"></th>';
     const blocks = BLOCKS.map(b=>{
       const bt = !b.proj && state.bt.has(b.id);
+      const more = b.id==='qp' && qpDefault.length < b.cols.length;
+      const qxOpen = more && state.qx.has(b.id);
+      if(more && !qxOpen) b = {...b, cols:qpDefault};
+      b = {...b, cols:[...b.cols].reverse()};   // newest period on the left, oldest on the right
       // each displayed column: {c, bt:false} for actual, {c, bt:true} for the projection made at the time
       const dcols = bt ? b.cols.flatMap(c=>[{c,bt:false},{c,bt:true}]) : b.cols.map(c=>({c,bt:false}));
-      return {...b, closed:state.blk.has(b.id), past:!b.proj, btOpen:bt, dcols};
-    });
+      return {...b, closed:state.blk.has(b.id), past:!b.proj, btOpen:bt, dcols, more, qxOpen};
+    }).reverse();   // right to left: annual projected | annual actual | quarterly projected | quarterly actual
     const cells = (fn) => blocks.map((b,bi)=>(bi?gap:'')+(b.closed?'<td class="colx"></td>':b.dcols.map(d=>fn(d.c,b,d.bt)).join(''))).join('');
+    const qxBtn = b => b.more ? `<button class="ol" data-ol="qx" data-id="${b.id}" aria-expanded="${b.qxOpen}" title="${b.qxOpen?'Hide':'Show'} projected quarters beyond the current fiscal year">${b.qxOpen?'−':'+'}</button>` : '';
     const btBtn = b => b.past ? `<button class="ol ol-txt" data-ol="bt" data-id="${b.id}" aria-expanded="${b.btOpen}" title="Show what the model would have projected for each period with data through the prior period">${b.btOpen?'− projected at the time':'+ projected at the time'}</button>` : '';
     const hA = `<tr class="hA"><th class="c-lab co-name">SoFi Technologies, Inc. (SOFI)</th><th class="c-unit"></th>${
       blocks.map((b,bi)=>(bi?gapH:'')+(b.closed
         ? `<th class="band ${b.proj?'band-p':'band-a'} colx" title="${b.title}">${btn('blk',b.id,false,'Expand '+b.title)}</th>`
-        : `<th colspan="${b.dcols.length}" class="band ${b.proj?'band-p':'band-a'}">${btn('blk',b.id,true,'Collapse '+b.title)}<span>${b.title}</span>${btBtn(b)}</th>`)).join('')}</tr>`;
+        : `<th colspan="${b.dcols.length}" class="band ${b.proj?'band-p':'band-a'} ${b.more?'band-q':''}">${b.more?'':btn('blk',b.id,true,'Collapse '+b.title)}<span>${b.title}</span>${btBtn(b)}${qxBtn(b)}</th>`)).join('')}</tr>`;
     const hB = `<tr class="hB"><th class="c-lab">US$ in millions, except per-share data and KPIs</th><th class="c-unit">Unit</th>${
       blocks.map((b,bi)=>(bi?gapH:'')+(b.closed?`<th class="colx vlab">${b.short}</th>`:b.dcols.map(({c,bt})=>bt?`<th class="per btc" title="Projected at the time for ${c.v.lab}">${c.v.lab}<span class="pt">proj.</span></th>`:`<th class="per ${b.proj?'p':''}">${c.v.lab}${DERIVED_COLS.includes(c.v.lab)?'<sup>*</sup>':''}</th>`).join(''))).join('')}</tr>`;
     const hC = `<tr class="hC"><th class="c-lab"></th><th class="c-unit"></th>${
       blocks.map((b,bi)=>(bi?gapH:'')+(b.closed?'<th class="colx"></th>':b.dcols.map(({c,bt})=>bt?`<th class="btc">as of prior ${c.kind==='q'?'qtr':'year'}</th>`:`<th class="${b.proj?'p':''}">${c.v.end}${c.v.lab==='FY2026E'?' · 3A+1E':''}${c.v.annualOnly?' · annual':''}</th>`).join(''))).join('')}</tr>`;
     let body='';
+    let first=true;
     ROWS.forEach((r,ri)=>{
+      if(r.stmt_!==state.stmt) return;
       if(r.sec){
         const open=!state.sec.has(r.id);
-        if(ri) body+=`<tr class="spacer"><td class="c-lab"></td><td class="c-unit"></td>${cells(()=>'<td></td>')}</tr>`;
-        body+=`<tr class="sec"><td class="c-lab">${btn('sec',r.id,open,(open?'Collapse ':'Expand ')+r.sec)}${r.sec}</td><td class="c-unit"></td>${cells(()=>'<td></td>')}</tr>`;
+        if(!first) body+=`<tr class="spacer"><td class="c-lab"></td><td class="c-unit"></td>${cells(()=>'<td></td>')}</tr>`;
+        first=false;
+        const n = ROWS.filter(x=>x.sec_===ri && !x.sub && !x.subh).length;
+        body+=`<tr class="sec${open?'':' closed'}" data-sec="${r.id}"><td class="c-lab">${chev('sec',r.id,open,(open?'Collapse ':'Expand ')+r.sec)}${r.sec}${open?'':`<span class="sec-n">${n} lines</span>`}</td><td class="c-unit"></td>${cells(()=>'<td></td>')}</tr>`;
         return;
       }
       if(!visible(r)) return;
@@ -1778,7 +1984,7 @@ const MODEL = (() => {
         return `<td class="${cls.join(' ')}"${t}>${s}</td>`;
       });
       const rc=[r.sub?'sub':'', r.tot?'tot':'', r.key?'kt':'', r.b?'b':'', r.ind?'ind':'', r.subh?'subh':''].join(' ');
-      const tog = r.subh ? btn('grp',r.id,!state.grp.has(r.id),(state.grp.has(r.id)?'Expand ':'Collapse ')+r.l) : r.hasSubs && !state.hideSubs ? btn('row',r.id,!state.row.has(r.id),'Show / hide detail') : (r.sub?'':'<span class="ol-sp"></span>');
+      const tog = r.subh ? chev('grp',r.id,!state.grp.has(r.id),(state.grp.has(r.id)?'Expand ':'Collapse ')+r.l) : r.hasSubs && !state.hideSubs ? chev('row',r.id,!state.row.has(r.id),'Show / hide growth and ratios') : (r.sub?'':'<span class="ol-sp"></span>');
       body+=`<tr class="${rc}"><td class="c-lab" title="${r.note||r.l}">${tog}${r.l}</td><td class="c-unit">${r.u||''}</td>${tds}</tr>`;
     });
     const el=document.getElementById('modelTable');
@@ -1789,10 +1995,11 @@ const MODEL = (() => {
   }
   // Outline interactions
   function toggle(kind,id){ const set=state[kind]; set.has(id)?set.delete(id):set.add(id); save(); render(); }
-  function expandAll(){ state.sec.clear(); state.row.clear(); state.blk.clear(); state.grp.clear(); state.hideSubs=false; save(); render(); }
-  function collapseAll(){ ROWS.forEach(r=>{ if(r.sec) state.sec.add(r.id); }); save(); render(); }
+  function expandAll(){ ROWS.forEach(r=>{ if(r.sec && r.stmt===state.stmt) state.sec.delete(r.id); }); state.row.clear(); state.blk.clear(); state.grp.clear(); state.hideSubs=false; save(); render(); }
+  function collapseAll(){ ROWS.forEach(r=>{ if(r.sec && r.stmt===state.stmt) state.sec.add(r.id); }); save(); render(); }
+  function setStmt(v){ state.stmt=v; save(); render(); }
   function setHideSubs(v){ state.hideSubs=v; save(); render(); }
-  return {render, toggle, expandAll, collapseAll, setHideSubs, Q, Y, BQ, BY};
+  return {render, toggle, expandAll, collapseAll, setHideSubs, setStmt, Q, Y, BQ, BY};
 })();
 
 let modelRendered=false;
@@ -1801,9 +2008,11 @@ document.getElementById('hideSubs').addEventListener('change',e=>MODEL.setHideSu
 document.getElementById('olExpand').addEventListener('click',()=>MODEL.expandAll());
 document.getElementById('olCollapse').addEventListener('click',()=>MODEL.collapseAll());
 document.getElementById('modelTable').addEventListener('click',e=>{
-  const b=e.target.closest('button.ol'); if(!b) return;
-  MODEL.toggle(b.dataset.ol, b.dataset.id);
+  const b=e.target.closest('button.ol, button.chev');
+  if(b) return MODEL.toggle(b.dataset.ol, b.dataset.id);
+  const sec=e.target.closest('tr.sec'); if(sec) MODEL.toggle('sec', sec.dataset.sec);
 });
+document.getElementById('stmtSeg').addEventListener('click',e=>{ const b=e.target.closest('button'); if(b) MODEL.setStmt(b.dataset.stmt); });
 
 /* =====================================================================
    BOOT
@@ -1821,15 +2030,18 @@ const VIEWS={
    ===================================================================== */
 const COMPANIES = [
   { ticker:'SOFI', name:'SoFi Technologies, Inc.', exchange:'NASDAQ', sector:'Fintech · Digital banking',
+    short:'SoFi Technologies', tint:'0,162,199',
     logo:{src:'Sofi/logo-mark.svg', text:'SoFi', bg:'#2E75B6'},
     meta:[['Last report',"Q3'26 · Oct 27, 2026"],['2026 adj. revenue guidance','$5.04B'],['2027 adj. EPS guidance','$0.90']] },
 ];
 const logoHTML = (c,size) => c.logo.src
   ? `<span class="logo-c ${size}"><img src="${c.logo.src}" alt="${c.name}"></span>`
   : `<span class="logo ${size}" style="background:${c.logo.bg}">${c.logo.text}</span>`;
+// Glass medallion on the company cards, tinted with each company's brand colour
+const tintVars = t => [['--tint',`rgb(${t})`],['--tint-a',`rgba(${t},.16)`],['--tint-b',`rgba(${t},.28)`],['--tint-c',`rgba(${t},.14)`],['--tint-d',`rgba(${t},.38)`],['--tint-e',`rgba(${t},.12)`]];
 document.getElementById('coGrid').innerHTML = COMPANIES.map(c=>`
-  <button class="co-card" data-ticker="${c.ticker}">
-    ${logoHTML(c,'lg')}
+  <button class="co-card gl" data-ticker="${c.ticker}" style="${tintVars(c.tint||'46,117,182').map(([k,v])=>`${k}:${v}`).join(';')}">
+    ${c.logo.src?`<span class="glass"><img src="${c.logo.src}" alt="${c.name}"></span>`:logoHTML(c,'lg')}
     <div class="nm">${c.name}</div>
   </button>`).join('');
 
@@ -1843,9 +2055,11 @@ function showCompanies(){
 function showCompany(ticker){
   const c=COMPANIES.find(x=>x.ticker===ticker); if(!c) return showCompanies();
   page='company';
-  document.getElementById('coLogo').innerHTML=logoHTML(c,'sm');
-  document.getElementById('coTicker').textContent=c.ticker;
-  document.getElementById('coName').textContent=`${c.name} · ${c.exchange}`;
+  const t=c.tint||'46,117,182', top=document.querySelector('#page-company .topbar');
+  tintVars(t).forEach(([k,v])=>top.style.setProperty(k,v));
+  document.getElementById('coLogo').innerHTML=c.logo.src?`<span class="glass"><img src="${c.logo.src}" alt="${c.name}"></span>`:logoHTML(c,'sm');
+  document.getElementById('coName').textContent=c.short||c.name;
+  document.getElementById('coTags').innerHTML=[`<span class="chip tk-chip">${c.ticker}</span>`,`<span class="chip">${c.exchange}</span>`,`<span class="chip">${c.sector}</span>`].join('');
   document.getElementById('coMeta').innerHTML=c.meta.map(([l,v])=>`<div class="meta"><span class="l">${l}</span><span class="v">${v}</span></div>`).join('');
   document.getElementById('page-companies').classList.remove('active');
   document.getElementById('page-company').classList.add('active');
@@ -1858,19 +2072,27 @@ document.getElementById('navCompanies').addEventListener('click',showCompanies);
 document.getElementById('backBtn').addEventListener('click',showCompanies);
 window.addEventListener('hashchange',()=>{ const t=location.hash.slice(1); t ? showCompany(t) : showCompanies(); });
 
-let current='resumen', mainTab='tesis';
+let current='resumen', mainTab='tesis', vtab='model';
 function renderView(v){ if(page!=='company' || mainTab!=='earnings') return; VIEWS[v].forEach(fn=>fn()); }
 function showMain(m){
   mainTab=m;
   document.querySelectorAll('.mtab').forEach(x=>x.classList.toggle('active',x.dataset.main===m));
   document.querySelectorAll('.mview').forEach(x=>x.classList.toggle('active',x.id==='m-'+m));
   try{ localStorage.setItem('pvg-main',m); }catch(e){}
-  if(m==='modelo') renderModel();
+  if(m==='valuation' && vtab==='model') renderModel();
   renderView(current);
 }
 document.querySelectorAll('.mtab').forEach(t=>t.addEventListener('click',()=>showMain(t.dataset.main)));
-document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
-  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===t));
+function showVtab(v){
+  vtab=v;
+  document.querySelectorAll('.vtab').forEach(x=>x.classList.toggle('active',x.dataset.vtab===v));
+  document.querySelectorAll('#m-valuation > .view').forEach(x=>x.classList.toggle('active',x.id==='vv-'+v));
+  try{ localStorage.setItem('pvg-vtab',v); }catch(e){}
+  if(v==='model' && mainTab==='valuation') renderModel();
+}
+document.querySelectorAll('.vtab').forEach(t=>t.addEventListener('click',()=>showVtab(t.dataset.vtab)));
+document.querySelectorAll('#m-earnings .tab').forEach(t=>t.addEventListener('click',()=>{
+  document.querySelectorAll('#m-earnings .tab').forEach(x=>x.classList.toggle('active',x===t));
   document.querySelectorAll('#m-earnings .view').forEach(x=>x.classList.toggle('active',x.id==='v-'+t.dataset.tab));
   current=t.dataset.tab; renderView(current);
   try{ localStorage.setItem('pvg-tab',current); }catch(e){}
@@ -1905,7 +2127,8 @@ document.getElementById('themeBtn').addEventListener('click',()=>{
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>renderView(current));
 try{ const th=localStorage.getItem('pvg-theme'); if(th) document.documentElement.dataset.theme=th; }catch(e){}
 insights();
-try{ const t=localStorage.getItem('pvg-tab'); if(t && VIEWS[t]) { document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===t)); document.querySelectorAll('#m-earnings .view').forEach(x=>x.classList.toggle('active',x.id==='v-'+t)); current=t; } }catch(e){}
+try{ const t=localStorage.getItem('pvg-tab'); if(t && VIEWS[t]) { document.querySelectorAll('#m-earnings .tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===t)); document.querySelectorAll('#m-earnings .view').forEach(x=>x.classList.toggle('active',x.id==='v-'+t)); current=t; } }catch(e){}
+try{ const v=localStorage.getItem('pvg-vtab'); if(v && document.getElementById('vv-'+v)) showVtab(v); }catch(e){}
 try{ const m=localStorage.getItem('pvg-main'); if(m && document.getElementById('m-'+m)) showMain(m); }catch(e){}
 if(location.hash.length>1) showCompany(location.hash.slice(1));
 </script>
