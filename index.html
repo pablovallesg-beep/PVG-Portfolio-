@@ -2395,7 +2395,7 @@ const DCF = (() => {
     const flows = [{lab:stub.lab+' (stub)', o:stub, f:stubFrac, t:yrs(stub.lab.slice(0,-1))}, ...fut.map(y=>({lab:y.lab, o:y, f:1, t:yrs(y.lab.slice(0,-1))}))];
     flows.forEach(c=>{ const o=c.o; c.fcfe=o.fcf*c.f; c.fcff=(o.fcf+intDebt(o)*(1-t))*c.f; c.dfW=1/Math.pow(1+wacc,c.t); c.dfE=1/Math.pow(1+ke,c.t); });
     const lastY = fut[fut.length-1], tT = yrs(lastY.lab.slice(0,-1));
-    const tvFF = exitEV*lastY.ebitda, tvFE = exitPE*niOf(lastY);
+    const tvFF = exitEV*lastY.ebitda, tvFE = exitPE*epsOf(lastY)*st.shares;   // exit P/E × EPS = value per share, × shares outstanding
     const ff = {pv: flows.reduce((s,c)=>s+c.fcff*c.dfW,0), cum: flows.reduce((s,c)=>s+c.fcff,0), tv:tvFF, pvTV: tvFF/Math.pow(1+wacc,tT)};
     ff.ev = ff.pv+ff.pvTV; ff.eq = ff.ev-netDebt; ff.ps = ff.eq/st.shares;
     const fe = {pv: flows.reduce((s,c)=>s+c.fcfe*c.dfE,0), cum: flows.reduce((s,c)=>s+c.fcfe,0), tv:tvFE, pvTV: tvFE/Math.pow(1+ke,tT)};
@@ -2444,10 +2444,10 @@ const DCF = (() => {
       const line = (l, f, tv='', cls='') => `<tr class="${cls}"><td>${l}</td>${fl.map(c=>`<td class="p">${f(c)}</td>`).join('')}<td class="tv">${tv}</td></tr>`;
       const ffRows = kind==='ff'
         ? line('FCFE (CFO excl. loans held for sale − capex)', c=>m(c.o.fcf*c.f)) + line('+ After-tax interest on debt', c=>m(intDebt(c.o)*(1-r.t)*c.f)) + line('Free cash flow to the firm (FCFF)', c=>m(c.fcff), '', 'tot')
-        : line(st.epsB==='gaap'?'Net income (GAAP)':'Net income (adjusted)', c=>m(niOf(c.o)*c.f)) + line('Free cash flow to equity (FCFE)', c=>m(c.fcfe), '', 'tot');
+        : line(st.epsB==='gaap'?'Diluted EPS, GAAP (US$)':'Adjusted diluted EPS (US$)', c=>c.f<1?`<span class="card-sub">${F.ps(epsOf(c.o))} for the quarter</span>`:F.ps(epsOf(c.o))) + line('Free cash flow to equity (FCFE)', c=>m(c.fcfe), '', 'tot');
       const tvRow = kind==='ff'
         ? line('Terminal value = exit EV/EBITDA × EBITDA', ()=>'', `${r.exitEV.toFixed(1)}x × ${F.m(r.lastY.ebitda)} = ${m(R_.tv)}`)
-        : line('Terminal value = exit P/E × net income', ()=>'', `${r.exitPE.toFixed(1)}x × ${F.m(niOf(r.lastY))} = ${m(R_.tv)}`);
+        : line('Terminal value = exit P/E × EPS × shares', ()=>'', `${r.exitPE.toFixed(1)}x × ${F.ps(epsOf(r.lastY))} = $${(r.exitPE*epsOf(r.lastY)).toFixed(2)}/share × ${F.m(st.shares)}M sh. = ${m(R_.tv)}`);
       const df = kind==='ff' ? 'dfW' : 'dfE';
       const tT = Math.pow(1+rate, -yrsT());
       function yrsT(){ return (new Date('20'+r.lastY.lab.slice(4,6)+'-12-31') - new Date('2026-10-28'))/(365*864e5); }
@@ -3052,7 +3052,7 @@ const FOLD = (() => {
   const DEFAULT_CLOSED = new Set(['Borrower characteristics by quarter','Charge-offs and delinquencies by quarter','Credit performance',"Outside SoFi's credit box",
     'Partners and commitments','How much is committed','Economics','What Anthony Noto repeats on every call','How the loop works',
     'Analyst Q&A','Open questions from analysts','Capital and book value','Products by segment','Technology Platform accounts','Contribution profit by segment']);
-  const SKIP = el => el.closest('#vv-model') || el.closest('.dcf-top');       // the Model sheet and DCF inputs keep their own layout
+  const SKIP = el => el.closest('#vv-model');       // the Model sheet keeps its own outline
   const idOf = (card, i) => { const v=card.closest('.view, .mview'); const t=(card.querySelector('.card-t')?.textContent||'card'+i).trim(); return (v?.id||'x')+'|'+t; };
   function enhance(root=document){
     root.querySelectorAll('.card').forEach((card,i)=>{
