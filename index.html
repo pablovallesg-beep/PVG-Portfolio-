@@ -197,6 +197,20 @@ html.mobile .nav-item .ic-desk{display:block}
 .xl tr.sec .chev svg{width:12px;height:12px}
 .xl tr.sec.closed td{border-bottom-color:var(--border)}
 .xl tr.subh .chev{color:var(--accent)}
+.ave-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.ave-cards{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.ave-cards .chart{height:230px}
+.ave-res{display:inline-block;min-width:56px;padding:2px 8px;border-radius:9px;font-size:11px;font-weight:700;text-align:center}
+.ave-res.up{color:var(--positive);background:var(--positive-bg)} .ave-res.in{color:var(--text-secondary);background:var(--neutral-bg)} .ave-res.dn{color:var(--negative);background:var(--negative-bg)}
+.ave-t td,.ave-t th{padding:6px 10px;font-size:12px}
+.ave-t td:first-child{font-weight:500;color:var(--text-secondary)}
+.ave-t tr.dif td{font-weight:700}
+.ave-score td:first-child{font-weight:600}
+.ave-score .bar3{display:flex;height:8px;border-radius:4px;overflow:hidden;min-width:120px;background:var(--neutral-bg)}
+.ave-score .bar3 i{display:block;height:100%}
+.ave-empty{padding:40px 20px;text-align:center;color:var(--text-secondary);font-size:13px}
+html.mobile .ave-cards{grid-template-columns:minmax(0,1fr)}
+@media (max-width:1100px){.ave-cards{grid-template-columns:minmax(0,1fr)}}
 .stmt-seg{display:inline-flex;padding:3px;border-radius:10px;background:var(--main-bg);border:1px solid var(--border);gap:2px}
 .stmt-seg button{border:0;background:transparent;padding:7px 16px;border-radius:7px;font:600 13px 'Figtree',sans-serif;color:var(--text-secondary);cursor:pointer;white-space:nowrap}
 .stmt-seg button:hover{color:var(--text-primary)}
@@ -625,7 +639,15 @@ html.mobile .xl-wrap{max-height:calc(100vh - 190px)}
         </div>
       </section>
       <section class="view" id="vv-ave">
-        <div class="placeholder"><h2>Actual vs Estimates</h2><p>Reported results against our model and consensus estimates, quarter by quarter: beats, misses and the size of each surprise. In progress.</p></div>
+        <div class="ave-bar">
+          <div class="stmt-seg" id="aveFreq"><button data-v="q" class="on">Quarterly</button><button data-v="y">Annual</button></div>
+          <div class="stmt-seg" id="aveBench"><button data-v="g" class="on">Actual vs guidance</button><button data-v="c">Actual vs consensus</button></div>
+          <div class="stmt-seg" id="aveGuide"><button data-v="first" class="on">First guide</button><button data-v="last">Last guide</button></div>
+        </div>
+        <div class="card"><div class="card-h"><div><span class="card-t">Scorecard</span><span class="card-sub" id="aveSub"></span></div></div>
+          <div class="tbl-wrap" id="aveScore"></div></div>
+        <div id="aveCards" class="ave-cards"></div>
+        <div class="src" id="aveSrc"></div>
       </section>
       <section class="view" id="vv-guidance">
         <div class="placeholder"><h2>Guidance Revisions</h2><p>How SoFi's guidance has moved over time: first guide, each raise or cut, and the final result for every period. In progress.</p></div>
@@ -1311,6 +1333,33 @@ const MODEL = (() => {
     aoci:    [null,null,null,-1471,-5964,-8011,-9600,-8296,-6341,-5119,600,-1209,-2088,-1483,8109,-8365,2828,3593,9548,10979,-2743,-11981,-124762,-1471,-8296,-1209,-8365,10979],
     accDef:  [null,null,null,-1183114,-1293471,-1389306,-1463515,-1503521,-1537943,-1585492,-1852176,-1804263,-1716220,-1698816,-1638071,-1305598,-1234482,-1137219,-997827,-824278,-657547,-500955,-259966,-1183114,-1503521,-1804263,-1305598,-824278],
     eq:      [null,null,null,4377329,5210299,5186180,5181003,5208102,5234072,5257661,5053388,5234612,5825605,5901494,6121481,6525134,6678514,6860580,8779963,10489495,10811591,11076227,11295137,4377329,5208102,5234612,6525134,10489495],
+    // Cash flow statement (US$K). 10-Qs and 10-Ks report year-to-date flows: Q2 = 6M − 3M, Q3 = 9M − 6M, Q4 = FY − 9M.
+    // Lines are grouped into a standard template; "other" lines are what remains so each subtotal ties to the filing.
+    // Q3'26 is not filed yet (the earnings release has no cash flow statement): it is derived from the balance sheet.
+    cfNI:    [-177564,-165314,-30047,-111012,-110357,-95835,-74209,-40006,-34422,-47549,-266684,47913,88043,17404,60745,332473,71116,97263,139392,173549,166731,156592,null,-483937,-320407,-300742,498665,481320],
+    cfDA:    [25977,24989,24075,26527,30698,38056,40253,42353,45321,50130,52516,53449,48539,49623,51791,53545,55283,56743,59245,62880,67578,73106,null,101568,151360,201416,203498,234151],
+    cfSBC:   [37454,52154,72681,76722,77021,80142,77855,70976,64226,75878,62005,69107,55082,61057,63646,66367,63756,63256,66469,68577,72012,76865,null,239011,305994,271216,246152,262058],
+    cfProv:  [0,0,2887,4686,0,0,39387,14945,8407,12615,21831,12092,7182,11640,6013,6877,5678,10035,9199,5407,8895,13755,null,7573,54332,54945,31712,30319],
+    cfOthOp: [101396,75660,-60745,14571,29857,21477,-11679,8773,2792,109,251857,-75558,-92610,-24551,-90516,-279297,-74236,-119420,-34303,-83913,-11542,83240,null,130882,48428,179200,-486974,-311872],
+    cfHFS:   [366094,-261571,-180730,-1232122,-1049913,-956497,-2964674,-2492390,-2301031,-2234343,-2780169,-322609,736898,-482090,-1234981,-36130,-356077,-1590586,-1382272,-1113239,-2458410,-4164496,null,-1308329,-7463474,-7638152,-1016303,-4442174],
+    cfWC:    [-13306,16639,-24657,-15661,11470,-32842,12767,-23486,1947,63241,-27875,-32335,-104886,-117454,-30279,-343938,255982,15801,-163604,-104439,-160258,-129506,null,-36985,-32091,4978,-596557,3740],
+    CFO:     [340051,-257443,-196536,-1236289,-1011224,-945499,-2880300,-2418835,-2212760,-2079919,-2686519,-247941,738248,-484371,-1173581,-200103,21502,-1466908,-1305874,-991178,-2314994,-3890444,null,-1350217,-7255858,-7227139,-1119807,-3742458],
+    cfCapex: [-7445,-19363,-11637,-13816,-25114,-24914,-25948,-27757,-26534,-27597,-30413,-36648,-34112,-39473,-45801,-44231,-54248,-65992,-63158,-67719,-68777,-97640,null,-52261,-103733,-121192,-163617,-251117],
+    cfSec:   [171699,77755,-148166,44473,35563,32857,24190,19978,33871,-153222,-103034,-111568,-236467,-589788,447,-325773,-224515,-199987,-107845,-46155,-589537,-934117,null,145761,112588,-333953,-1151581,-578502],
+    cfHFI:   [0,0,0,0,-33884,-47966,-48250,-43628,-29544,-32499,-35062,-1265313,-990605,-1565656,-38651,-910880,-1161457,-1456492,-1288461,-1983078,-1736020,-1734207,null,0,-173728,-1362418,-3505792,-5889488],
+    cfAcq:   [0,0,0,0,73314,-14774,0,0,-17946,-54355,0,0,0,0,0,0,0,0,0,0,0,-64898,null,0,58540,-72301,0,0],
+    cfOthInv:[16693,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,null,16693,0,0,0,0],
+    CFI:     [180947,58392,-159803,30657,49879,-54797,-50008,-51407,-40153,-267673,-168509,-1413529,-1261184,-2194917,-84005,-1280884,-1440220,-1722471,-1459464,-2096952,-2394334,-2830862,null,110193,-106333,-1889864,-4820990,-6719107],
+    cfDep:   [0,0,0,0,961834,1534419,2362987,2293735,2754540,2637981,2904136,2935247,2896894,1400442,1356683,1300465,1480574,2285840,3334880,4147211,3034493,4968455,null,0,7152975,11231904,6954484,11248505],
+    cfDebt:  [-988866,-1521662,433389,1046052,935170,-1215118,830820,782924,632251,257220,-250010,-930674,-1838025,206573,143346,-90174,-49239,894699,-1231892,-902496,-3454,1484329,null,-1031087,1333796,-291213,-1578280,-1288928],
+    cfEq:    [-23891,1961027,8640,94099,-1726,-2060,-1201,-1386,-2248,-4213,-3184,-4510,-3294,-3832,-4745,10677,-5397,8065,1694619,1453235,83743,20482,null,2039875,-6373,-14155,-1194,3150522],
+    cfPref:  [-132859,-170047,0,-20379,0,-20047,0,-20378,0,-20047,0,-20378,0,-339903,0,0,0,0,0,0,0,0,null,-323285,-40425,-40425,-339903,0],
+    cfOthFin:[-163,-115,-119,-119,-120,-121,-123,-124,-125,-127,-128,-129,-130,-132,-134,-134,-175,-195,-197,-199,-202,52280,null,-516,-488,-509,-530,-766],
+    CFF:     [-1145779,269203,441910,1119653,1895158,297073,3192483,3054771,3384418,2870814,2650814,1979556,1055445,1263148,1495150,1220834,1425763,3188409,3797410,4697751,3114580,6525546,null,684987,8439485,10885602,5034577,13109333],
+    cfFX:    [-80,-266,204,188,-38,-56,325,340,-293,392,103,475,-179,-136,563,-246,-269,-563,-228,705,-774,68,null,46,571,677,2,-355],
+    cfNet:   [-624861,69886,85775,-85791,933775,-703279,262500,584869,1131212,523614,-204111,318561,532330,-1416276,238127,-260399,6776,-1533,1031844,1610326,-1595522,-195692,null,-554991,1077865,1769276,-906218,2647413],
+    cfBeg:   [1323428,698567,768453,854228,768437,1702212,998933,1261433,1846302,2977514,3501128,3297017,3615578,4147908,2731632,2969759,2709360,2716136,2714603,3746447,5356773,3761251,null,1323428,768437,1846302,3615578,2709360],
+    cfEnd:   [698567,768453,854228,768437,1702212,998933,1261433,1846302,2977514,3501128,3297017,3615578,4147908,2731632,2969759,2709360,2716136,2714603,3746447,5356773,3761251,3565559,null,768437,1846302,3615578,2709360,5356773],
     adjWarr:  [89920,70989,-64405,10824,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,107328,0,0,0,0],
     adjGain:  [0,0,0,0,0,0,0,0,0,0,0,-14574,-59194,0,-3323,0,0,0,0,0,0,0,0,0,0,-14574,-62517,0],
   };
@@ -1320,6 +1369,7 @@ const MODEL = (() => {
     adjEps: [null,null,null,null,-0.14,-0.12,-0.09,null,-0.05,-0.06,-0.02,null,null,null,null,null,0.06,0.08,0.11,0.13,0.12,0.12,0.18,null,-0.40,-0.10,0.15,0.39],
   };
   const MONEY = new Set(['avgIEA','avgLoans','intLoans','intOther','expSec','expDep','expCorp','expOther','losss','techRev','lpf','crypto','otherNII','prov','tpd','sm','coo','ga','gw','tax','adjRev','da','sbc','ebitda','adjNI','fLPF','fRefLPB','fRefOth','fInterch','fBrok','fOrig','fTech','fCrypto','fOther','shBasic','shDil','adjRestr','adjTrans','adjImp','adjFX','adjSR','adjResid','adjGain','sL_nii','sL_non','sT_nii','sT_non','sF_nii','sF_non','sC_nii','sC_non','adjWarr',
+    'cfNI','cfDA','cfSBC','cfProv','cfOthOp','cfHFS','cfWC','CFO','cfCapex','cfSec','cfHFI','cfAcq','cfOthInv','CFI','cfDep','cfDebt','cfEq','cfPref','cfOthFin','CFF','cfFX','cfNet','cfBeg','cfEnd',
     'cash','rcash','inv','hfs','hfiFV','hfiAC','servR','ppe','gwA','intang','rou','othA','totA','depI','depN','dep','apOth','leaseL','debt','resid','totL','pref','cs','apic','aoci','accDef','eq']);
   const pick = i => { const o={}; for(const k in RAW){ const v=RAW[k][i]; o[k]= v===null ? null : MONEY.has(k) ? v/1000 : v; } for(const k in PER_SHARE) o[k]=PER_SHARE[k][i]; return o; };
 
@@ -1429,12 +1479,36 @@ const MODEL = (() => {
     o.loans = sum(o.hfs,o.hfiFV,o.hfiAC);
     o.csApic = sum(o.cs,o.apic);
     o.tangEq = sum(o.eq,isN(o.gwA)?-o.gwA:null,isN(o.intang)?-o.intang:null);
+    o.cfoX = isN(o.CFO)&&isN(o.cfHFS) ? o.CFO-o.cfHFS : null;
+    o.fcf = isN(o.cfoX)&&isN(o.cfCapex) ? o.cfoX+o.cfCapex : null;
+    o.cfCheck = isN(o.cfEnd)&&isN(o.cash)&&isN(o.rcash) ? (Math.round((o.cfEnd-o.cash-o.rcash)*1000)/1000 || 0) : null;
     o.bsCheck = isN(o.totA)&&isN(o.totL)&&isN(o.eq) ? (Math.round((o.totA-o.totL-(o.pref||0)-o.eq)*1000)/1000 || 0) : null;
     return o;
   }
   // Projected balance sheet: assets grow with average interest-earning assets; goodwill, intangibles and
   // right-of-use assets stay flat; deposits, payables and lease liabilities keep their share of total assets;
   // equity rolls forward with net income and share-based compensation; debt is the balancing item.
+  // Cash flow from the income statement and balance sheet changes (projections and periods not yet filed):
+  // every balance sheet line maps to one cash flow line, so the ending cash equals cash + restricted cash.
+  const CF_LINES = ['cfOthOp','cfHFS','cfWC','cfCapex','cfSec','cfHFI','cfAcq','cfDep','cfDebt','cfEq','cfPref','cfNet'];
+  function buildCF(o, L){
+    if(!isN(o.totA) || !isN(L.totA)) return o;
+    const d = k => (o[k]||0)-(L[k]||0);
+    o.cfNI=o.ni; o.cfDA=o.da; o.cfSBC=o.sbc; o.cfProv=o.prov;
+    o.cfOthOp = d('aoci') + (d('accDef')-o.ni);
+    o.cfHFS = -d('hfs');
+    o.cfWC = -(d('servR')+d('othA')+d('rou')) + d('apOth')+d('leaseL');
+    o.CFO = o.cfNI+o.cfDA+o.cfSBC+o.cfProv+o.cfOthOp+o.cfHFS+o.cfWC;
+    o.cfCapex = -(d('ppe')+d('intang')+o.da);
+    o.cfSec = -d('inv'); o.cfHFI = -(d('hfiFV')+d('hfiAC'))-o.prov; o.cfAcq = -d('gwA'); o.cfOthInv = 0;
+    o.CFI = o.cfCapex+o.cfSec+o.cfHFI+o.cfAcq;
+    o.cfDep = d('dep'); o.cfDebt = d('debt')+d('resid'); o.cfEq = d('cs')+d('apic')-o.sbc; o.cfPref = d('pref'); o.cfOthFin = 0;
+    o.CFF = o.cfDep+o.cfDebt+o.cfEq+o.cfPref;
+    o.cfFX = 0; o.cfNet = o.CFO+o.CFI+o.CFF;
+    o.cfBeg = isN(L.cfEnd) ? L.cfEnd : L.cash+L.rcash; o.cfEnd = o.cfBeg+o.cfNet;
+    CF_LINES.forEach(k=>{ if(Math.abs(o[k])<1e-9) o[k]=0; });   // no "-0"
+    return derive(o);
+  }
   const BS_SCALED = ['cash','rcash','inv','hfs','hfiFV','hfiAC','servR','ppe','othA'];
   function buildBS(o, L){
     if(!isN(L.totA) || !isN(o.avgIEA) || !isN(L.avgIEA)) return o;
@@ -1486,6 +1560,8 @@ const MODEL = (() => {
   const at = (obj,j) => Object.fromEntries(Object.entries(obj).map(([k,v])=>[k,v[j]]));
 
   const Q = QLAB.map((_,i)=>derive({...pick(i), days:QDAYS[i], lab:QLAB[i], end:QEND[i]}));
+  // Reported quarters without a filed cash flow statement (latest quarter before its 10-Q): derive it from the balance sheet
+  Q.forEach((o,i)=>{ if(i && !isN(o.CFO) && isN(o.totA)){ buildCF(o, Q[i-1]); o.cfDerived=true; } });
   PLAB.forEach((lab,j)=>{
     const i=Q.length, L=Q[i-1], Y=Q[i-4], a=at(ASM,j);
     const o={days:PDAYS[j], lab, end:PEND[j]};
@@ -1503,15 +1579,17 @@ const MODEL = (() => {
     o.shBasic=L.shBasic*(1+a.gSh); o.shDil=L.shDil*(1+a.gSh);
     o.adjSh=(L.adjSh||ADJ_SH_Q3_26)*(1+a.gSh);
     o.da=L.da*(1+a.gDA); o.sbc=L.sbc*(1+a.gSBC);
-    Q.push(buildBS(buildPL(o, L, a, o.days/365), L));
+    Q.push(buildCF(buildBS(buildPL(o, L, a, o.days/365), L), L));
   });
   const Y = YLAB.map((lab,j)=>derive({...pick(QLAB.length+j), days:YDAYS[j], lab, end:'Dec-'+lab.slice(-2)}));
   const STOCK=['members','lendProd','fsProd','techAcc','cash','rcash','inv','hfs','hfiFV','hfiAC','servR','ppe','gwA','intang','rou','othA','totA','depI','depN','dep','apOth','leaseL','debt','resid','totL','pref','cs','apic','aoci','accDef','eq'];
-  const FLOW=['oPL','oSL','oHL','oSB','lpbVol','intLoans','intOther','expSec','expDep','expCorp','expOther','losss','techRev','lpf','crypto','otherNII','prov','tpd','sm','coo','ga','gw','tax','adjRev','da','sbc','ebitda','adjNI',...FEE_KEYS,...ADJ_KEYS,'sL_nii','sL_non','sT_nii','sT_non','sF_nii','sF_non','sC_nii','sC_non'];
+  const FLOW=['oPL','oSL','oHL','oSB','lpbVol','intLoans','intOther','expSec','expDep','expCorp','expOther','losss','techRev','lpf','crypto','otherNII','prov','tpd','sm','coo','ga','gw','tax','adjRev','da','sbc','ebitda','adjNI',...FEE_KEYS,...ADJ_KEYS,'sL_nii','sL_non','sT_nii','sT_non','sF_nii','sF_non','sC_nii','sC_non',
+    'cfNI','cfDA','cfSBC','cfProv','cfOthOp','cfHFS','cfWC','CFO','cfCapex','cfSec','cfHFI','cfAcq','cfOthInv','CFI','cfDep','cfDebt','cfEq','cfPref','cfOthFin','CFF','cfFX','cfNet'];
   function yearFrom(qs, lab, end){
     const o={days:qs.reduce((s,q)=>s+q.days,0), lab, end, proj:true, fromQ:true};
     STOCK.forEach(k=>o[k]=qs[3][k]);
     FLOW.forEach(k=>o[k]=sum(...qs.map(q=>q[k])));
+    o.cfBeg=qs[0].cfBeg; o.cfEnd=qs[3].cfEnd; o.cfDerived=qs.some(q=>q.cfDerived);
     o.avgIEA=qs.reduce((s,q)=>s+q.avgIEA*q.days,0)/o.days;
     o.avgLoans=qs.reduce((s,q)=>s+q.avgLoans*q.days,0)/o.days;
     derive(o);
@@ -1538,7 +1616,7 @@ const MODEL = (() => {
     o.crypto=(P.crypto??0)*(1+a.gOther); o.otherNII=P.otherNII*(1+a.gOther);
     o.shBasic=P.shBasic*(1+a.gSh); o.shDil=P.shDil*(1+a.gSh); o.adjSh=P.adjSh*(1+a.gSh);
     o.da=P.da*(1+a.gDA); o.sbc=P.sbc*(1+a.gSBC);
-    Y.push(buildBS(buildPL(o, P, a, 1), P));
+    Y.push(buildCF(buildBS(buildPL(o, P, a, 1), P), P));
     o.end='Dec-'+lab.slice(4,6).replace('20','');
   });
   Y.forEach(y=>{ if(y.lab.startsWith('FY20')) y.end='Dec-'+y.lab.slice(4,6); });
@@ -1572,7 +1650,7 @@ const MODEL = (() => {
     o.crypto=L.crypto??0; o.otherNII=L.otherNII*(1+gr(L.otherNII,L2.otherNII));
     o.shDil=L.shDil??L2.shDil; o.shBasic=L.shBasic??L2.shBasic; o.adjSh=o.shDil;
     o.da=L.da*(1+gr(L.da,L2.da)); o.sbc=L.sbc*(1+gr(L.sbc,L2.sbc));
-    BQ[i]=buildBS(buildPL(o, L, a, o.days/365), L);
+    BQ[i]=buildCF(buildBS(buildPL(o, L, a, o.days/365), L), L);
   }
   for(let j=2;j<YLAB.length;j++){                 // FY2023 onwards (FY2022 would need FY2020)
     const P=Y[j-1], PP=Y[j-2];
@@ -1595,7 +1673,7 @@ const MODEL = (() => {
     o.crypto=P.crypto??0; o.otherNII=P.otherNII*(1+gr(P.otherNII,PP.otherNII));
     o.shDil=P.shDil; o.shBasic=P.shBasic; o.adjSh=P.shDil;
     o.da=P.da*(1+gr(P.da,PP.da)); o.sbc=P.sbc*(1+gr(P.sbc,PP.sbc));
-    BY[j]=buildBS(buildPL(o, P, a, 1), P);
+    BY[j]=buildCF(buildBS(buildPL(o, P, a, 1), P), P);
   }
 
   // Displayed blocks
@@ -1889,6 +1967,46 @@ const MODEL = (() => {
     YOY('tangEq'),
     {l:'Return on average equity (annualized)', f:(o,c)=>{ const p=prevBase(c)?.eq; return isN(o.ni)&&isN(o.eq)&&isN(p) ? o.ni*(365/o.days)/((o.eq+p)/2) : null; }, fmt:'p', u:'%'},
     {l:'Return on average tangible equity (annualized)', f:(o,c)=>{ const p=prevBase(c)?.tangEq; return isN(o.ni)&&isN(o.tangEq)&&isN(p) ? o.ni*(365/o.days)/((o.tangEq+p)/2) : null; }, fmt:'p', u:'%'},
+    SEC('Operating activities','cf'),
+    {l:'Net income (loss)', f:val('cfNI'), fmt:'m', u:'US$M', b:1},
+    {l:'(+) Depreciation and amortization', f:val('cfDA'), fmt:'m', u:'US$M', ind:1},
+    {l:'(+) Share-based compensation', f:val('cfSBC'), fmt:'m', u:'US$M', ind:1},
+    {l:'(+) Provision for credit losses', f:val('cfProv'), fmt:'m', u:'US$M', ind:1},
+    {l:'(±) Other non-cash items (fair value changes, deferred taxes, other)', f:val('cfOthOp'), fmt:'m', u:'US$M', ind:1},
+    {l:'(±) Change in loans held for sale, net', f:val('cfHFS'), fmt:'m', u:'US$M', ind:1},
+    {l:'(±) Change in other operating assets and liabilities', f:val('cfWC'), fmt:'m', u:'US$M', ind:1},
+    {l:'Net cash from operating activities', f:val('CFO'), fmt:'m', u:'US$M', tot:1, key:1},
+    {l:'CFO excluding loans held for sale', f:val('cfoX'), fmt:'m', u:'US$M', b:1},
+    YOY('cfoX'),
+    PCT('% of total net revenue','cfoX','totRev'),
+    SEC('Investing activities','cf'),
+    {l:'Capital expenditures (property, equipment and software)', f:val('cfCapex'), fmt:'m', u:'US$M'},
+    {l:'% of total net revenue', f:o=>isN(o.cfCapex)&&o.totRev?-o.cfCapex/o.totRev:null, fmt:'cs', u:'%', sub:1},
+    {l:'Investment securities, net', f:val('cfSec'), fmt:'m', u:'US$M'},
+    {l:'Loans held for investment, net', f:val('cfHFI'), fmt:'m', u:'US$M'},
+    {l:'Acquisitions, net of cash acquired', f:val('cfAcq'), fmt:'m', u:'US$M'},
+    {l:'Other investing activities', f:val('cfOthInv'), fmt:'m', u:'US$M'},
+    {l:'Net cash from investing activities', f:val('CFI'), fmt:'m', u:'US$M', tot:1, key:1},
+    SEC('Financing activities','cf'),
+    {l:'Net change in deposits', f:val('cfDep'), fmt:'m', u:'US$M'},
+    {l:'Net change in debt (warehouse, securitization, convertible and other)', f:val('cfDebt'), fmt:'m', u:'US$M'},
+    {l:'Common stock issued (repurchased), net', f:val('cfEq'), fmt:'m', u:'US$M'},
+    {l:'Preferred stock dividends and redemptions', f:val('cfPref'), fmt:'m', u:'US$M'},
+    {l:'Other financing activities', f:val('cfOthFin'), fmt:'m', u:'US$M'},
+    {l:'Net cash from financing activities', f:val('CFF'), fmt:'m', u:'US$M', tot:1, key:1},
+    SEC('Change in cash','cf'),
+    {l:'Effect of exchange rates', f:val('cfFX'), fmt:'m', u:'US$M'},
+    {l:'Net change in cash, cash equivalents and restricted cash', f:val('cfNet'), fmt:'m', u:'US$M', b:1},
+    {l:'Cash and restricted cash at beginning of period', f:val('cfBeg'), fmt:'m', u:'US$M'},
+    {l:'Cash and restricted cash at end of period', f:val('cfEnd'), fmt:'m', u:'US$M', tot:1, key:1},
+    {l:'Check: ending cash − balance sheet cash and restricted cash', f:val('cfCheck'), fmt:'m', u:'US$M', sub:1},
+    SEC('Free cash flow','cf'),
+    {l:'CFO excluding loans held for sale', f:val('cfoX'), fmt:'m', u:'US$M'},
+    {l:'(−) Capital expenditures', f:val('cfCapex'), fmt:'m', u:'US$M', ind:1},
+    {l:'Free cash flow (excluding loans held for sale)', f:val('fcf'), fmt:'m', u:'US$M', tot:1, key:1},
+    YOY('fcf'),
+    PCT('FCF margin (% of total net revenue)','fcf','totRev'),
+    {l:'FCF conversion (% of net income)', f:o=>isN(o.fcf)&&o.ni>0?o.fcf/o.ni:null, fmt:'cs', u:'%', sub:1},
   ];
   // Outline structure: each row knows its section and (for sub-rows) its parent line
   // Sub-heading groups (e.g. "By segment") run until the next sub-heading or a row flagged grpEnd
@@ -1925,7 +2043,7 @@ const MODEL = (() => {
     if(r.sub) return !secClosed && !state.hideSubs && !state.row.has(ROWS[r.parent]?.id);
     return !secClosed || r.tot;
   }
-  const STMT = {is:['Income statement','US$M unless noted · KPIs in thousands'], bs:['Balance sheet','US$M · period-end balances'], cf:['Cash flow statement','US$M']};
+  const STMT = {is:['Income statement','US$M unless noted · KPIs in thousands'], bs:['Balance sheet','US$M · period-end balances'], cf:['Cash flow statement','US$M · quarters from year-to-date filings']};
   function render(){
     document.querySelectorAll('#stmtSeg button').forEach(b=>b.classList.toggle('on',b.dataset.stmt===state.stmt));
     document.getElementById('stmtTitle').textContent=STMT[state.stmt][0];
@@ -1980,7 +2098,7 @@ const MODEL = (() => {
         }
         let v; try{ v=r.f(c.v,c); }catch(e){ v=null; }
         let s=(FM[r.fmt]||FM.m)(v);
-        const derived = (r.der && r.der.includes(c.v.lab)) || (r.ghk && GH[c.v.lab]?.[r.ghkind]?.d?.includes(r.ghk));
+        const derived = (r.stmt_==='cf' && c.v.cfDerived) || (r.der && r.der.includes(c.v.lab)) || (r.ghk && GH[c.v.lab]?.[r.ghkind]?.d?.includes(r.ghk));
         if(derived && isN(v)) s=`<span class="derived">${s}</span>`;
         const t = r.ghk && GH[c.v.lab]?.[r.ghkind]?.src ? ` title="${GH[c.v.lab][r.ghkind].src}"` : '';
         return `<td class="${cls.join(' ')}"${t}>${s}</td>`;
@@ -2003,6 +2121,111 @@ const MODEL = (() => {
   function setHideSubs(v){ state.hideSubs=v; save(); render(); }
   return {render, toggle, expandAll, collapseAll, setHideSubs, setStmt, Q, Y, BQ, BY};
 })();
+
+/* =====================================================================
+   ACTUAL VS ESTIMATES — guidance and consensus track record
+   ===================================================================== */
+// AVE_DATA: per period and metric → guidance range (first and last given), consensus and the actual SoFi reported.
+// US$M; EPS in US$. Filled from SoFi's earnings releases / calls and consensus published before each report.
+// gLow/gHigh = guidance (quarters: given the prior quarter; years: first guide), lLow/lHigh = last guide before the report,
+// est = consensus, act = actual as first reported by SoFi, actC = the actual the consensus provider compared against.
+const AVE_DATA = {"q":{"Q1'22":{"adjRev":{"gLow":280,"gHigh":285,"act":321.727,"est":281.94},"ebitda":{"gLow":0,"gHigh":5,"act":8.684},"ni":{"act":-110.357},"eps":{"act":-0.14,"est":-0.14,"actC":-0.14},"members":{"act":408.036}},"Q2'22":{"adjRev":{"gLow":330,"gHigh":340,"act":356.091,"est":345.99,"actC":362.53},"ebitda":{"gLow":5,"gHigh":15,"act":20.304},"ni":{"act":-95.835},"eps":{"act":-0.12,"est":-0.12,"actC":-0.12},"members":{"act":450.371}},"Q3'22":{"adjRev":{"act":419.256,"est":391.84,"actC":423.99},"ebitda":{"act":44.298},"ni":{"act":-74.209},"eps":{"act":-0.09,"est":-0.1,"actC":-0.09},"members":{"act":423.968}},"Q4'22":{"adjRev":{"act":443.418,"est":425.7,"actC":456.68},"ebitda":{"act":70.06},"ni":{"act":-40.006},"eps":{"act":-0.05,"est":-0.09,"actC":-0.05},"members":{"act":479.86}},"Q1'23":{"adjRev":{"gLow":430,"gHigh":440,"act":460.163,"est":441.7,"actC":460.16},"ebitda":{"gLow":40,"gHigh":45,"act":75.689},"ni":{"act":-34.422},"eps":{"act":-0.05,"est":-0.08,"actC":-0.05},"members":{"act":433.178}},"Q2'23":{"adjRev":{"gLow":470,"gHigh":480,"act":488.815,"est":474.6,"actC":488.82},"ebitda":{"gLow":50,"gHigh":60,"act":76.819},"ni":{"act":-47.549},"eps":{"act":-0.06,"est":-0.07,"actC":-0.06},"members":{"act":584.38}},"Q3'23":{"adjRev":{"act":530.717,"est":516.2,"actC":530.72},"ebitda":{"act":98.025},"ni":{"act":-266.684},"eps":{"act":-0.29,"est":-0.07,"actC":-0.03},"members":{"act":717.096}},"Q4'23":{"adjRev":{"act":594.245,"est":571.7,"actC":594.0},"ebitda":{"act":181.204},"ni":{"act":47.913},"eps":{"act":0.02,"est":0.0,"actC":0.02},"members":{"act":584.673}},"Q1'24":{"adjRev":{"gLow":550,"gHigh":560,"act":580.648,"est":567.21,"actC":580.65},"ebitda":{"gLow":110,"gHigh":120,"act":144.385},"ni":{"gLow":10,"gHigh":20,"act":88.043},"eps":{"act":0.02,"est":0.01,"actC":0.02},"members":{"act":589.86}},"Q2'24":{"adjRev":{"gLow":555,"gHigh":565,"act":596.965,"est":563.6,"actC":596.97},"ebitda":{"gLow":115,"gHigh":125,"act":137.901},"ni":{"gLow":5,"gHigh":10,"act":17.404},"eps":{"act":0.01,"est":0.0,"actC":0.01},"members":{"act":642.516}},"Q3'24":{"adjRev":{"gLow":625,"gHigh":645,"act":689.445,"est":636.68,"actC":689.45},"ebitda":{"gLow":160,"gHigh":165,"act":186.237},"ni":{"gLow":40,"gHigh":45,"act":60.745},"eps":{"gLow":0.04,"gHigh":0.04,"act":0.05,"est":0.04,"actC":0.05},"members":{"act":598.379}},"Q4'24":{"adjRev":{"act":739.112,"est":664.04,"actC":739.11},"ebitda":{"act":197.957},"ni":{"act":332.473},"eps":{"act":0.29,"est":0.04,"actC":0.05},"members":{"act":754.708}},"Q1'25":{"adjRev":{"gLow":725,"gHigh":745,"act":770.72,"est":742.34,"actC":770.72},"ebitda":{"gLow":175,"gHigh":185,"act":210.337},"ni":{"gLow":30,"gHigh":40,"act":71.116},"eps":{"gLow":0.03,"gHigh":0.03,"act":0.06,"est":0.03,"actC":0.06},"members":{"act":788.488}},"Q2'25":{"adjRev":{"gLow":785,"gHigh":805,"act":858.23,"est":805.44,"actC":858.23},"ebitda":{"gLow":200,"gHigh":210,"act":249.083},"ni":{"gLow":60,"gHigh":70,"act":97.263},"eps":{"gLow":0.05,"gHigh":0.06,"act":0.08,"est":0.06,"actC":0.08},"members":{"act":829.761}},"Q3'25":{"adjRev":{"act":949.626,"est":890.83,"actC":949.63},"ebitda":{"act":276.881},"ni":{"act":139.392},"eps":{"act":0.11,"est":0.09,"actC":0.11},"members":{"act":896.803}},"Q4'25":{"adjRev":{"act":1012.835,"est":981.89,"actC":1010.0},"ebitda":{"act":317.597},"ni":{"act":173.549},"eps":{"gLow":0.12,"gHigh":0.12,"act":0.13,"est":0.12,"actC":0.13},"members":{"act":1008.627}},"Q1'26":{"adjRev":{"gLow":1040,"gHigh":1040,"act":1087.232,"est":1040.0,"actC":1090.0},"ebitda":{"gLow":300,"gHigh":300,"act":339.901},"ni":{"gLow":160,"gHigh":160,"act":166.731},"eps":{"gLow":0.12,"gHigh":0.12,"act":0.12,"est":0.12,"actC":0.12},"members":{"act":1055.038}},"Q2'26":{"adjRev":{"gLow":1115,"gHigh":1115,"act":1205.55,"est":1110.0,"actC":1210.0},"ebitda":{"gLow":330,"gHigh":330,"act":357.821},"ni":{"act":160.406},"eps":{"gLow":0.1,"gHigh":0.11,"act":0.12,"est":0.11,"actC":0.12},"members":{"act":1108.378}},"Q3'26":{"adjRev":{"act":1371.124,"est":1260.0,"actC":1370.0},"ebitda":{"act":469.818},"ni":{"act":242.986},"eps":{"act":0.18,"est":0.17,"actC":0.18},"members":{"act":1259.854}},"Q4'26":{"adjRev":{"gLow":1375,"gHigh":1375},"ebitda":{"gLow":492,"gHigh":492},"ni":{"gLow":276,"gHigh":276},"eps":{"gLow":0.19,"gHigh":0.19}}},"y":{"FY2022":{"adjRev":{"gLow":1570,"gHigh":1570,"lLow":1517,"lHigh":1522,"act":1540.492,"est":1500.0},"ebitda":{"gLow":180,"gHigh":180,"lLow":115,"lHigh":120,"act":143.346},"ni":{"act":-320.407},"eps":{"act":-0.4,"est":-0.45},"members":{"act":1762.235}},"FY2023":{"adjRev":{"gLow":1925,"gHigh":2000,"lLow":2045,"lHigh":2065,"act":2073.94,"est":2020.0},"ebitda":{"gLow":260,"gHigh":280,"lLow":386,"lHigh":396,"act":431.737},"ni":{"act":-300.742},"eps":{"act":-0.36,"est":-0.2},"members":{"act":2319.327}},"FY2024":{"adjRev":{"gLow":2365,"gHigh":2405,"lLow":2535,"lHigh":2550,"act":2606.17,"est":2470.0},"ebitda":{"gLow":580,"gHigh":590,"lLow":640,"lHigh":645,"act":666.48},"ni":{"gLow":95,"gHigh":105,"lLow":204,"lHigh":206,"act":498.665},"eps":{"gLow":0.07,"gHigh":0.08,"lLow":0.11,"lHigh":0.12,"act":0.39},"members":{"gLow":2300,"lLow":2300,"act":2585.463}},"FY2025":{"adjRev":{"gLow":3200,"gHigh":3275,"lLow":3540,"lHigh":3540,"act":3591.411,"est":3450.0},"ebitda":{"gLow":845,"gHigh":865,"lLow":1035,"lHigh":1035,"act":1053.898},"ni":{"gLow":285,"gHigh":305,"lLow":455,"lHigh":455,"act":481.32},"eps":{"gLow":0.25,"gHigh":0.27,"lLow":0.37,"lHigh":0.37,"act":0.39,"est":0.32},"members":{"gLow":2800,"lLow":3500,"act":3523.679}},"FY2026":{"adjRev":{"gLow":4655,"gHigh":4655,"lLow":5040,"lHigh":5040},"ebitda":{"gLow":1600,"gHigh":1600,"lLow":1660,"lHigh":1660},"ni":{"gLow":825,"gHigh":825,"lLow":840,"lHigh":840},"eps":{"gLow":0.6,"gHigh":0.6,"lLow":0.61,"lHigh":0.61}},"FY2027":{"adjRev":{"gLow":6400,"gHigh":6400,"lLow":6400,"lHigh":6400},"ebitda":{"gLow":2240,"gHigh":2240,"lLow":2240,"lHigh":2240},"ni":{"gLow":1280,"gHigh":1280,"lLow":1280,"lHigh":1280},"eps":{"gLow":0.9,"gHigh":0.9,"lLow":0.9,"lHigh":0.9}}},sources:[]};
+const AVE_METRICS = [
+  {k:'adjRev', l:'Adjusted net revenue', u:'US$M', fmt:'m'},
+  {k:'ebitda', l:'Adjusted EBITDA', u:'US$M', fmt:'m'},
+  {k:'ni',     l:'Net income (basis as guided)', u:'US$M', fmt:'m'},
+  {k:'eps',    l:'Diluted EPS (basis as guided)', u:'US$', fmt:'ps'},
+  {k:'members',l:'Net new members', u:'k', fmt:'k'},
+];
+const AVE = (() => {
+  const st = {freq:'q', bench:'g', guide:'first'};
+  try{ Object.assign(st, JSON.parse(localStorage.getItem('pvg-ave')||'{}')); }catch(e){}
+  const save = () => { try{ localStorage.setItem('pvg-ave', JSON.stringify(st)); }catch(e){} };
+  const perOrder = l => l.startsWith('FY') ? +l.slice(2) : 2000+(+l.slice(3,5))+(+l[1])/10;
+  // benchmark for a period/metric → {lo, hi, mid} or null
+  function bench(d){
+    if(!d) return null;
+    if(st.bench==='c') return isN(d.est) ? {lo:d.est, hi:d.est, mid:d.est} : null;
+    const lo = st.guide==='last' && isN(d.lLow) ? d.lLow : d.gLow, hi0 = st.guide==='last' && isN(d.lLow) ? d.lHigh : d.gHigh;
+    if(!isN(lo)) return null;
+    const hi = isN(hi0) ? hi0 : lo;
+    return {lo, hi, mid:(lo+hi)/2};
+  }
+  const surprise = (a, m) => isN(a)&&isN(m)&&m!==0 ? (a-m)/Math.abs(m) : null;
+  // Above / in line / below. Guidance: inside the range is in line (single-number guides: ±1%).
+  // Consensus: within ±1% is in line (EPS: same cent).
+  function result(a, b, k){
+    if(!isN(a)||!b) return null;
+    if(st.bench==='c'){
+      if(k==='eps') return Math.abs(a-b.mid)<0.005 ? 'in' : a>b.mid ? 'up' : 'dn';
+      const s=surprise(a,b.mid); return Math.abs(s)<=0.01 ? 'in' : s>0 ? 'up' : 'dn';
+    }
+    if(b.lo===b.hi){ const s=surprise(a,b.mid); return Math.abs(s)<=0.01 ? 'in' : s>0 ? 'up' : 'dn'; }
+    return a>b.hi ? 'up' : a<b.lo ? 'dn' : 'in';
+  }
+  const RES = {up:['Above','up'], in:['In line','in'], dn:['Below','dn']};
+  const resTag = r => r ? `<span class="ave-res ${RES[r][1]}">${RES[r][0]}</span>` : NA;
+  const pctS = v => isN(v) ? `<span class="g ${Math.abs(v)<0.0005?'neu':v>0?'pos':'neg'}">${v>0?'+':v<0?'−':''}${Math.abs(v*100).toFixed(1)}%</span>` : NA;
+
+  function rows(k){
+    const src = AVE_DATA[st.freq];
+    return Object.keys(src).sort((a,b)=>perOrder(a)-perOrder(b)).map(per=>{
+      const d=src[per]?.[k], b=bench(d), a = st.bench==='c' && isN(d?.actC) ? d.actC : d?.act;
+      return {per, d, b, a, s: b?surprise(a,b.mid):null, r: result(a,b,k)};
+    }).filter(x=>x.b && isN(x.a));
+  }
+  function stats(rs){
+    const n=rs.length, c=t=>rs.filter(x=>x.r===t).length;
+    const ss=rs.map(x=>x.s).filter(isN).sort((a,b)=>a-b);
+    return {n, up:c('up'), in:c('in'), dn:c('dn'), avg: ss.length? ss.reduce((a,b)=>a+b,0)/ss.length : null, med: ss.length? ss[Math.floor((ss.length-1)/2)]/2+ss[Math.ceil((ss.length-1)/2)]/2 : null};
+  }
+  const pc = (x,n) => n ? Math.round(x/n*100)+'%' : NA;
+
+  function render(){
+    ['aveFreq','aveBench','aveGuide'].forEach((id,i)=>{
+      const v=[st.freq,st.bench,st.guide][i];
+      document.querySelectorAll('#'+id+' button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+    });
+    document.getElementById('aveGuide').style.display = st.bench==='g' && st.freq==='y' ? '' : 'none';
+    const benchName = st.bench==='g' ? (st.freq==='y' ? (st.guide==='first'?'first guidance given for the year':'last guidance before the report') : 'guidance given the prior quarter') : 'consensus before the report';
+    document.getElementById('aveSub').textContent = `${st.freq==='q'?'Quarters':'Years'} · actual vs ${benchName}`;
+    const c=C();
+    // Scorecard
+    const sc = AVE_METRICS.map(m=>({m, s:stats(rows(m.k))}));
+    document.getElementById('aveScore').innerHTML = `<table class="metrics-table ave-score"><thead><tr><th>Metric</th><th>Periods</th><th>Above</th><th>In line</th><th>Below</th><th>Avg. difference</th><th>Median</th><th></th></tr></thead><tbody>${
+      sc.map(({m,s})=>`<tr><td>${m.l}</td><td>${s.n||NA}</td><td><span class="g pos">${pc(s.up,s.n)}</span></td><td>${pc(s.in,s.n)}</td><td><span class="g neg">${pc(s.dn,s.n)}</span></td><td>${pctS(s.avg)}</td><td>${pctS(s.med)}</td><td>${s.n?`<div class="bar3"><i style="width:${s.up/s.n*100}%;background:${c.pos}"></i><i style="width:${s.in/s.n*100}%;background:${c.grey}"></i><i style="width:${s.dn/s.n*100}%;background:${c.neg}"></i></div>`:''}</td></tr>`).join('')
+    }</tbody></table>`;
+    // One card per metric: bars with the difference only, then the detail table
+    const host=document.getElementById('aveCards');
+    const shown = AVE_METRICS.filter(m=>rows(m.k).length);
+    host.innerHTML = shown.length ? '' : `<div class="card"><div class="ave-empty">No ${st.bench==='g'?'guidance':'consensus'} to compare for these periods.</div></div>`;
+    host.innerHTML += shown.map(m=>`<div class="card"><div class="card-h"><div><span class="card-t">${m.l}</span><span class="card-sub">difference vs ${st.bench==='g'?'guidance midpoint':'consensus'}</span></div></div>
+      <div class="card-b"><div class="chart"><canvas id="ave-c-${m.k}"></canvas></div></div><div class="tbl-wrap" id="ave-t-${m.k}"></div></div>`).join('');
+    shown.forEach(m=>{
+      const rs=rows(m.k), s=stats(rs);
+      if(!rs.length){ document.getElementById('ave-c-'+m.k).parentElement.innerHTML=`<div class="ave-empty">No ${st.bench==='g'?'guidance':'consensus'} available for this metric.</div>`; document.getElementById('ave-t-'+m.k).innerHTML=''; return; }
+      const col = r => r==='up'?c.pos : r==='dn'?c.neg : c.grey;
+      mk('ave-c-'+m.k, {type:'bar', data:{labels:rs.map(x=>x.per), datasets:[{label:'Difference', data:rs.map(x=>isN(x.s)?x.s*100:null), backgroundColor:rs.map(x=>col(x.r)), borderRadius:3, maxBarThickness:28, tip:v=>isN(v)?(v>0?'+':'')+v.toFixed(1)+'%':'–'}]},
+        options:{...baseOpts({yTick:v=>(v>0?'+':'')+v+'%'}), animation:false, plugins:{...baseOpts().plugins, legend:{display:false}}}});
+      const fm = F[m.fmt];
+      const hdr = rs.map(x=>`<th>${x.per}</th>`).join('');
+      const line = (l, f, cls='') => `<tr class="${cls}"><td>${l}</td>${rs.map(x=>`<td>${f(x)}</td>`).join('')}</tr>`;
+      const bRows = st.bench==='g'
+        ? line('Guidance low', x=>fm(x.b.lo)) + line('Guidance high', x=>x.b.hi===x.b.lo?NA:fm(x.b.hi)) + line('Midpoint', x=>fm(x.b.mid))
+        : line('Consensus', x=>fm(x.b.mid));
+      document.getElementById('ave-t-'+m.k).innerHTML = `<table class="metrics-table ave-t"><thead><tr><th>${m.u}</th>${hdr}</tr></thead><tbody>
+        ${bRows}${line('Actual', x=>fm(x.a))}${line('Difference', x=>pctS(x.s), 'dif')}${line('Result', x=>resTag(x.r))}
+        <tr class="dif"><td>Above / in line / below</td><td colspan="${rs.length}" style="text-align:left"><span class="g pos">${pc(s.up,s.n)} above</span> · ${pc(s.in,s.n)} in line · <span class="g neg">${pc(s.dn,s.n)} below</span> &nbsp;(${s.n} ${st.freq==='q'?'quarters':'years'})</td></tr>
+      </tbody></table>`;
+    });
+    document.getElementById('aveSrc').innerHTML = (st.bench==='g'
+      ? 'Guidance: SoFi earnings releases (8-K Exhibit 99.1) and calls. Quarters are compared with the guide given the prior quarter (SoFi gave only full-year or second-half guides for Q3\'22, Q4\'22, Q3\'23, Q4\'23, Q4\'24, Q3\'25 and Q3\'26, so those are not shown). The range midpoint is the benchmark and inside the range counts as in line; single-number and "at least" guides count as in line within ±1%. Net income and EPS were guided on a GAAP basis until mid-2025 and adjusted afterwards; FY2024 GAAP net income includes a one-time tax benefit (adjusted: $227M, $0.15). Actuals as first reported.'
+      : 'Consensus: Zacks consensus before each report, compared with the actual Zacks used (2022: GAAP total net revenue; from 2023: adjusted net revenue; EPS: GAAP through Q3\'24, adjusted afterwards). Q4\'23 uses the consensus quoted by The Motley Fool. Full years use the latest consensus found before the Q4 report. Within ±1% counts as in line (EPS: same cent).') + (AVE_DATA.sources.length?' Sources: '+AVE_DATA.sources.join('; ')+'.':'');
+  }
+  function set(k,v){ st[k]=v; save(); render(); }
+  return {render, set};
+})();
+['aveFreq','aveBench','aveGuide'].forEach((id,i)=>document.getElementById(id).addEventListener('click',e=>{ const b=e.target.closest('button'); if(b) AVE.set(['freq','bench','guide'][i], b.dataset.v); }));
 
 let modelRendered=false;
 function renderModel(){ if(modelRendered) return; MODEL.render(); modelRendered=true; }
@@ -2082,6 +2305,7 @@ function showMain(m){
   document.querySelectorAll('.mview').forEach(x=>x.classList.toggle('active',x.id==='m-'+m));
   try{ localStorage.setItem('pvg-main',m); }catch(e){}
   if(m==='valuation' && vtab==='model') renderModel();
+  if(m==='valuation' && vtab==='ave') AVE.render();
   renderView(current);
 }
 document.querySelectorAll('.mtab').forEach(t=>t.addEventListener('click',()=>showMain(t.dataset.main)));
@@ -2091,6 +2315,7 @@ function showVtab(v){
   document.querySelectorAll('#m-valuation > .view').forEach(x=>x.classList.toggle('active',x.id==='vv-'+v));
   try{ localStorage.setItem('pvg-vtab',v); }catch(e){}
   if(v==='model' && mainTab==='valuation') renderModel();
+  if(v==='ave' && mainTab==='valuation') AVE.render();
 }
 document.querySelectorAll('.vtab').forEach(t=>t.addEventListener('click',()=>showVtab(t.dataset.vtab)));
 document.querySelectorAll('#m-earnings .tab').forEach(t=>t.addEventListener('click',()=>{
