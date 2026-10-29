@@ -177,6 +177,16 @@ html.mobile .px-v{font-size:22px}
 /* body */
 .xl td.p{background:var(--proj)}
 .xl td.inp{background:var(--inp-bg);color:var(--inp-fg)}
+.xl td.edit{cursor:text;box-shadow:inset 0 0 0 1px rgba(191,144,0,.35)}
+.xl td.edit:hover,.xl td.edit:focus{box-shadow:inset 0 0 0 1.5px #BF9000;outline:none}
+.xl td.edit.dirty{background:#FFE08A;box-shadow:inset 0 0 0 1.5px #ED7D31}
+.xl td.edit input{width:100%;min-width:52px;box-sizing:border-box;border:0;background:transparent;font:inherit;color:inherit;text-align:right;padding:0;outline:none}
+.co-pane{display:none;flex-direction:column;min-width:0}
+.co-pane.active{display:flex}
+.edit-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--text-secondary)}
+.edit-bar .tbtn.primary{background:#2E75B6;border-color:#2E75B6;color:#fff}
+.edit-bar .tbtn.primary:disabled{opacity:.45;cursor:default}
+.edit-bar .msg{font-size:11.5px}
 .xl tr.sec td{background:var(--sec-bg);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-primary);height:34px;border-bottom:2px solid var(--accent);cursor:pointer;user-select:none}
 .xl tr.sec:hover td{background:var(--sec-hover,var(--accent-light))}
 .xl tr.sec td.c-lab{padding-left:10px !important}
@@ -567,8 +577,9 @@ html.mobile .xl-wrap{max-height:calc(100vh - 190px)}
       <button class="mtab" data-main="valuation">Valuation</button>
     </nav>
 
+    <div class="co-pane active" data-co="SOFI">
     <!-- ============ EARNINGS: call summaries (previous) and what to watch (next) ============ -->
-    <div class="mview" id="m-earnings">
+    <div class="mview" id="m-earnings" data-main="earnings">
     <nav class="subtabs" role="tablist">
       <button class="tab etab active" data-etab="prev">Previous</button>
       <button class="tab etab" data-etab="next">Next</button>
@@ -584,7 +595,7 @@ html.mobile .xl-wrap{max-height:calc(100vh - 190px)}
     </div>
 
     <!-- ============ THESIS (operating dashboard) ============ -->
-    <div class="mview active" id="m-tesis">
+    <div class="mview active" id="m-tesis" data-main="tesis">
     <nav class="subtabs" role="tablist">
       <span class="per-seg stmt-seg" id="perSeg"><button data-v="q" class="on">Quarterly</button><button data-v="y">Annual</button></span>
       <button class="tab active" data-tab="crecimiento">Members &amp; products</button>
@@ -727,7 +738,7 @@ html.mobile .xl-wrap{max-height:calc(100vh - 190px)}
     </div>
 
     <!-- ============ VALUATION ============ -->
-    <div class="mview" id="m-valuation">
+    <div class="mview" id="m-valuation" data-main="valuation">
     <nav class="subtabs" role="tablist">
       <button class="tab vtab active" data-vtab="model">Model</button>
       <button class="tab vtab" data-vtab="ave">Actual vs Estimates</button>
@@ -779,6 +790,51 @@ html.mobile .xl-wrap{max-height:calc(100vh - 190px)}
         <div id="grCards" class="ave-cards"></div>
         <div class="src" id="grSrc"></div>
       </section>
+    </div>
+    </div>
+
+    <!-- ============ AMAZON ============ -->
+    <div class="co-pane" data-co="AMZN">
+    <div class="mview" id="am-earnings" data-main="earnings">
+      <nav class="subtabs" role="tablist"><button class="tab active">Previous</button><button class="tab">Next</button></nav>
+      <section class="view active"><div class="card"><div class="stmt-empty"><b>Earnings</b>Coming next: summaries of the ten calls from Apr-24 to Jul-26, by call and by topic, and what to watch in the Q3'26 report.</div></div></section>
+    </div>
+    <div class="mview active" id="am-tesis" data-main="tesis">
+      <nav class="subtabs" role="tablist"><button class="tab active">Overview</button></nav>
+      <section class="view active"><div class="card"><div class="stmt-empty"><b>Thesis</b>Coming next: segments (North America, International, AWS), product groups, capex and free cash flow, built from the model data.</div></div></section>
+    </div>
+    <div class="mview" id="am-valuation" data-main="valuation">
+    <nav class="subtabs" role="tablist">
+      <button class="tab amvtab active" data-amvtab="model">Model</button>
+      <button class="tab amvtab" data-amvtab="ave">Actual vs Estimates</button>
+      <button class="tab amvtab" data-amvtab="guidance">Guidance Revisions</button>
+      <button class="tab amvtab" data-amvtab="dcf">DCF</button>
+    </nav>
+      <section class="view active" id="amv-model">
+        <div class="card">
+          <div class="card-h">
+            <div class="stmt-seg" id="amStmtSeg" role="tablist">
+              <button data-stmt="is" class="on">Income statement</button>
+              <button data-stmt="bs">Balance sheet</button>
+              <button data-stmt="cf">Cash flow statement</button>
+            </div>
+            <div class="ctrls">
+              <div class="legend"><span><i style="background:#FFF4CC"></i>Input / assumption (click to edit)</span><span><i style="background:rgba(46,117,182,0.12)"></i>Projected</span><span><sup style="color:var(--warning)">*</sup> Q4 derived (FY − 9M)</span><span><u>123</u> Estimated (Q4 weighted-average shares)</span></div>
+              <div class="tbtns"><button class="tbtn" id="amOlExpand">+ Expand all</button><button class="tbtn" id="amOlCollapse">− Collapse all</button></div>
+              <label class="chk"><input type="checkbox" id="amHideSubs"> Hide growth and common-size rows</label>
+            </div>
+          </div>
+          <div class="stmt-head"><span class="stmt-title" id="amStmtTitle">Income statement</span><span class="card-sub" id="amStmtSub"></span>
+            <span class="edit-bar"><button class="tbtn primary" id="amSubmit" disabled>Submit assumptions</button><button class="tbtn" id="amDiscard" disabled>Discard</button><button class="tbtn" id="amReset">Reset to defaults</button><span class="msg" id="amEditMsg"></span></span>
+          </div>
+          <div class="xl-wrap" id="amModelTable"></div>
+        </div>
+        <div class="src">Source: Amazon 10-Q (Q1'19–Q2'26) and 10-K (FY2019–FY2025) filings; Q4'24 and Q4'25 EPS and shares from the Q4'25 release; guidance from the earnings releases and calls. Q4 = full year − nine months. Shares and EPS adjusted for the 20-for-1 split of May 2022. Projections: segment net sales grow at the YoY rate entered and operating income is each segment's sales × its operating margin; the consolidated expense lines split total operating expenses with the mix of the same period a year earlier. Edited assumptions are saved in this browser.</div>
+      </section>
+      <section class="view" id="amv-ave"><div class="card"><div class="stmt-empty"><b>Actual vs Estimates</b>Coming next: net sales and operating income against Amazon's guidance range, quarter by quarter.</div></div></section>
+      <section class="view" id="amv-guidance"><div class="card"><div class="stmt-empty"><b>Guidance Revisions</b>Coming next: how the quarterly ranges and the annual capex plan moved.</div></div></section>
+      <section class="view" id="amv-dcf"><div class="card"><div class="stmt-empty"><b>DCF</b>Coming next: trading multiples and a DCF linked to the model.</div></div></section>
+    </div>
     </div>
 
   </div>
@@ -1339,6 +1395,115 @@ function insights(){
   document.getElementById('ins-seg').innerHTML=`<strong>Lending was the engine again: ${fmtTipG(yoy(DQ.lendRev,L))} YoY to $${nf0.format(DQ.lendRev[L])}M, ${F.p(DQ.lendRev[L]/segTot)} of segment revenue, with a ${F.p(DQ.lendCp[L]/DQ.lendRev[L])} contribution margin.</strong> Financial Services grew ${fmtTipG(yoy(DQ.fsRev,L))} but its margin fell to ${F.p(DQ.fsCp[L]/DQ.fsRev[L])} from ${F.p(DQ.fsCp[L-4]/DQ.fsRev[L-4])}. Technology Platform declined ${fmtTipG(yoy(DQ.techRev,L))} YoY (per the company, +18% excluding the departed client). Fee-based revenue reached ${F.p(DQ.fee[L]/DQ.rev[L])} of net revenue.`;
   const o=add(DQ.oPL,DQ.oSL,DQ.oHL,DQ.oSB);
   document.getElementById('ins-lend').innerHTML=`<strong>Record originations of $${(o[L]/1000).toFixed(1)}B (${fmtTipG(yoy(o,L))} YoY) while the personal loan net charge-off rate fell to ${DQ.ncoPL[L].toFixed(2)}% from ${DQ.ncoPL[L-4].toFixed(2)}% a year ago.</strong> Net interest margin rose to ${DQ.nim[L].toFixed(2)}% and deposits to $${DQ.deposits[L].toFixed(1)}B. Worth watching: CET1 fell from ${DQ.cet1[L-2].toFixed(1)}% in Q1'26 to ${DQ.cet1[L].toFixed(1)}% as risk-weighted assets grow (still well above the 7.0% minimum).`;
+}
+
+/* =====================================================================
+   MODEL SHEET — Excel-style statement table shared by every company model:
+   collapsible sections, rows and column blocks, "projected at the time" columns,
+   statement switcher (income statement · balance sheet · cash flow).
+   ===================================================================== */
+function modelSheet(cfg){
+  const {ROWS, BLOCKS, qpDefault, BQ, BY, isInput, ids, STMT} = cfg;
+  // ---- Outline state (persisted) ----
+  const ST_KEY=cfg.stKey;
+  let S0={}; try{ S0=JSON.parse(localStorage.getItem(ST_KEY)||'{}'); }catch(e){}
+  const state={ sec:new Set(S0.sec||[]), row:new Set(S0.row||[]), blk:new Set(S0.blk||[]), hideSubs:!!S0.hideSubs, grp:new Set(S0.grp||[]), bt:new Set(S0.bt||[]), qx:new Set(S0.qx||[]), stmt:S0.stmt||'is' };
+  const save=()=>{ try{ localStorage.setItem(ST_KEY, JSON.stringify({sec:[...state.sec],row:[...state.row],blk:[...state.blk],hideSubs:state.hideSubs,grp:[...state.grp],bt:[...state.bt],qx:[...state.qx],stmt:state.stmt})); }catch(e){} };
+
+  // ---- Render ----
+  const FM = {
+    ...F,
+    usd0: v => !isN(v) ? NA : '$'+nf0.format(v),
+    usd2: v => !isN(v) ? NA : '$'+v.toFixed(2),
+    p2:   v => !isN(v) ? NA : (v*100).toFixed(2)+'%',
+    ps:   v => !isN(v) ? NA : (v<0?'($'+Math.abs(v).toFixed(2)+')':'$'+v.toFixed(v<0.1&&v>0&&Math.round(v*1000)%10!==0?3:2)),
+  };
+  const CHEV = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.25 6 7.75l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const chev = (kind,id,open,title) => `<button class="chev" data-ol="${kind}" data-id="${id}" title="${title}" aria-expanded="${open}">${CHEV}</button>`;
+  const btn = (kind,id,open,title) => `<button class="ol" data-ol="${kind}" data-id="${id}" title="${title}" aria-expanded="${open}">${open?'−':'+'}</button>`;
+  function visible(r){
+    if(r.grp_>=0 && state.grp.has(ROWS[r.grp_].id)) return false;
+    const secClosed = state.sec.has(ROWS[r.sec_]?.id);
+    if(r.sub) return !secClosed && !state.hideSubs && !state.row.has(ROWS[r.parent]?.id);
+    return !secClosed;                       // a collapsed section hides every row, totals included
+  }
+  function render(){
+    document.querySelectorAll('#'+ids.seg+' button').forEach(b=>b.classList.toggle('on',b.dataset.stmt===state.stmt));
+    document.getElementById(ids.title).textContent=STMT[state.stmt][0];
+    document.getElementById(ids.sub).textContent=STMT[state.stmt][1];
+    const el0=document.getElementById(ids.table);
+    if(!ROWS.some(r=>r.sec && r.stmt===state.stmt)){
+      el0.innerHTML='<div class="stmt-empty"><b>Cash flow statement</b>Coming next: operating, investing and financing cash flows by quarter and year, with the same layout as the income statement and balance sheet.</div>';
+      return;
+    }
+    const gap = '<td class="gap"></td>', gapH = '<th class="gap"></th>';
+    const blocks = BLOCKS.map(b=>{
+      const bt = !b.proj && state.bt.has(b.id);
+      const more = b.id==='qp' && qpDefault.length < b.cols.length;
+      const qxOpen = more && state.qx.has(b.id);
+      if(more && !qxOpen) b = {...b, cols:qpDefault};
+      b = {...b, cols:[...b.cols].reverse()};   // newest period on the left, oldest on the right
+      // each displayed column: {c, bt:false} for actual, {c, bt:true} for the projection made at the time
+      const dcols = bt ? b.cols.flatMap(c=>[{c,bt:false},{c,bt:true}]) : b.cols.map(c=>({c,bt:false}));
+      return {...b, closed:state.blk.has(b.id), past:!b.proj, btOpen:bt, dcols, more, qxOpen};
+    }).reverse();   // right to left: annual projected | annual actual | quarterly projected | quarterly actual
+    const cells = (fn) => blocks.map((b,bi)=>(bi?gap:'')+(b.closed?'<td class="colx"></td>':b.dcols.map(d=>fn(d.c,b,d.bt)).join(''))).join('');
+    const qxBtn = b => b.more ? `<button class="ol" data-ol="qx" data-id="${b.id}" aria-expanded="${b.qxOpen}" title="${b.qxOpen?'Hide':'Show'} projected quarters beyond the current fiscal year">${b.qxOpen?'−':'+'}</button>` : '';
+    const btBtn = b => b.past ? `<button class="ol ol-txt" data-ol="bt" data-id="${b.id}" aria-expanded="${b.btOpen}" title="Show what the model would have projected for each period with data through the prior period">${b.btOpen?'− projected at the time':'+ projected at the time'}</button>` : '';
+    const hA = `<tr class="hA"><th class="c-lab co-name">${cfg.coName}</th><th class="c-unit"></th>${
+      blocks.map((b,bi)=>(bi?gapH:'')+(b.closed
+        ? `<th class="band ${b.proj?'band-p':'band-a'} colx" title="${b.title}">${btn('blk',b.id,false,'Expand '+b.title)}</th>`
+        : `<th colspan="${b.dcols.length}" class="band ${b.proj?'band-p':'band-a'} ${b.more?'band-q':''}">${b.more?'':btn('blk',b.id,true,'Collapse '+b.title)}<span>${b.title}</span>${btBtn(b)}${qxBtn(b)}</th>`)).join('')}</tr>`;
+    const hB = `<tr class="hB"><th class="c-lab">${cfg.unitNote}</th><th class="c-unit">Unit</th>${
+      blocks.map((b,bi)=>(bi?gapH:'')+(b.closed?`<th class="colx vlab">${b.short}</th>`:b.dcols.map(({c,bt})=>bt?`<th class="per btc" title="Projected at the time for ${c.v.lab}">${c.v.lab}<span class="pt">proj.</span></th>`:`<th class="per ${b.proj?'p':''}">${c.v.lab}${(cfg.derivedCols||[]).includes(c.v.lab)?'<sup>*</sup>':''}</th>`).join(''))).join('')}</tr>`;
+    const hC = `<tr class="hC"><th class="c-lab"></th><th class="c-unit"></th>${
+      blocks.map((b,bi)=>(bi?gapH:'')+(b.closed?'<th class="colx"></th>':b.dcols.map(({c,bt})=>bt?`<th class="btc">as of prior ${c.kind==='q'?'qtr':'year'}</th>`:`<th class="${b.proj?'p':''}">${c.v.end}${cfg.colNote?cfg.colNote(c):''}${c.v.annualOnly?' · annual':''}</th>`).join(''))).join('')}</tr>`;
+    let body='';
+    let first=true;
+    ROWS.forEach((r,ri)=>{
+      if(r.stmt_!==state.stmt) return;
+      if(r.sec){
+        const open=!state.sec.has(r.id);
+        if(!first) body+=`<tr class="spacer"><td class="c-lab"></td><td class="c-unit"></td>${cells(()=>'<td></td>')}</tr>`;
+        first=false;
+        const n = ROWS.filter(x=>x.sec_===ri && !x.sub && !x.subh).length;
+        body+=`<tr class="sec${open?'':' closed'}" data-sec="${r.id}"><td class="c-lab">${chev('sec',r.id,open,(open?'Collapse ':'Expand ')+r.sec)}${r.sec}${open?'':`<span class="sec-n">${n} lines</span>`}</td><td class="c-unit"></td>${cells(()=>'<td></td>')}</tr>`;
+        return;
+      }
+      if(!visible(r)) return;
+      const tds = cells((c,b,bt)=>{
+        if(r.subh) return `<td class="n${b.proj?' p':''}"></td>`;
+        const attr = !bt && cfg.cellAttr ? cfg.cellAttr(r,c) : '';
+        const cls=['n', b.proj?'p':'', isInput(r,c)?'inp':'', attr?'edit':''];
+        if(bt){
+          const bo = c.kind==='q' ? BQ[c.qi] : BY[c.yi];
+          let bv=null; if(bo && !(cfg.btSkip && cfg.btSkip(r))){ try{ bv=r.f(bo,c); }catch(e){ bv=null; } }
+          return `<td class="n bt">${(FM[r.fmt]||FM.m)(bv)}</td>`;
+        }
+        let v; try{ v=r.f(c.v,c); }catch(e){ v=null; }
+        let s=(FM[r.fmt]||FM.m)(v);
+        const derived = cfg.isDerived ? cfg.isDerived(r,c) : false;
+        if(derived && isN(v)) s=`<span class="derived">${s}</span>`;
+        const tt = cfg.cellTitle ? cfg.cellTitle(r,c) : '', t = tt ? ` title="${tt}"` : '';
+        return `<td class="${cls.join(' ')}"${t}${attr}>${s}</td>`;
+      });
+      const rc=[r.sub?'sub':'', r.tot?'tot':'', r.key?'kt':'', r.b?'b':'', r.ind?'ind':'', r.subh?'subh':''].join(' ');
+      const tog = r.subh ? chev('grp',r.id,!state.grp.has(r.id),(state.grp.has(r.id)?'Expand ':'Collapse ')+r.l) : r.hasSubs && !state.hideSubs ? chev('row',r.id,!state.row.has(r.id),'Show / hide growth and ratios') : (r.sub?'':'<span class="ol-sp"></span>');
+      body+=`<tr class="${rc}"><td class="c-lab" title="${r.note||r.l}">${tog}${r.l}</td><td class="c-unit">${r.u||''}</td>${tds}</tr>`;
+    });
+    const el=document.getElementById(ids.table);
+    const sx=el.scrollLeft, sy=el.scrollTop;
+    el.innerHTML=`<table class="xl"><thead>${hA}${hB}${hC}</thead><tbody>${body}</tbody></table>`;
+    el.scrollLeft=sx; el.scrollTop=sy;
+    document.getElementById(ids.hide).checked=state.hideSubs;
+  }
+  // Outline interactions
+  function toggle(kind,id){ const set=state[kind]; set.has(id)?set.delete(id):set.add(id); save(); render(); }
+  function expandAll(){ ROWS.forEach(r=>{ if(r.sec && r.stmt===state.stmt) state.sec.delete(r.id); }); state.row.clear(); state.blk.clear(); state.grp.clear(); state.hideSubs=false; save(); render(); }
+  function collapseAll(){ ROWS.forEach(r=>{ if(r.sec && r.stmt===state.stmt) state.sec.add(r.id); }); save(); render(); }
+  function setStmt(v){ state.stmt=v; save(); render(); }
+  function setHideSubs(v){ state.hideSubs=v; save(); render(); }
+  return {render, toggle, expandAll, collapseAll, setHideSubs, setStmt};
 }
 
 /* =====================================================================
@@ -2147,107 +2312,681 @@ const MODEL = (() => {
     if(r.sub){ r.parent=parentIdx; if(parentIdx>=0) ROWS[parentIdx].hasSubs=true; } else parentIdx=i;
   });
 
-  // ---- Outline state (persisted) ----
-  const ST_KEY='pvg-model-outline';
-  let S0={}; try{ S0=JSON.parse(localStorage.getItem(ST_KEY)||'{}'); }catch(e){}
-  const state={ sec:new Set(S0.sec||[]), row:new Set(S0.row||[]), blk:new Set(S0.blk||[]), hideSubs:!!S0.hideSubs, grp:new Set(S0.grp||[]), bt:new Set(S0.bt||[]), qx:new Set(S0.qx||[]), stmt:S0.stmt||'is' };
-  const save=()=>{ try{ localStorage.setItem(ST_KEY, JSON.stringify({sec:[...state.sec],row:[...state.row],blk:[...state.blk],hideSubs:state.hideSubs,grp:[...state.grp],bt:[...state.bt],qx:[...state.qx],stmt:state.stmt})); }catch(e){} };
-
-  // ---- Render ----
-  const FM = {
-    ...F,
-    usd0: v => !isN(v) ? NA : '$'+nf0.format(v),
-    usd2: v => !isN(v) ? NA : '$'+v.toFixed(2),
-    p2:   v => !isN(v) ? NA : (v*100).toFixed(2)+'%',
-    ps:   v => !isN(v) ? NA : (v<0?'($'+Math.abs(v).toFixed(2)+')':'$'+v.toFixed(v<0.1&&v>0&&Math.round(v*1000)%10!==0?3:2)),
-  };
   const DERIVED_COLS = ["Q4'21","Q4'22","Q4'23","Q4'24","Q4'25"];
-  const CHEV = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.25 6 7.75l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  const chev = (kind,id,open,title) => `<button class="chev" data-ol="${kind}" data-id="${id}" title="${title}" aria-expanded="${open}">${CHEV}</button>`;
-  const btn = (kind,id,open,title) => `<button class="ol" data-ol="${kind}" data-id="${id}" title="${title}" aria-expanded="${open}">${open?'−':'+'}</button>`;
-  function visible(r){
-    if(r.grp_>=0 && state.grp.has(ROWS[r.grp_].id)) return false;
-    const secClosed = state.sec.has(ROWS[r.sec_]?.id);
-    if(r.sub) return !secClosed && !state.hideSubs && !state.row.has(ROWS[r.parent]?.id);
-    return !secClosed;                       // a collapsed section hides every row, totals included
+  const SHEET = modelSheet({ROWS, BLOCKS, qpDefault, BQ, BY, isInput, stKey:'pvg-model-outline',
+    ids:{seg:'stmtSeg', title:'stmtTitle', sub:'stmtSub', table:'modelTable', hide:'hideSubs'},
+    coName:'SoFi Technologies, Inc. (SOFI)', unitNote:'US$ in millions, except per-share data and KPIs',
+    STMT:{is:['Income statement','US$M unless noted · KPIs in thousands'], bs:['Balance sheet','US$M · period-end balances'], cf:['Cash flow statement','US$M · quarters from year-to-date filings']},
+    derivedCols:DERIVED_COLS, colNote:c=>c.v.lab==='FY2026E'?' · 3A+1E':'',
+    isDerived:(r,c)=>(r.stmt_==='cf' && c.v.cfDerived) || (r.der && r.der.includes(c.v.lab)) || (r.ghk && GH[c.v.lab]?.[r.ghkind]?.d?.includes(r.ghk)),
+    cellTitle:(r,c)=>r.ghk && GH[c.v.lab]?.[r.ghkind]?.src ? GH[c.v.lab][r.ghkind].src : '',
+    btSkip:r=>ROWS[r.sec_]?.sec?.startsWith('Guidance')});
+  return {...SHEET, Q, Y, BQ, BY};
+})();
+
+/* =====================================================================
+   AMAZON — Model: income statement, balance sheet and cash flow statement (US$M).
+   Extracted from the 10-Q / 10-K filings in Amzn/ (FY2019–FY2025, Q1'19–Q2'26) plus the
+   Q4'25 release (Q4 EPS and shares). Same layout and engine as the SoFi model.
+   ===================================================================== */
+const AMZN_MODEL = (() => {
+  // ---- Periods ----
+  // Captured series order (42 values): Q1'18 … Q2'26 (34) | FY2018 … FY2025 (8).
+  // 2018 is not displayed; it is the base for YoY growth. Q1'18–Q3'18 come from the comparative columns of the 2019 10-Qs.
+  // Q4 = full year (10-K) − nine months, using filings that present the same lines (see the reclassification notes in each section).
+  const QLAB = ["Q1'18", "Q2'18", "Q3'18", "Q4'18", "Q1'19", "Q2'19", "Q3'19", "Q4'19", "Q1'20", "Q2'20", "Q3'20", "Q4'20", "Q1'21", "Q2'21", "Q3'21", "Q4'21", "Q1'22", "Q2'22", "Q3'22", "Q4'22", "Q1'23", "Q2'23", "Q3'23", "Q4'23", "Q1'24", "Q2'24", "Q3'24", "Q4'24", "Q1'25", "Q2'25", "Q3'25", "Q4'25", "Q1'26", "Q2'26"];
+  const QEND = QLAB.map(l=>['Mar','Jun','Sep','Dec'][+l[1]-1]+'-'+l.slice(3));
+  const QDAYS = QLAB.map(l=>{ const y=2000+(+l.slice(3)), q=+l[1]; return q===1?((y%4===0)?91:90):q===2?91:92; });
+  const PLAB = ["Q3'26E","Q4'26E","Q1'27E","Q2'27E","Q3'27E","Q4'27E"];
+  const PEND = ['Sep-26','Dec-26','Mar-27','Jun-27','Sep-27','Dec-27'];
+  const PDAYS = [92,92,90,91,92,92];
+  const YLAB = ['FY2018','FY2019','FY2020','FY2021','FY2022','FY2023','FY2024','FY2025'];
+  const YDAYS = [365,365,366,365,365,365,366,365];
+  const XLAB = ['FY2028E','FY2029E','FY2030E'];   // annual-only projections
+  const FIRST_SHOWN_Q = 4;   // Q1'19
+  const FIRST_SHOWN_Y = 1;   // FY2019
+
+  // US$M; EPS in US$; shares in millions (split-adjusted for the 20-for-1 split of May 2022).
+  const RAW = {
+    // Income statement
+    prodSales:[31605,31864,33746,44700,34283,35856,39726,50543,41841,50244,52774,71056,57491,58004,54876,71416,56455,56575,59340,70531,56981,59032,63171,76703,60915,61569,67601,82226,63970,68246,74058,89992,71304,77602,141915,160408,215915,241787,242901,255887,272311,296266],
+    servSales:[19437,21022,22830,27683,25417,27548,30255,36894,33611,38668,43371,54499,51027,55076,55936,65996,59989,64659,67761,78673,70377,75351,79912,93258,82398,86408,91276,105566,91697,99456,106111,123394,110215,123004,90972,120114,170149,228035,271082,318898,365648,420658],
+    sales:    [51042,52886,56576,72383,59700,63404,69981,87437,75452,88912,96145,125555,108518,113080,110812,137412,116444,121234,127101,149204,127358,134383,143083,169961,143313,147977,158877,187792,155667,167702,180169,213386,181519,200606,232887,280522,386064,469822,513983,574785,637959,716924],
+    cogs:     [30735,30632,33003,44786,33920,36337,41302,53977,44257,52660,57106,79284,62403,64176,62930,82835,66499,66424,70268,85640,67791,69373,75022,92553,72633,73785,80977,98893,76976,80809,88670,109959,87463,95778,139156,165536,233307,272344,288831,304739,326288,356414],
+    fulf:     [7792,7932,8275,10028,8601,9271,10167,12193,11531,13806,14705,18475,16530,17638,18498,22445,20271,20342,20583,23103,20905,21305,22314,26095,22317,23566,24660,27962,24593,25976,27679,30826,27289,29633,34027,40232,58517,75111,84299,90619,98505,109074],
+    tech:     [6759,7247,7162,7669,7927,9065,9200,9739,9325,10388,10976,12051,12488,13871,14380,15313,14842,18072,19485,20814,20450,21931,21203,22038,20424,22304,22245,23571,22994,27166,28962,29399,29567,33158,28837,35931,42740,56052,73213,85622,88544,108521],
+    mkt:      [2699,2901,3303,4911,3664,4291,4752,6171,4828,4345,5434,7401,6207,7524,8010,10810,8320,10086,11014,12818,10172,10745,10551,12902,9662,10512,10609,13124,9763,11416,11686,14264,10314,11698,13814,18878,22008,32551,42238,44370,43907,47129],
+    ga:       [1067,1111,1041,1117,1173,1270,1348,1412,1452,1580,1668,1968,1987,2158,2153,2525,2594,2903,3061,3333,3043,3202,2561,3010,2742,3041,2713,2863,2628,2965,2875,2704,2587,2788,4336,5203,6668,8823,11891,11816,11359,11172],
+    othOp:    [63,80,68,85,-5,86,55,65,70,290,62,-497,38,11,-11,24,249,90,165,759,223,146,244,154,228,97,262,176,308,199,2875,1257,447,90,296,201,-75,62,1263,767,763,4639],
+    opex:     [49115,49903,52852,68596,55280,60320,66824,83557,71463,83069,89951,118682,99653,105378,105960,133952,112775,117917,124576,146467,122584,126702,131895,156752,128006,133305,141466,166589,137262,148531,162747,188409,157667,173145,220466,265981,363165,444943,501735,537933,569366,636949],
+    opInc:    [1927,2983,3724,3787,4420,3084,3157,3880,3989,5843,6194,6873,8865,7702,4852,3460,3669,3317,2525,2737,4774,7681,11188,13209,15307,14672,17411,21203,18405,19171,17422,24977,23852,27461,12421,14541,22899,24879,12248,36852,68593,79975],
+    intInc:   [80,94,117,149,183,215,224,210,202,135,118,100,105,106,119,118,108,159,277,445,611,661,776,901,993,1180,1256,1248,1066,1085,1100,1130,1135,1295,440,832,555,448,989,2949,4677,4381],
+    intExp:   [-330,-343,-358,-386,-366,-383,-396,-455,-402,-403,-428,-414,-399,-435,-493,-482,-472,-584,-617,-694,-823,-840,-806,-713,-644,-589,-603,-570,-541,-516,-538,-679,-800,-1314,-1417,-1600,-1647,-1809,-2367,-3182,-2406,-2274],
+    othInc:   [239,-129,-93,-200,164,-27,-353,419,-406,646,925,1206,1697,1261,-163,11838,-8570,-5545,759,-3450,-443,61,1031,289,-2673,-18,-27,468,2749,1117,10186,1177,15647,53415,-183,203,2371,14633,-16806,938,-2250,15229],
+    nonOp:    [-11,-378,-334,-437,-19,-195,-525,174,-606,378,615,892,1403,932,-537,11474,-8934,-5970,419,-3699,-655,-118,1001,477,-2324,573,626,1146,3274,1686,10748,1628,15982,53396,-1160,-565,1279,13272,-18184,705,21,17336],
+    ebt:      [1916,2605,3390,3350,4401,2889,2632,4054,3383,6221,6809,7765,10268,8634,4315,14934,-5265,-2653,2944,-962,4119,7563,12189,13686,12983,15245,18037,22349,21679,20857,28170,26605,39834,80857,11261,13976,24178,38151,-5936,37557,68614,97311],
+    tax:      [-287,-74,-508,-328,-836,-257,-494,-787,-744,-984,-569,-566,-2156,-868,-1155,-612,1422,637,-69,1227,-948,-804,-2306,-3062,-2467,-1767,-2706,-2325,-4553,-2678,-6910,-4946,-9560,-18199,-1197,-2374,-2863,-4791,3217,-7120,-9265,-19087],
+    eqMeth:   [0,3,1,5,-4,-7,-4,1,-104,6,91,23,-5,12,-4,1,-1,-12,-3,13,1,-9,-4,0,-85,7,-3,-20,1,-15,-73,-467,-19,-11,9,-14,16,4,-3,-12,-101,-554],
+    ni:       [1629,2534,2883,3027,3561,2625,2134,3268,2535,5243,6331,7222,8107,7778,3156,14323,-3844,-2028,2872,278,3172,6750,9879,10624,10431,13485,15328,20004,17127,18164,21187,21192,30255,62647,10073,11588,21331,33364,-2722,30425,59248,77670],
+    epsB:     [0.168,0.2605,0.2955,0.309,0.362,0.266,0.2155,0.329,0.2545,0.525,0.6315,0.719,0.8045,0.77,0.31,1.4107,-0.38,-0.2,0.28,0.0272,0.31,0.66,0.96,1.0256,1,1.29,1.46,1.9,1.62,1.71,1.98,1.98,2.82,5.82,1.034,1.173,2.13,3.3,-0.27,2.95,5.66,7.29],
+    epsD:     [0.1635,0.2535,0.2875,0.302,0.3545,0.261,0.2115,0.3235,0.2505,0.515,0.6185,0.7045,0.7895,0.76,0.31,1.3867,-0.38,-0.2,0.28,0.0276,0.31,0.65,0.94,1.0009,0.98,1.26,1.43,1.86,1.59,1.68,1.95,1.95,2.78,5.75,1.007,1.1505,2.09,3.24,-0.27,2.9,5.53,7.17],
+    shB:      [9680,9720,9760,9800,9820,9860,9900,9920,9960,10000,10020,10040,10080,10103,10132,10153,10171,10175,10191,10219,10250,10285,10322,10359,10393,10447,10501,10552,10603,10637,10674,10709,10743,10769,9740,9880,10005,10117,10189,10304,10473,10656],
+    shD:      [9960,10000,10020,10020,10040,10060,10080,10100,10120,10180,10240,10260,10260,10286,10309,10329,10171,10175,10331,10079,10347,10449,10558,10614,10670,10708,10735,10771,10793,10806,10845,10863,10874,10903,10000,10080,10198,10296,10189,10492,10721,10827],
+    // Segments (net sales, operating expenses, operating income)
+    segNA_s:  [30725,32169,34348,44124,35812,38653,42638,53670,46127,55436,59373,75346,64366,67550,65557,82360,69244,74430,78843,93363,76881,82546,87887,105514,86341,90033,95537,115586,92887,100068,106267,127083,104143,116177,141366,170773,236282,279833,315880,352828,387497,426305],
+    segNA_x:  [29576,30334,32316,41873,33525,37089,41356,51770,44815,53295,57121,72400,60916,64403,64677,82566,70812,75057,79255,93603,75983,79335,83580,99053,81358,84968,89874,106330,87046,92551,101478,115611,95876,107054,134099,163740,227631,272562,318727,337951,362530,396686],
+    segNA_o:  [1149,1835,2032,2251,2287,1564,1282,1900,1312,2141,2252,2946,3450,3147,880,-206,-1568,-627,-412,-240,898,3211,4307,6461,4983,5065,5663,9256,5841,7517,4789,11472,8267,9123,7267,7033,8651,7271,-2847,14877,24967,29619],
+    segIN_s:  [14875,14612,15549,20830,16192,16370,18348,23813,19106,22668,25171,37467,30649,30721,29145,37272,28759,27065,27720,34463,29123,29697,32137,40243,31935,31663,35888,43420,33513,36761,40896,50724,39789,42197,65866,74723,104412,127787,118007,131200,142906,161894],
+    segIN_x:  [15497,15106,15934,21471,16282,16971,18734,24429,19504,22323,24764,37104,29397,30359,30056,38899,30040,28836,30186,36691,30370,30592,32232,40662,31032,31390,34587,42105,32496,35267,39697,49684,38365,40480,68008,76416,103695,128711,125753,133856,139114,157144],
+    segIN_o:  [-622,-494,-385,-641,-90,-601,-386,-616,-398,345,407,363,1252,362,-911,-1627,-1281,-1771,-2466,-2228,-1247,-895,-95,-419,903,273,1301,1315,1017,1494,1199,1040,1424,1717,-2142,-1693,717,-924,-7746,-2656,3792,4750],
+    segAWS_s: [5442,6105,6679,7429,7696,8381,8995,9954,10219,10808,11601,12742,13503,14809,16110,17780,18441,19739,20538,21378,21354,22140,23059,24204,25037,26281,27452,28786,29267,30873,33006,35579,37587,42232,25655,35026,45370,62202,80096,90757,107556,128725],
+    segAWS_x: [4042,4463,4602,5252,5473,6260,6734,7358,7144,7451,8066,9178,9340,10616,11227,12487,11923,14024,15135,16173,16231,16775,16083,17037,15616,16947,17005,18154,17720,20713,21572,23114,23426,25611,18359,25825,31839,43670,57255,66126,67722,83119],
+    segAWS_o: [1400,1642,2077,2177,2223,2121,2261,2596,3075,3357,3535,3564,4163,4193,4883,5293,6518,5715,5403,5205,5123,5365,6976,7167,9421,9334,10447,10632,11547,10160,11434,12465,14161,16621,7296,9201,13531,18532,22841,24631,39834,45606],
+    // Net sales by groups of similar products and services
+    pgOnline: [26939,27165,29061,39822,29498,31053,35039,45657,36652,45896,48350,66448,52901,53157,49942,66075,51129,50855,53489,64531,51096,52966,57267,70543,54670,55392,61411,75556,57407,61485,67407,82988,64254,70432,122987,141247,197346,222075,220004,231872,247029,269287],
+    pgPhys:   [4263,4312,4248,4401,4307,4330,4192,4363,4640,3774,3788,4025,3920,4198,4269,4688,4591,4721,4694,4957,4895,5024,4959,5152,5202,5206,5228,5579,5533,5595,5578,5855,5785,5794,17224,17192,16227,17075,18963,20030,21215,22561],
+    pg3P:     [9265,9702,10395,13383,11141,11962,13212,17447,14479,18195,20436,27351,23709,25085,24252,30320,25335,27376,28666,36339,29820,32332,34342,43559,34596,36201,37864,47485,36512,40348,42486,52816,41578,46780,42745,53762,80461,103366,117716,140053,156146,172162],
+    pgAds:    [null,null,null,null,null,null,null,null,null,null,null,null,6381,7451,7612,9716,7877,8757,9548,11557,9509,10683,12060,14654,11824,12771,14331,17288,13921,15694,17703,21317,17243,19809,null,12625,19773,31160,37739,46906,56214,68635],
+    pgSub:    [3102,3408,3698,3960,4342,4676,4957,5235,5556,6018,6572,7061,7580,7917,8148,8123,8410,8716,8903,9189,9657,9894,10170,10488,10722,10866,11278,11508,11715,12208,12574,13122,13427,13730,14168,19210,25207,31768,35218,40209,44374,49619],
+    pgAWS:    [5442,6105,6679,7429,7696,8381,8995,9954,10219,10808,11601,12742,13503,14809,16110,17780,18441,19739,20538,21378,21354,22140,23059,24204,25037,26281,27452,28786,29267,30873,33006,35579,37587,42232,25655,35026,45370,62202,80096,90757,107556,128725],
+    pgOther:  [null,null,null,null,null,null,null,null,null,null,null,null,524,463,479,710,661,1070,1263,1253,1027,1344,1226,1361,1262,1260,1313,1590,1312,1499,1415,1709,1645,1829,10108,1460,1680,2176,4247,4958,5425,5935],
+    // Balance sheet: period-end balances; Q4 = December (10-K)
+    cash:     [null,null,null,31750,23115,22616,23255,36092,27201,37466,29930,42122,33834,40380,29944,36220,36393,37478,34947,53888,49343,49529,49605,73387,72852,71178,75091,78779,66207,57741,66922,86810,101816,78213,31750,36092,42122,36220,53888,73387,78779,86810],
+    mktSec:   [null,null,null,9500,13905,18847,20146,18929,22091,33925,38472,42274,39436,49514,49044,59829,29992,23232,23715,16138,15062,14441,14564,13393,12222,17914,12960,22423,28358,35439,27275,36219,41273,44775,9500,18929,42274,59829,16138,13393,22423,36219],
+    inv:      [null,null,null,17174,16432,18580,18766,20497,18857,19599,23735,23795,23849,24119,30933,32640,34987,38153,36647,34405,34170,36587,35406,33318,31147,34109,36103,34214,35864,40825,41494,38325,36534,38184,17174,20497,23795,32640,34405,33318,34214,38325],
+    ar:       [null,null,null,16677,15979,16747,16887,20816,17836,19918,20832,24542,24289,26835,28610,32891,32504,34804,36154,42360,37646,39925,43420,52253,47768,50106,51638,55451,54216,57415,61175,67729,75532,88092,16677,20816,24542,32891,42360,52253,55451,67729],
+    tca:      [null,null,null,75101,69431,76790,79054,96334,85985,110908,112969,132733,121408,140848,138531,161580,133876,133667,131463,146791,136221,140482,142995,172351,163989,173307,175792,190867,184645,191420,196866,229083,255155,249264,75101,96334,132733,161580,146791,172351,190867,229083],
+    ppe:      [null,null,null,61797,61048,64723,67662,72705,77779,86517,99981,113114,121461,133502,147152,160281,168468,173706,177195,186715,190754,193784,196468,204177,209950,220717,237917,252665,272781,297616,324435,357025,397458,446046,61797,72705,113114,160281,186715,204177,252665,357025],
+    opLease:  [null,null,null,0,20132,21649,23114,25141,26279,28537,34119,37553,39328,43346,52151,56082,56161,58430,62033,66123,68262,70332,70758,72513,73313,74575,76527,76141,78495,82125,83456,86054,88741,92743,0,25141,37553,56082,66123,72513,76141,86054],
+    gw:       [null,null,null,14548,14708,14727,14734,14754,14739,14751,14960,15017,15220,15350,15345,15371,20229,20195,20168,20288,22749,22785,22749,22789,22770,22879,23081,23074,23089,23155,23260,23273,23449,23504,14548,14754,15017,15371,20288,22789,23074,23273],
+    othA:     [null,null,null,11202,12783,13462,14535,16314,16456,17601,20150,22778,25660,27273,29227,27235,32033,33730,37503,42758,46392,50224,53913,56024,60947,63340,71309,82147,84246,87854,99904,122607,151827,284132,11202,16314,22778,27235,42758,56024,82147,122607],
+    totA:     [null,null,null,162648,178102,191351,199099,225248,221238,258314,282179,321195,323077,360319,382406,420549,410767,419728,428362,462675,464378,477607,486883,527854,530969,554818,584626,624894,643256,682170,727921,818042,916630,1095689,162648,225248,321195,420549,462675,527854,624894,818042],
+    ap:       [null,null,null,38192,31809,36063,35794,47183,40056,51036,58334,72539,63926,66090,71474,78664,68547,71219,67760,79600,66907,69481,72004,84981,73068,81817,84570,94363,89241,98285,106032,121909,124749,147440,38192,47183,72539,78664,79600,84981,94363,121909],
+    accr:     [null,null,null,23663,24588,26140,28961,32439,30791,33863,34327,44138,40939,41007,41546,51775,58141,56254,59974,62566,66382,64235,58812,64709,63970,60351,60602,66965,66331,66974,68051,75520,71120,73406,23663,32439,44138,51775,62566,64709,66965,75520],
+    unearn:   [null,null,null,6536,7298,7475,7381,8190,8864,8997,9251,9708,10539,10695,10974,11827,12820,12818,12629,13227,14281,14522,14398,15227,15927,16004,16305,18103,20599,21662,21113,20576,20887,20428,6536,8190,9708,11827,13227,15227,18103,20576],
+    tcl:      [null,null,null,68391,63695,69678,72136,87812,79711,93896,101912,126385,115404,117792,123994,142266,139508,140291,140363,155393,147570,148238,145214,164917,152965,158172,161477,179431,176171,186921,195196,218005,216756,241274,68391,87812,126385,142266,155393,164917,179431,218005],
+    ltLease:  [null,null,null,9650,33275,35134,37058,39791,40300,42798,48589,52573,53067,56297,63848,67651,65731,66524,69332,72968,74267,75822,75891,77297,77052,78084,79802,78277,79871,83221,84677,87339,90814,94338,9650,39791,52573,67651,72968,77297,78277,87339],
+    ltDebt:   [null,null,null,23495,23322,23329,22472,23414,23437,33128,32929,31816,31868,50279,50055,48744,47556,58053,58919,67150,67084,63092,61098,58314,57634,54889,54890,52623,53374,50718,50742,65648,119074,128894,23495,23414,31816,48744,67150,58314,52623,65648],
+    othLTL:   [null,null,null,17563,9400,10149,10925,12171,12518,14764,15974,17017,19418,21148,23945,23643,23971,23458,22259,21121,20931,21853,21707,25451,26657,27226,29306,28593,27973,27535,27675,35985,48072,79563,17563,12171,17017,23643,21121,25451,28593,35985],
+    cs:       [null,null,null,5,5,5,5,5,5,5,5,5,5,5,5,106,5,107,107,108,108,108,108,109,109,110,110,111,111,112,112,112,113,113,5,5,5,106,108,109,111,112],
+    treas:    [null,null,null,-1837,-1837,-1837,-1837,-1837,-1837,-1837,-1837,-1837,-1837,-1837,-1837,-1837,-4503,-7837,-7837,-7837,-7837,-7837,-7837,-7837,-7837,-7837,-7837,-7837,-7837,-7837,-7837,-7837,-7837,-7837,-1837,-1837,-1837,-1837,-7837,-7837,-7837,-7837],
+    apic:     [null,null,null,26791,28059,30035,31817,33658,35412,38017,40307,42865,45160,48724,51879,55437,58793,63871,69419,75066,79863,86896,92711,99025,103938,110633,115934,120864,124514,130923,135679,140024,143979,149619,26791,33658,42865,55437,75066,99025,120864,140024],
+    aoci:     [null,null,null,-1035,-1010,-960,-1429,-986,-2063,-1455,-1029,-180,-666,-525,-1075,-1376,-2365,-4782,-7115,-4487,-3973,-3680,-5003,-3040,-3598,-3993,-1918,-34,-914,2420,12333,28230,24868,66287,-1035,-986,-180,-1376,-4487,-3040,-34,28230],
+    re:       [null,null,null,19625,23193,25818,27952,31220,33755,38998,45329,52551,60658,68436,71592,85915,82071,80043,82915,83193,86365,93115,102994,113618,124049,137534,152862,172866,189993,208157,229344,250536,280791,343438,19625,31220,52551,85915,83193,113618,172866,250536],
+    eq:       [null,null,null,43549,48410,53061,56508,62060,65272,73728,82775,93404,103320,114803,120564,138245,134001,131402,137489,146043,154526,168602,182973,201875,216661,236447,259151,285970,305867,333775,369631,411065,441914,551620,43549,62060,93404,138245,146043,201875,285970,411065],
+    totLE:    [null,null,null,162648,178102,191351,199099,225248,221238,258314,282179,321195,323077,360319,382406,420549,410767,419728,428362,462675,464378,477607,486883,527854,530969,554818,584626,624894,643256,682170,727921,818042,916630,1095689,162648,225248,321195,420549,462675,527854,624894,818042],
+    // Cash flow statement: three-month columns of the 10-Qs; Q4 = FY − 9M
+    cfBeg:    [21856,17616,20536,21032,32173,23507,22965,23554,36410,27505,37842,30202,42377,34155,40667,30177,36477,36599,37700,35178,54253,49734,50067,50081,73890,73332,71673,78677,82312,69893,61453,70464,90106,104692,21856,32173,36410,42377,36477,54253,73890,82312],
+    cfNI:     [1629,2534,2883,3027,3561,2625,2134,3268,2535,5243,6331,7222,8107,7778,3156,14323,-3844,-2028,2872,278,3172,6750,9879,10624,10431,13485,15328,20004,17127,18164,21187,21192,30255,62647,10073,11588,21331,33364,-2722,30425,59248,77670],
+    cfDA:     [3671,3630,3778,4262,4854,5202,5563,6170,5362,5748,6523,7618,7508,8038,8948,9802,9193,9716,10327,12685,11123,11589,12131,13820,11684,12038,13442,15631,14262,15227,16796,19471,18945,19988,15341,21789,25180,34433,41921,48663,52795,65756],
+    cfSBC:    [1182,1468,1350,1418,1274,1971,1779,1840,1757,2601,2288,2562,2306,3591,3180,3680,3250,5209,5556,5606,4748,7127,5829,6319,4961,6722,5333,4995,3689,6534,4847,4397,4032,6038,5418,6864,9208,12757,19621,24023,22011,19467],
+    cfOthOpx: [56,85,62,71,-13,80,47,50,67,282,67,-487,30,18,24,65,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,274,164,0,0,0,0,0,0],
+    cfOthNon: [-184,110,96,197,-135,-7,388,-495,565,-769,-1051,-1327,-1456,-1258,340,-11932,8689,6104,-1272,3445,534,47,-990,-339,2734,-95,-141,-486,-2817,-1258,-10112,-693,-15632,-53381,219,-249,-2582,-14306,16966,-748,2012,-14880],
+    cfDefTax: [141,-139,266,173,415,105,92,184,322,465,295,-1636,1703,701,909,-3623,-2001,-1955,-825,-3367,-472,-2744,-1196,-1464,-938,-785,-1317,-1608,507,11,10130,822,12798,17691,441,796,-554,-310,-8148,-5876,-4648,11470],
+    cfInv:    [2220,-1090,-1094,-1350,719,-2100,-381,-1516,1392,-672,-3899,330,-304,-209,-7059,-1915,-2614,-3890,732,3180,371,-2373,808,2643,1776,-3085,-1509,934,-1222,-4054,-827,3101,1622,-1818,-1314,-3278,-2849,-9487,-2592,1449,-1884,-3002],
+    cfAR:     [1029,-1364,-2884,-1396,-401,-2193,-1181,-3906,1262,-2854,-2016,-4561,-2255,-4462,-4890,-6556,-1516,-6799,-4794,-8788,4724,-2041,-3584,-7447,3684,-2209,-701,-4023,1247,-1125,-1977,-5478,-5750,-8204,-4615,-7681,-8169,-9145,-8622,-8348,-3249,-7333],
+    cfOthA:   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-3203,-3126,-3134,-2802,-2701,-3055,-4537,-4190,-3402,-2971,-4039,-5220,-3811,-4717,0,0,0,-9018,-13275,-12265,-14483,-15632],
+    cfAP:     [-10216,2703,3894,6882,-6384,3668,226,10683,-8044,8616,3658,13250,-8266,47,3832,7989,-9380,3699,-1226,9852,-11264,3029,2820,10888,-11282,6005,-477,8726,-9043,7058,2151,11065,-8737,9442,3263,8193,17480,3602,2945,5473,2972,11231],
+    cfAccr:   [-2225,-205,237,2665,-2932,-623,-722,2894,-2761,1699,-310,7126,-4060,-1685,-1465,9333,-5903,-1412,-20,5777,-5763,-1938,-1321,6594,-2928,-4147,129,4042,-4061,-4952,-1999,5993,-8045,-2018,472,-1383,5754,2123,-1558,-2428,-2904,-5019],
+    cfUnearn: [906,-283,0,528,888,390,-53,486,607,247,78,333,900,156,338,920,1336,321,54,505,818,156,-25,3629,1568,407,421,1611,728,-119,-632,-191,355,-281,1151,1711,1265,2314,2216,4578,4007,-214],
+    CFO:      [-1791,7449,8588,16477,1846,9118,7892,19658,3064,20606,11964,30430,4213,12715,7313,22086,-2790,8965,11404,29173,4788,16476,21217,42465,18989,25281,25971,45636,17015,32515,35525,54459,26032,45387,30723,38514,66064,46327,46752,84946,115877,139514],
+    cfCapex:  [-3098,-3243,-3352,-3734,-3290,-3562,-4697,-5312,-6795,-7459,-11063,-14823,-12082,-14288,-15748,-18935,-14951,-15724,-16378,-16592,-14207,-11455,-12479,-14588,-14925,-17620,-22620,-27834,-25019,-32183,-35095,-39522,-44203,-54208,-13427,-16861,-40140,-61053,-63645,-52729,-82999,-131819],
+    cfPPEproc:[371,294,825,614,569,919,1312,1372,1367,844,1255,1630,895,1300,997,2465,1209,1626,1337,1152,1137,1043,1181,1235,990,1227,1342,1782,764,815,867,1053,969,1132,2104,4172,5096,5657,5324,4596,5341,3499],
+    cfAcq:    [-13,-866,-976,-331,-1169,-117,-398,-777,-91,-118,-1735,-381,-630,-320,-654,-381,-6341,-259,-885,-831,-3513,-316,-1629,-381,-3354,-571,-622,-2535,48,-1700,-786,-1403,-15408,-24359,-2186,-2461,-2325,-1985,-8316,-5839,-7082,-3841],
+    cfSecSale:[2677,1660,1964,1939,2643,5161,7251,7626,11626,8138,13135,17338,17826,13213,15808,12537,22753,2608,557,5683,1115,1551,1393,1568,1392,3265,8069,3677,7737,11441,16367,8841,17686,24196,8240,22681,50237,59384,31601,5627,16403,44386],
+    cfSecBuy: [-470,-537,-4033,-2060,-6876,-9950,-8542,-6444,-15001,-19209,-17468,-20801,-14675,-21985,-15231,-8266,-1764,-329,-239,-233,-338,-496,-219,-435,-1965,-8439,-3068,-12533,-13333,-17797,-7426,-16214,-23256,-26006,-7100,-31812,-72479,-60157,-2565,-1488,-26005,-54770],
+    CFI:      [-533,-2692,-5572,-3572,-8123,-7549,-5074,-3535,-8894,-17804,-15876,-17037,-8666,-22080,-14828,-12580,906,-12078,-15608,-10821,-15806,-9673,-11753,-12601,-17862,-22138,-16899,-37443,-29803,-39424,-26073,-47245,-64212,-79245,-12369,-24281,-59611,-58154,-37601,-49833,-94342,-142545],
+    cfBuyback:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-2666,-3334,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-6000,0,0,0],
+    cfSTp:    [0,0,0,0,0,222,415,0,617,2433,1311,2435,1926,1176,2187,2667,13743,4865,12338,10607,12780,4399,216,734,338,525,1725,2554,1815,2093,3223,2189,6018,9368,886,1402,6796,7956,41553,18129,5142,9320],
+    cfSTr:    [0,0,0,0,0,-73,-341,0,-631,-1906,-1349,-2291,-2001,-1176,-1917,-2659,-6231,-7610,-7916,-15797,-3603,-7641,-8095,-6338,-404,-229,-1820,-2607,-2082,-1392,-1826,-3126,-6109,-9573,-813,-1518,-6177,-7753,-37554,-25677,-5060,-8426],
+    cfLTp:    [125,96,143,404,190,61,287,1098,76,9918,0,531,111,18516,176,200,0,12824,107,8235,0,0,0,0,0,0,0,0,746,0,0,14927,53441,13557,182,871,10525,19003,21166,0,0,15673],
+    cfLTr:    [-202,-149,-183,-134,-351,-39,-14,-1866,-36,-205,-1198,-114,-39,-41,-509,-1001,0,-1,0,-1257,-1386,-2000,0,-290,-330,-4169,-2183,-2500,0,-2751,-1008,-1262,0,-2752,-155,-1166,-1553,-1590,-1258,-3676,-9182,-5021],
+    cfFinL:   [-2015,-1284,-2247,-1903,-2214,-2327,-2307,-2780,-2600,-2817,-2857,-2368,-3406,-2804,-2693,-2260,-2777,-2059,-1465,-1640,-1380,-1220,-1005,-779,-770,-538,-402,-333,-410,-411,-351,-385,-468,-395,-7449,-9628,-10642,-11163,-7941,-4384,-2043,-1557],
+    cfFinO:   [-72,-57,-82,-126,-2,-2,0,-23,-17,-15,-12,-9,-67,-28,-20,-47,-79,-59,-48,-62,-57,-77,-64,-73,-90,-79,-78,-422,-116,-78,-82,-52,-115,-59,-337,-27,-53,-162,-248,-271,-669,-328],
+    CFF:      [-2164,-1394,-2369,-1759,-2377,-2158,-1960,-3571,-2591,7408,-4105,-1816,-3476,15643,-2776,-3100,1990,4626,3016,86,6354,-6539,-8948,-6746,-1256,-4490,-2758,-3308,-47,-2539,-44,12291,52767,10146,-7686,-10066,-1104,6291,9718,-15879,-11812,9661],
+    cfFX:     [248,-443,-151,-5,-12,47,-269,304,-484,127,377,598,-293,234,-199,-106,16,-412,-1334,637,145,69,-502,691,-429,-312,690,-1250,416,1008,-397,137,-1,-53,-351,70,618,-364,-1093,403,-1301,1164],
+    cfNet:    [-4240,2920,496,11141,-8666,-542,589,12856,-8905,10337,-7640,12175,-8222,6512,-10490,6300,122,1101,-2522,19075,-4519,333,14,23809,-558,-1659,7004,3635,-12419,-8440,9011,19642,14586,-23765,10317,4237,5967,-5900,17776,19637,8422,7794],
+    cfEnd:    [17616,20536,21032,32173,23507,22965,23554,36410,27505,37842,30202,42377,34155,40667,30177,36477,36599,37700,35178,54253,49734,50067,50081,73890,73332,71673,78677,82312,69893,61453,70464,90106,104692,80927,32173,36410,42377,36477,54253,73890,82312,90106],
+  };
+  // Periods where a value is an estimate rather than a filed figure (dotted underline)
+  const EST = {
+    shB:["Q4'21","Q4'22","Q4'23"], shD:["Q4'21","Q4'22","Q4'23"], epsB:["Q4'21","Q4'22","Q4'23"], epsD:["Q4'21","Q4'22","Q4'23"],
+  };
+  const pick = i => { const o={}; for(const k in RAW) o[k]=RAW[k][i]; return o; };
+
+  // ---- Projection assumptions (input cells) ----
+  // Quarterly: one value per projected quarter (Q3'26E … Q4'27E). Q3'26E is set inside the Q2'26 release guidance
+  // (net sales $197–202B, operating income $22.5–26.5B); cash capex follows the ~$220B FY2026 plan from the Jul-26 call.
+  const ASM = {
+    gNA:     [0.070,0.090,0.090,0.090,0.090,0.090],   // segment net sales YoY
+    gIN:     [0.100,0.100,0.100,0.100,0.100,0.100],
+    gAWS:    [0.300,0.300,0.250,0.240,0.220,0.200],
+    prodMix: [0.395,0.410,0.385,0.380,0.385,0.400],   // net product sales / total net sales
+    mNA:     [0.068,0.085,0.080,0.080,0.070,0.085],   // segment operating margin
+    mAWS:    [0.370,0.360,0.370,0.370,0.370,0.360],
+    mIN:     [0.035,0.025,0.036,0.040,0.035,0.025],
+    yield:   [0.036,0.036,0.036,0.036,0.036,0.036],   // interest income / prior cash + marketable securities (annualized)
+    rate:    [0.045,0.045,0.045,0.045,0.045,0.045],   // interest expense / prior long-term debt (annualized)
+    othInc:  [0,0,0,0,0,0],                           // other income (expense), US$M — equity marks are not forecast
+    tax:     [0.21,0.21,0.21,0.21,0.21,0.21],
+    da:      [0.102,0.098,0.108,0.105,0.106,0.100],   // D&A % of net sales
+    sbc:     [0.025,0.021,0.022,0.030,0.025,0.021],
+    gSh:     [0.002,0.002,0.002,0.002,0.002,0.002],   // diluted shares QoQ
+    capex:   [59000,64690,60000,62000,64000,66000],   // cash capex net of proceeds and incentives (US$M)
+  };
+  // Annual: one value per year FY2028E, FY2029E, FY2030E
+  const ASMY = {
+    gNA:     [0.08,0.08,0.07],
+    gIN:     [0.09,0.09,0.08],
+    gAWS:    [0.18,0.16,0.14],
+    prodMix: [0.38,0.37,0.36],
+    mNA:     [0.080,0.085,0.090],
+    mAWS:    [0.36,0.36,0.36],
+    mIN:     [0.040,0.045,0.050],
+    yield:   [0.035,0.035,0.035],
+    rate:    [0.045,0.045,0.045],
+    othInc:  [0,0,0],
+    tax:     [0.21,0.21,0.21],
+    da:      [0.105,0.105,0.105],
+    sbc:     [0.024,0.024,0.024],
+    gSh:     [0.006,0.006,0.006],
+    capex:   [270000,285000,300000],
+  };
+
+  // Editable assumptions: the yellow cells of rows tagged with an assumption key (ak) can be edited in the sheet;
+  // "Submit" saves the overrides in this browser and rebuilds the projections.
+  const ASM_KEY='pvg-amzn-asm';
+  const DEFAULTS = JSON.parse(JSON.stringify({q:ASM, y:ASMY}));
+  const SETS = {q:ASM, y:ASMY};
+  function loadSaved(){
+    let sv={}; try{ sv=JSON.parse(localStorage.getItem(ASM_KEY)||'{}'); }catch(e){}
+    for(const kind of ['q','y']) for(const k in (sv[kind]||{})) if(SETS[kind][k]) sv[kind][k].forEach((v,j)=>{ if(isN(v) && j<SETS[kind][k].length) SETS[kind][k][j]=v; });
   }
-  const STMT = {is:['Income statement','US$M unless noted · KPIs in thousands'], bs:['Balance sheet','US$M · period-end balances'], cf:['Cash flow statement','US$M · quarters from year-to-date filings']};
-  function render(){
-    document.querySelectorAll('#stmtSeg button').forEach(b=>b.classList.toggle('on',b.dataset.stmt===state.stmt));
-    document.getElementById('stmtTitle').textContent=STMT[state.stmt][0];
-    document.getElementById('stmtSub').textContent=STMT[state.stmt][1];
-    const el0=document.getElementById('modelTable');
-    if(!ROWS.some(r=>r.sec && r.stmt===state.stmt)){
-      el0.innerHTML='<div class="stmt-empty"><b>Cash flow statement</b>Coming next: operating, investing and financing cash flows by quarter and year, with the same layout as the income statement and balance sheet.</div>';
-      return;
-    }
-    const gap = '<td class="gap"></td>', gapH = '<th class="gap"></th>';
-    const blocks = BLOCKS.map(b=>{
-      const bt = !b.proj && state.bt.has(b.id);
-      const more = b.id==='qp' && qpDefault.length < b.cols.length;
-      const qxOpen = more && state.qx.has(b.id);
-      if(more && !qxOpen) b = {...b, cols:qpDefault};
-      b = {...b, cols:[...b.cols].reverse()};   // newest period on the left, oldest on the right
-      // each displayed column: {c, bt:false} for actual, {c, bt:true} for the projection made at the time
-      const dcols = bt ? b.cols.flatMap(c=>[{c,bt:false},{c,bt:true}]) : b.cols.map(c=>({c,bt:false}));
-      return {...b, closed:state.blk.has(b.id), past:!b.proj, btOpen:bt, dcols, more, qxOpen};
-    }).reverse();   // right to left: annual projected | annual actual | quarterly projected | quarterly actual
-    const cells = (fn) => blocks.map((b,bi)=>(bi?gap:'')+(b.closed?'<td class="colx"></td>':b.dcols.map(d=>fn(d.c,b,d.bt)).join(''))).join('');
-    const qxBtn = b => b.more ? `<button class="ol" data-ol="qx" data-id="${b.id}" aria-expanded="${b.qxOpen}" title="${b.qxOpen?'Hide':'Show'} projected quarters beyond the current fiscal year">${b.qxOpen?'−':'+'}</button>` : '';
-    const btBtn = b => b.past ? `<button class="ol ol-txt" data-ol="bt" data-id="${b.id}" aria-expanded="${b.btOpen}" title="Show what the model would have projected for each period with data through the prior period">${b.btOpen?'− projected at the time':'+ projected at the time'}</button>` : '';
-    const hA = `<tr class="hA"><th class="c-lab co-name">SoFi Technologies, Inc. (SOFI)</th><th class="c-unit"></th>${
-      blocks.map((b,bi)=>(bi?gapH:'')+(b.closed
-        ? `<th class="band ${b.proj?'band-p':'band-a'} colx" title="${b.title}">${btn('blk',b.id,false,'Expand '+b.title)}</th>`
-        : `<th colspan="${b.dcols.length}" class="band ${b.proj?'band-p':'band-a'} ${b.more?'band-q':''}">${b.more?'':btn('blk',b.id,true,'Collapse '+b.title)}<span>${b.title}</span>${btBtn(b)}${qxBtn(b)}</th>`)).join('')}</tr>`;
-    const hB = `<tr class="hB"><th class="c-lab">US$ in millions, except per-share data and KPIs</th><th class="c-unit">Unit</th>${
-      blocks.map((b,bi)=>(bi?gapH:'')+(b.closed?`<th class="colx vlab">${b.short}</th>`:b.dcols.map(({c,bt})=>bt?`<th class="per btc" title="Projected at the time for ${c.v.lab}">${c.v.lab}<span class="pt">proj.</span></th>`:`<th class="per ${b.proj?'p':''}">${c.v.lab}${DERIVED_COLS.includes(c.v.lab)?'<sup>*</sup>':''}</th>`).join(''))).join('')}</tr>`;
-    const hC = `<tr class="hC"><th class="c-lab"></th><th class="c-unit"></th>${
-      blocks.map((b,bi)=>(bi?gapH:'')+(b.closed?'<th class="colx"></th>':b.dcols.map(({c,bt})=>bt?`<th class="btc">as of prior ${c.kind==='q'?'qtr':'year'}</th>`:`<th class="${b.proj?'p':''}">${c.v.end}${c.v.lab==='FY2026E'?' · 3A+1E':''}${c.v.annualOnly?' · annual':''}</th>`).join(''))).join('')}</tr>`;
-    let body='';
-    let first=true;
-    ROWS.forEach((r,ri)=>{
-      if(r.stmt_!==state.stmt) return;
-      if(r.sec){
-        const open=!state.sec.has(r.id);
-        if(!first) body+=`<tr class="spacer"><td class="c-lab"></td><td class="c-unit"></td>${cells(()=>'<td></td>')}</tr>`;
-        first=false;
-        const n = ROWS.filter(x=>x.sec_===ri && !x.sub && !x.subh).length;
-        body+=`<tr class="sec${open?'':' closed'}" data-sec="${r.id}"><td class="c-lab">${chev('sec',r.id,open,(open?'Collapse ':'Expand ')+r.sec)}${r.sec}${open?'':`<span class="sec-n">${n} lines</span>`}</td><td class="c-unit"></td>${cells(()=>'<td></td>')}</tr>`;
-        return;
-      }
-      if(!visible(r)) return;
-      const tds = cells((c,b,bt)=>{
-        if(r.subh) return `<td class="n${b.proj?' p':''}"></td>`;
-        const cls=['n', b.proj?'p':'', isInput(r,c)?'inp':''];
-        if(bt){
-          const bo = c.kind==='q' ? BQ[c.qi] : BY[c.yi];
-          let bv=null; if(bo && !ROWS[r.sec_]?.sec?.startsWith('Guidance')){ try{ bv=r.f(bo,c); }catch(e){ bv=null; } }
-          return `<td class="n bt">${(FM[r.fmt]||FM.m)(bv)}</td>`;
-        }
-        let v; try{ v=r.f(c.v,c); }catch(e){ v=null; }
-        let s=(FM[r.fmt]||FM.m)(v);
-        const derived = (r.stmt_==='cf' && c.v.cfDerived) || (r.der && r.der.includes(c.v.lab)) || (r.ghk && GH[c.v.lab]?.[r.ghkind]?.d?.includes(r.ghk));
-        if(derived && isN(v)) s=`<span class="derived">${s}</span>`;
-        const t = r.ghk && GH[c.v.lab]?.[r.ghkind]?.src ? ` title="${GH[c.v.lab][r.ghkind].src}"` : '';
-        return `<td class="${cls.join(' ')}"${t}>${s}</td>`;
-      });
-      const rc=[r.sub?'sub':'', r.tot?'tot':'', r.key?'kt':'', r.b?'b':'', r.ind?'ind':'', r.subh?'subh':''].join(' ');
-      const tog = r.subh ? chev('grp',r.id,!state.grp.has(r.id),(state.grp.has(r.id)?'Expand ':'Collapse ')+r.l) : r.hasSubs && !state.hideSubs ? chev('row',r.id,!state.row.has(r.id),'Show / hide growth and ratios') : (r.sub?'':'<span class="ol-sp"></span>');
-      body+=`<tr class="${rc}"><td class="c-lab" title="${r.note||r.l}">${tog}${r.l}</td><td class="c-unit">${r.u||''}</td>${tds}</tr>`;
+  loadSaved();
+
+  // ---- Guidance history (US$M): quarterly ranges given with the prior quarter's results; annual capex plan ----
+  const GH = {
+    "Q2'24":  {sales:[144000,149000], oi:[10000,14000], src:'Apr 30, 2024 call'},
+    "Q1'25":  {sales:[151000,155500], oi:[14000,18000], src:'Feb 6, 2025 call'},
+    "Q2'25":  {sales:[159000,164000], oi:[13000,17500], src:'Q1 2025 release'},
+    "Q3'25":  {sales:[174000,179500], oi:[15500,20500], src:'Q2 2025 release'},
+    "Q4'25":  {sales:[206000,213000], oi:[21000,26000], src:'Q3 2025 release'},
+    "Q1'26":  {sales:[173500,178500], oi:[16500,21500], src:'Q4 2025 release'},
+    "Q2'26":  {sales:[194000,199000], oi:[20000,24000], src:'Q1 2026 release'},
+    "Q3'26E": {sales:[197000,202000], oi:[22500,26500], src:'Q2 2026 release'},
+    'FY2026E':{capexFirst:200000, capexLast:220000, src:'Feb-26 call: ~$200B cash capex · Jul-26 call: ~$220B'},
+  };
+
+  // ---- Engine ----
+  const sum = (...a) => a.some(v=>v===null||v===undefined) ? null : a.reduce((s,v)=>s+v,0);
+  const dif = (a,b) => isN(a)&&isN(b) ? a-b : null;
+  function derive(o){
+    o.gross = dif(o.sales,o.cogs);
+    o.opexX = sum(o.fulf,o.tech,o.mkt,o.ga,o.othOp);
+    o.pgAdsOth = isN(o.pgOnline) ? dif(o.sales, sum(o.pgOnline,o.pgPhys,o.pg3P,o.pgSub,o.pgAWS)) : null;
+    o.ebitda = sum(o.opInc,o.cfDA); o.ebitdaS = sum(o.ebitda,o.cfSBC);
+    o.liq = sum(o.cash,o.mktSec); o.netCash = dif(o.liq,o.ltDebt);
+    o.totL = sum(o.tcl,o.ltLease,o.ltDebt,o.othLTL); o.csApic = sum(o.cs,o.apic); o.wc = dif(o.tca,o.tcl);
+    o.bsCheck = isN(o.totA)&&isN(o.totL)&&isN(o.eq) ? (Math.round((o.totA-o.totL-o.eq)*1000)/1000 || 0) : null;
+    o.cfOthNC = sum(o.cfOthOpx,o.cfOthNon); o.netCapex = sum(o.cfCapex,o.cfPPEproc); o.cfSec = sum(o.cfSecSale,o.cfSecBuy);
+    o.cfSTnet = sum(o.cfSTp,o.cfSTr); o.cfFinLO = sum(o.cfFinL,o.cfFinO);
+    o.fcf = sum(o.CFO,o.netCapex); o.fcfL = sum(o.fcf,o.cfFinLO);
+    o.cfCheck = isN(o.cfEnd)&&isN(o.cfBeg)&&isN(o.cfNet) ? (Math.round((o.cfBeg+o.cfNet-o.cfEnd)*1000)/1000 || 0) : null;
+    return o;
+  }
+  const COST = ['cogs','fulf','tech','mkt','ga','othOp'];
+  // Revenue → net income for projected periods (quarterly or annual). Y = same period a year earlier.
+  function buildPL(o, L, Y, a, factor){
+    o.segNA_s=Y.segNA_s*(1+a.gNA); o.segIN_s=Y.segIN_s*(1+a.gIN); o.segAWS_s=Y.segAWS_s*(1+a.gAWS);
+    o.sales=o.segNA_s+o.segIN_s+o.segAWS_s;
+    o.pgAWS=o.segAWS_s;
+    o.prodSales=o.sales*a.prodMix; o.servSales=o.sales-o.prodSales;
+    // operating income = Σ segment net sales × segment operating margin
+    o.segNA_o=o.segNA_s*a.mNA; o.segIN_o=o.segIN_s*a.mIN; o.segAWS_o=o.segAWS_s*a.mAWS;
+    o.opInc=o.segNA_o+o.segIN_o+o.segAWS_o;
+    // consolidated expense lines split total operating expenses with the mix of the same period a year earlier
+    o.opex=o.sales-o.opInc;
+    COST.forEach(k=>o[k]=o.opex*Y[k]/Y.opex);
+    o.segNA_x=o.segNA_s-o.segNA_o; o.segIN_x=o.segIN_s-o.segIN_o; o.segAWS_x=o.segAWS_s-o.segAWS_o;
+    o.intInc=a.yield*(L.liq||0)*factor; o.intExp=-a.rate*(L.ltDebt||0)*factor; o.othInc=a.othInc;
+    o.nonOp=o.intInc+o.intExp+o.othInc; o.ebt=o.opInc+o.nonOp; o.tax=-o.ebt*a.tax; o.eqMeth=0; o.ni=o.ebt+o.tax+o.eqMeth;
+    o.cfDA=o.sales*a.da; o.cfSBC=o.sales*a.sbc;
+    o.shD=L.shD*(1+a.gSh); o.shB=L.shB*(1+a.gSh); o.epsD=o.ni/o.shD; o.epsB=o.ni/o.shB;
+    o.cfPPEproc=Y.cfPPEproc??L.cfPPEproc??0; o.cfCapex=-a.capex-o.cfPPEproc;
+    o.proj=true;
+    return o;
+  }
+  // Projected balance sheet: working capital keeps its ratio to net sales of the same period a year earlier (seasonality);
+  // operating leases and other liabilities grow with sales; PP&E rolls forward with capex less the PP&E share of D&A;
+  // the change in other assets in the cash flow keeps its ratio to sales of a year earlier (content spend) and other assets
+  // absorb it together with the rest of D&A; goodwill, marketable securities, treasury stock and AOCI stay flat;
+  // equity adds net income and SBC; cash balances, and long-term debt covers any shortfall below the minimum cash.
+  const WC = ['inv','ar','ap','accr','unearn'];
+  const K_DA = 0.69;       // PP&E share of D&A: Q2'26 10-Q, D&A on property and equipment $13.9B of $20.0B total
+  const CASH_MIN = 50000;  // minimum cash balance (US$M) before projected borrowing
+  function buildBS(o, L, Y){
+    const W = Y && isN(Y.inv) && Y.sales ? Y : L;
+    const ref = W===Y ? Y.sales : L.sales*(Y ? (o.days/L.days) : 1);
+    WC.forEach(k=>o[k]=W[k]*o.sales/ref);
+    const kq = Y && Y.sales ? (o.days>200 ? o.sales/Y.sales : Math.pow(o.sales/Y.sales,0.25)) : 1;
+    ['opLease','ltLease','othLTL'].forEach(k=>o[k]=L[k]*kq);
+    o.ppe=L.ppe+(-o.cfCapex-o.cfPPEproc)-K_DA*o.cfDA;
+    o.cfOthA=(W.cfOthA||0)*o.sales/ref;
+    o.othA=L.othA-o.cfOthA-(o.opLease-L.opLease)-(1-K_DA)*o.cfDA;
+    ['gw','mktSec','ltDebt','cs','treas','aoci'].forEach(k=>o[k]=L[k]);
+    o.apic=L.apic+o.cfSBC; o.re=L.re+o.ni; o.eq=o.cs+o.treas+o.apic+o.aoci+o.re;
+    o.tcl=o.ap+o.accr+o.unearn;
+    const nonCash=o.mktSec+o.inv+o.ar+o.ppe+o.opLease+o.gw+o.othA;
+    o.cash=o.tcl+o.ltLease+o.ltDebt+o.othLTL+o.eq-nonCash;
+    if(o.cash<CASH_MIN){ o.ltDebt+=CASH_MIN-o.cash; o.cash=CASH_MIN; }
+    o.totLE=o.tcl+o.ltLease+o.ltDebt+o.othLTL+o.eq;
+    o.tca=o.cash+o.mktSec+o.inv+o.ar; o.totA=o.totLE;
+    return o;
+  }
+  // Cash flow from the income statement and balance sheet changes: every balance sheet line maps to one cash flow line,
+  // so the ending cash moves exactly with balance sheet cash.
+  function buildCF(o, L){
+    const d = k => (o[k]||0)-(L[k]||0);
+    o.cfNI=o.ni; o.cfOthOpx=0; o.cfOthNon=0; o.cfDefTax=0;
+    o.cfInv=-d('inv'); o.cfAR=-d('ar'); o.cfOthA=-d('opLease')-d('othA')-(1-K_DA)*o.cfDA;
+    o.cfAP=d('ap'); o.cfAccr=d('accr')+d('ltLease')+d('othLTL'); o.cfUnearn=d('unearn');
+    o.CFO=o.cfNI+o.cfDA+o.cfSBC+o.cfInv+o.cfAR+o.cfOthA+o.cfAP+o.cfAccr+o.cfUnearn;
+    o.cfAcq=-d('gw'); o.cfSecSale=0; o.cfSecBuy=-d('mktSec');
+    o.CFI=o.cfCapex+o.cfPPEproc+o.cfAcq+o.cfSecSale+o.cfSecBuy;
+    o.cfBuyback=0; o.cfSTp=0; o.cfSTr=0; o.cfLTp=Math.max(d('ltDebt'),0); o.cfLTr=Math.min(d('ltDebt'),0); o.cfFinL=0; o.cfFinO=0;
+    o.CFF=o.cfLTp+o.cfLTr;
+    o.cfFX=0; o.cfNet=o.CFO+o.CFI+o.CFF;
+    o.cfBeg=L.cfEnd; o.cfEnd=o.cfBeg+o.cfNet;
+    return derive(o);
+  }
+  const at = (obj,j) => Object.fromEntries(Object.entries(obj).map(([k,v])=>[k,v[j]]));
+
+  const Q = QLAB.map((_,i)=>derive({...pick(i), days:QDAYS[i], lab:QLAB[i], end:QEND[i]}));
+  const Y = YLAB.map((lab,j)=>derive({...pick(QLAB.length+j), days:YDAYS[j], lab, end:'Dec-'+lab.slice(-2)}));
+  const STOCK=['cash','mktSec','inv','ar','tca','ppe','opLease','gw','othA','totA','ap','accr','unearn','tcl','ltLease','ltDebt','othLTL','cs','treas','apic','aoci','re','eq','totLE'];
+  const FLOW=['prodSales','servSales','sales','cogs','fulf','tech','mkt','ga','othOp','opex','opInc','intInc','intExp','othInc','nonOp','ebt','tax','eqMeth','ni',
+    'segNA_s','segNA_x','segNA_o','segIN_s','segIN_x','segIN_o','segAWS_s','segAWS_x','segAWS_o','pgOnline','pgPhys','pg3P','pgAds','pgSub','pgAWS','pgOther',
+    'cfNI','cfDA','cfSBC','cfOthOpx','cfOthNon','cfDefTax','cfInv','cfAR','cfOthA','cfAP','cfAccr','cfUnearn','CFO','cfCapex','cfPPEproc','cfAcq','cfSecSale','cfSecBuy','CFI',
+    'cfBuyback','cfSTp','cfSTr','cfLTp','cfLTr','cfFinL','cfFinO','CFF','cfFX','cfNet'];
+  function yearFrom(qs, lab, end, note){
+    const o={days:qs.reduce((s,q)=>s+q.days,0), lab, end, proj:true, fromQ:true, note};
+    STOCK.forEach(k=>o[k]=qs[3][k]);
+    FLOW.forEach(k=>o[k]=sum(...qs.map(q=>q[k])));
+    o.cfBeg=qs[0].cfBeg; o.cfEnd=qs[3].cfEnd;
+    const avg=k=>qs.every(q=>q[k])?qs.reduce((s,q)=>s+q[k],0)/4:null;
+    o.shD=avg('shD'); o.shB=avg('shB');
+    o.epsD=o.shD?o.ni/o.shD:null; o.epsB=o.shB?o.ni/o.shB:null;
+    return derive(o);
+  }
+  // Projections are rebuilt whenever the editable assumptions change
+  const Q126 = QLAB.indexOf("Q1'26");
+  function project(){
+    Q.length=QLAB.length; Y.length=YLAB.length;
+    PLAB.forEach((lab,j)=>{
+      const i=Q.length, L=Q[i-1], Yq=Q[i-4], a=at(ASM,j);
+      const o={days:PDAYS[j], lab, end:PEND[j]};
+      Q.push(buildCF(buildBS(derive(buildPL(o, L, Yq, a, o.days/365)), L, Yq), L));
     });
-    const el=document.getElementById('modelTable');
-    const sx=el.scrollLeft, sy=el.scrollTop;
-    el.innerHTML=`<table class="xl"><thead>${hA}${hB}${hC}</thead><tbody>${body}</tbody></table>`;
-    el.scrollLeft=sx; el.scrollTop=sy;
-    document.getElementById('hideSubs').checked=state.hideSubs;
+    Y.push(yearFrom(Q.slice(Q126,Q126+4),'FY2026E','Dec-26',' · 2A+2E'), yearFrom(Q.slice(Q126+4,Q126+8),'FY2027E','Dec-27'));
+    XLAB.forEach((lab,j)=>{
+      const P=Y[Y.length-1], a=at(ASMY,j);
+      const o={days:365, lab, end:'Dec-'+lab.slice(4,6), annualOnly:true};
+      Y.push(buildCF(buildBS(derive(buildPL(o, P, P, a, 1)), P, P), P));
+    });
   }
-  // Outline interactions
-  function toggle(kind,id){ const set=state[kind]; set.has(id)?set.delete(id):set.add(id); save(); render(); }
-  function expandAll(){ ROWS.forEach(r=>{ if(r.sec && r.stmt===state.stmt) state.sec.delete(r.id); }); state.row.clear(); state.blk.clear(); state.grp.clear(); state.hideSubs=false; save(); render(); }
-  function collapseAll(){ ROWS.forEach(r=>{ if(r.sec && r.stmt===state.stmt) state.sec.add(r.id); }); save(); render(); }
-  function setStmt(v){ state.stmt=v; save(); render(); }
-  function setHideSubs(v){ state.hideSubs=v; save(); render(); }
-  return {render, toggle, expandAll, collapseAll, setHideSubs, setStmt, Q, Y, BQ, BY};
+  project();
+
+  // ---- Back-projections (shown in blue for past periods) ----
+  // Run-rate method with data available at the end of the prior period: segment growth of the prior period carries forward,
+  // cost mix of the same period a year earlier, prior-period segment margins, yields, tax rate, D&A, SBC and capex.
+  const gr = (a,b) => isN(a)&&isN(b)&&b>0 ? a/b-1 : 0;
+  const rt = (a,b) => isN(a)&&isN(b)&&b ? a/b : 0;
+  const clampTax = (t,p) => isN(t)&&isN(p)&&p>0 ? Math.min(Math.max(-t/p,0),0.35) : 0.21;
+  const runRate = (L, L2, Yq, LY, f) => ({
+    gNA:LY?gr(L.segNA_s,LY.segNA_s):0, gIN:LY?gr(L.segIN_s,LY.segIN_s):0, gAWS:LY?gr(L.segAWS_s,LY.segAWS_s):0,
+    prodMix:rt(Yq.prodSales,Yq.sales),
+    mNA:rt(L.segNA_o,L.segNA_s), mAWS:rt(L.segAWS_o,L.segAWS_s), mIN:rt(L.segIN_o,L.segIN_s),
+    yield:L2&&L2.liq ? L.intInc/f/L2.liq : 0, rate:L2&&L2.ltDebt ? -L.intExp/f/L2.ltDebt : 0, othInc:0,
+    tax:clampTax(L.tax,L.ebt), da:rt(L.cfDA,L.sales), sbc:rt(L.cfSBC,L.sales),
+    gSh:L2?gr(L.shD,L2.shD):0, capex:-L.netCapex,
+  });
+  const BQ = {}, BY = {};
+  for(let i=FIRST_SHOWN_Q;i<QLAB.length;i++){
+    const L=Q[i-1], L2=Q[i-2], Yq=Q[i-4], LY=Q[i-5];
+    const a=runRate(L, L2, Yq, LY, L.days/365);
+    a.capex=-L.netCapex*QDAYS[i]/L.days;
+    const o={days:QDAYS[i], lab:QLAB[i], end:QEND[i], back:true};
+    BQ[i]=buildCF(buildBS(derive(buildPL(o, L, Yq, a, o.days/365)), L, Yq), L);
+  }
+  for(let j=2;j<YLAB.length;j++){                 // FY2020 onwards (FY2019 would need FY2017)
+    const P=Y[j-1], PP=Y[j-2];
+    const a=runRate(P, PP, P, PP, 1);
+    a.gSh=gr(P.shD,PP.shD); a.capex=-P.netCapex*(1+gr(P.netCapex,PP.netCapex));
+    const o={days:YDAYS[j], lab:YLAB[j], end:'Dec-'+YLAB[j].slice(-2), back:true};
+    BY[j]=buildCF(buildBS(derive(buildPL(o, P, P, a, 1)), P, P), P);
+  }
+
+  // Displayed blocks
+  const CUR_FY = QLAB[QLAB.length-1][1]==='4' ? YLAB.length-1 : YLAB.length;   // index in Y of the fiscal year in progress
+  const BLOCKS = [
+    {id:'qa', title:'Quarterly · Actual', short:'Q · Act.',  proj:false, cols:[]},
+    {id:'qp', title:'Estimates Qs',       short:'Q · Proj.', proj:true,  cols:[]},
+    {id:'ya', title:'Annual · Actual',    short:'Y · Act.',  proj:false, cols:[]},
+    {id:'yp', title:'Annual · Projected', short:'Y · Proj.', proj:true,  cols:[]},
+  ];
+  const CUR_YY = QLAB[QLAB.length-1].slice(3,5), LAST_IS_Q4 = QLAB[QLAB.length-1][1]==='4';
+  const qpDefault = [];
+  function refreshBlocks(){
+    BLOCKS[0].cols = Q.slice(FIRST_SHOWN_Q, QLAB.length).map((v,k)=>({v, kind:'q', qi:FIRST_SHOWN_Q+k}));
+    BLOCKS[1].cols = Q.slice(QLAB.length).map((v,k)=>({v, kind:'q', qi:QLAB.length+k}));
+    BLOCKS[2].cols = Y.slice(FIRST_SHOWN_Y, CUR_FY+1).map((v,k)=>({v, kind:'y', yi:FIRST_SHOWN_Y+k}));
+    BLOCKS[3].cols = Y.slice(CUR_FY+1).map((v,k)=>({v, kind:'y', yi:CUR_FY+1+k}));
+    qpDefault.splice(0, qpDefault.length, ...BLOCKS[1].cols.filter(c=>LAST_IS_Q4 ? c.v.lab.slice(3,5)===String(+CUR_YY+1).padStart(2,'0') : c.v.lab.slice(3,5)===CUR_YY));
+  }
+  refreshBlocks();
+  const yoyBase = c => c.kind==='q' ? Q[c.qi-4] : Y[c.yi-1];
+  const prevBase = c => c.kind==='q' ? Q[c.qi-1] : Y[c.yi-1];
+  const isInput = (r,c) => (r.inp && c.kind==='q' && c.v.proj) || (r.inpY && c.v.annualOnly);
+
+  // ---- Row helpers ----
+  const val = k => o=>o[k];
+  const ratio = (a,b) => o=> (isN(o[a])&&isN(o[b])&&o[b]!==0) ? o[a]/o[b] : null;
+  const growth = (cur, base) => !isN(cur)||!isN(base) ? null : base<=0 ? NaN : (Math.abs(cur/base-1)>=10 ? NaN : cur/base-1);
+  const YOY = (k, extra={}) => ({l:'YoY growth', f:(o,c)=>growth(o[k], yoyBase(c)?.[k]), fmt:'g', u:'%', sub:1, ...extra});
+  const QOQ = (k, extra={}) => ({l:'QoQ growth', f:(o,c)=>c.kind==='q'?growth(o[k], prevBase(c)?.[k]):null, fmt:'g', u:'%', sub:1, ...extra});
+  const PCT = (l, a, b, extra={}) => ({l, f:ratio(a,b), fmt:'cs', u:'%', sub:1, ...extra});
+  const SEC = (t, stmt='is') => ({sec:t, stmt});
+  const neg = v => isN(v) ? (v===0 ? 0 : -v) : v;
+  const ann = c => c.kind==='q' ? 365/c.v.days : 1;
+  const avgOf = (k,o,c) => { const p=prevBase(c)?.[k]; return isN(o[k])&&isN(p) ? (o[k]+p)/2 : null; };
+  const days = (num,den) => (o,c) => isN(o[num])&&o[den] ? o[num]/o[den]*o.days : null;
+  const ttm = k => (o,c) => { if(c.kind!=='q') return o[k]; const p=[1,2,3].map(n=>Q[c.qi-n]?.[k]); return isN(o[k])&&p.every(isN) ? o[k]+p[0]+p[1]+p[2] : null; };
+  const g = (lab,key,j) => GH[lab]?.[key]?.[j] ?? null;
+  const mid = (lab,key) => GH[lab]?.[key] ? (GH[lab][key][0]+GH[lab][key][1])/2 : null;
+  const GROW = (key, label, act) => [
+    {l:`${label} – guidance low`,  f:o=>g(o.lab,key,0), fmt:'m', u:'US$M', ghk:key},
+    {l:`${label} – guidance high`, f:o=>g(o.lab,key,1), fmt:'m', u:'US$M', ghk:key},
+    {l:`${label} – midpoint`,      f:o=>mid(o.lab,key), fmt:'m', u:'US$M', ghk:key, b:1},
+    {l:`${label} – actual / model`,f:o=>GH[o.lab]?.[key]?o[act]:null, fmt:'m', u:'US$M'},
+    {l:'vs midpoint', f:o=>{ const m=mid(o.lab,key); return isN(m)&&isN(o[act])?o[act]/m-1:null; }, fmt:'g', u:'%', sub:1},
+    {l:'vs high end', f:o=>{ const h=g(o.lab,key,1); return isN(h)&&isN(o[act])?o[act]/h-1:null; }, fmt:'g', u:'%', sub:1},
+  ];
+
+  const ROWS = [
+    SEC('Segments'),
+    {l:'Net sales', f:()=>null, subh:1},
+    {l:'North America', f:val('segNA_s'), fmt:'m', u:'US$M', b:1},
+    YOY('segNA_s', {inp:1, inpY:1, ak:'gNA'}),
+    PCT('% of total net sales','segNA_s','sales'),
+    {l:'International', f:val('segIN_s'), fmt:'m', u:'US$M', b:1},
+    YOY('segIN_s', {inp:1, inpY:1, ak:'gIN'}),
+    PCT('% of total net sales','segIN_s','sales'),
+    {l:'AWS', f:val('segAWS_s'), fmt:'m', u:'US$M', b:1},
+    YOY('segAWS_s', {inp:1, inpY:1, ak:'gAWS'}),
+    QOQ('segAWS_s'),
+    PCT('% of total net sales','segAWS_s','sales'),
+    {l:'Total net sales', f:val('sales'), fmt:'m', u:'US$M', tot:1},
+    YOY('sales'),
+    {l:'Operating income', f:()=>null, subh:1},
+    {l:'North America', f:val('segNA_o'), fmt:'m', u:'US$M', b:1},
+    YOY('segNA_o'),
+    PCT('Operating margin','segNA_o','segNA_s',{inp:1, inpY:1, ak:'mNA'}),
+    {l:'International', f:val('segIN_o'), fmt:'m', u:'US$M', b:1},
+    YOY('segIN_o'),
+    PCT('Operating margin','segIN_o','segIN_s',{inp:1, inpY:1, ak:'mIN'}),
+    {l:'AWS', f:val('segAWS_o'), fmt:'m', u:'US$M', b:1},
+    YOY('segAWS_o'),
+    PCT('Operating margin','segAWS_o','segAWS_s',{inp:1, inpY:1, ak:'mAWS'}),
+    PCT('% of total operating income','segAWS_o','opInc'),
+    {l:'Total operating income', f:val('opInc'), fmt:'m', u:'US$M', tot:1, grpEnd:1},
+
+    SEC('Net sales by groups of similar products and services'),
+    {l:'Online stores', f:val('pgOnline'), fmt:'m', u:'US$M'},
+    YOY('pgOnline'),
+    PCT('% of total net sales','pgOnline','sales'),
+    {l:'Physical stores', f:val('pgPhys'), fmt:'m', u:'US$M'},
+    YOY('pgPhys'),
+    {l:'Third-party seller services', f:val('pg3P'), fmt:'m', u:'US$M'},
+    YOY('pg3P'),
+    PCT('% of total net sales','pg3P','sales'),
+    {l:'Advertising services', f:val('pgAds'), fmt:'m', u:'US$M', note:'Reported separately from Q1 2021 (FY2019 onward in the 10-K); earlier quarters sit inside Other'},
+    YOY('pgAds'),
+    PCT('% of total net sales','pgAds','sales'),
+    {l:'Subscription services', f:val('pgSub'), fmt:'m', u:'US$M'},
+    YOY('pgSub'),
+    {l:'AWS', f:val('pgAWS'), fmt:'m', u:'US$M'},
+    YOY('pgAWS'),
+    {l:'Other', f:val('pgOther'), fmt:'m', u:'US$M', note:'Before Q1 2021 the quarterly filings included advertising in Other'},
+    {l:'Advertising + other (comparable since 2019)', f:val('pgAdsOth'), fmt:'m', u:'US$M', b:1},
+    YOY('pgAdsOth'),
+    {l:'Total net sales', f:o=>isN(o.pgOnline)?o.sales:null, fmt:'m', u:'US$M', tot:1, note:'Product groups are not projected'},
+
+    SEC('Income statement'),
+    {l:'Net product sales', f:val('prodSales'), fmt:'m', u:'US$M', ind:1},
+    YOY('prodSales'),
+    PCT('% of total net sales','prodSales','sales',{inp:1, inpY:1, ak:'prodMix'}),
+    {l:'Net service sales', f:val('servSales'), fmt:'m', u:'US$M', ind:1},
+    YOY('servSales'),
+    {l:'Total net sales', f:val('sales'), fmt:'m', u:'US$M', tot:1, key:1},
+    YOY('sales'),
+    QOQ('sales'),
+    {l:'Cost of sales', f:o=>neg(o.cogs), fmt:'m', u:'US$M', ind:1},
+    YOY('cogs'),
+    PCT('% of net sales','cogs','sales'),
+    {l:'Gross profit', f:val('gross'), fmt:'m', u:'US$M', tot:1, key:1},
+    YOY('gross'),
+    PCT('Gross margin','gross','sales'),
+    {l:'Fulfillment', f:o=>neg(o.fulf), fmt:'m', u:'US$M', ind:1},
+    YOY('fulf'),
+    PCT('% of net sales','fulf','sales'),
+    {l:'Technology and infrastructure', f:o=>neg(o.tech), fmt:'m', u:'US$M', ind:1, note:'Named "Technology and content" before 2023'},
+    YOY('tech'),
+    PCT('% of net sales','tech','sales'),
+    {l:'Sales and marketing', f:o=>neg(o.mkt), fmt:'m', u:'US$M', ind:1, note:'Named "Marketing" before 2022'},
+    YOY('mkt'),
+    PCT('% of net sales','mkt','sales'),
+    {l:'General and administrative', f:o=>neg(o.ga), fmt:'m', u:'US$M', ind:1},
+    YOY('ga'),
+    PCT('% of net sales','ga','sales'),
+    {l:'Other operating expense (income), net', f:o=>neg(o.othOp), fmt:'m', u:'US$M', ind:1},
+    PCT('% of net sales','othOp','sales'),
+    {l:'Total operating expenses (excl. cost of sales)', f:o=>neg(o.opexX), fmt:'m', u:'US$M', b:1},
+    YOY('opexX'),
+    PCT('% of net sales','opexX','sales'),
+    {l:'Operating income', f:val('opInc'), fmt:'m', u:'US$M', tot:1, key:1},
+    YOY('opInc'),
+    {l:'Operating margin', f:ratio('opInc','sales'), fmt:'p', u:'%', sub:1},
+    {l:'Interest income', f:val('intInc'), fmt:'m', u:'US$M', ind:1},
+    {l:'Yield on prior cash + marketable securities (annualized)', f:(o,c)=>{ const p=prevBase(c)?.liq; return isN(o.intInc)&&p ? o.intInc*ann(c)/p : null; }, fmt:'p', u:'%', sub:1, inp:1, inpY:1, ak:'yield'},
+    {l:'Interest expense', f:val('intExp'), fmt:'m', u:'US$M', ind:1},
+    {l:'Rate on prior long-term debt (annualized)', f:(o,c)=>{ const p=prevBase(c)?.ltDebt; return isN(o.intExp)&&p ? -o.intExp*ann(c)/p : null; }, fmt:'p', u:'%', sub:1, inp:1, inpY:1, ak:'rate'},
+    {l:'Other income (expense), net', f:val('othInc'), fmt:'m', u:'US$M', ind:1, inp:1, inpY:1, ak:'othInc', akT:'num', note:'Mostly fair value changes of equity investments and warrants; not forecast'},
+    {l:'Total non-operating income (expense)', f:val('nonOp'), fmt:'m', u:'US$M', b:1},
+    {l:'Income before income taxes', f:val('ebt'), fmt:'m', u:'US$M', tot:1},
+    YOY('ebt'),
+    {l:'Pre-tax margin', f:ratio('ebt','sales'), fmt:'p', u:'%', sub:1},
+    {l:'Provision for income taxes', f:val('tax'), fmt:'m', u:'US$M'},
+    {l:'Effective tax rate', f:o=>isN(o.tax)&&o.ebt>0?-o.tax/o.ebt:null, fmt:'p', u:'%', sub:1, inp:1, inpY:1, ak:'tax'},
+    {l:'Equity-method investment activity, net of tax', f:val('eqMeth'), fmt:'m', u:'US$M'},
+    {l:'Net income', f:val('ni'), fmt:'m', u:'US$M', tot:1, key:1},
+    YOY('ni'),
+    {l:'Net margin', f:ratio('ni','sales'), fmt:'p', u:'%', sub:1},
+    {l:'EPS – basic', f:val('epsB'), fmt:'ps', u:'US$', der:EST.epsB},
+    {l:'EPS – diluted', f:val('epsD'), fmt:'ps', u:'US$', b:1, der:EST.epsD},
+    YOY('epsD'),
+    {l:'Diluted weighted avg. shares', f:val('shD'), fmt:'m', u:'M', der:EST.shD},
+    QOQ('shD', {inp:1, ak:'gSh'}),
+    YOY('shD', {inpY:1, ak:'gSh'}),
+    {l:'Basic weighted avg. shares', f:val('shB'), fmt:'m', u:'M', der:EST.shB},
+
+    SEC('EBITDA'),
+    {l:'Operating income', f:val('opInc'), fmt:'m', u:'US$M', b:1},
+    {l:'(+) Depreciation and amortization (cash flow statement)', f:val('cfDA'), fmt:'m', u:'US$M', ind:1},
+    YOY('cfDA'),
+    PCT('% of net sales','cfDA','sales',{inp:1, inpY:1, ak:'da'}),
+    {l:'EBITDA', f:val('ebitda'), fmt:'m', u:'US$M', tot:1, key:1},
+    YOY('ebitda'),
+    {l:'EBITDA margin', f:ratio('ebitda','sales'), fmt:'p', u:'%', sub:1},
+    {l:'(+) Stock-based compensation', f:val('cfSBC'), fmt:'m', u:'US$M', ind:1},
+    YOY('cfSBC'),
+    PCT('% of net sales','cfSBC','sales',{inp:1, inpY:1, ak:'sbc'}),
+    {l:'EBITDA before stock-based compensation', f:val('ebitdaS'), fmt:'m', u:'US$M', tot:1},
+    YOY('ebitdaS'),
+    {l:'Margin', f:ratio('ebitdaS','sales'), fmt:'p', u:'%', sub:1},
+
+    SEC('Guidance (quarterly, given with the prior quarter)'),
+    ...GROW('sales','Net sales','sales'),
+    ...GROW('oi','Operating income','opInc'),
+    {l:'Cash capex plan – first', f:o=>GH[o.lab]?.capexFirst ?? null, fmt:'m', u:'US$M', ghk:'capex'},
+    {l:'Cash capex plan – latest', f:o=>GH[o.lab]?.capexLast ?? null, fmt:'m', u:'US$M', ghk:'capex'},
+    {l:'Cash capex – actual / model (net of proceeds)', f:o=>GH[o.lab]?.capexLast ? -o.netCapex : null, fmt:'m', u:'US$M', b:1},
+
+    SEC('Assets','bs'),
+    {l:'Cash and cash equivalents (balancing item in projections, min. $50B)', f:val('cash'), fmt:'m', u:'US$M'},
+    {l:'Marketable securities', f:val('mktSec'), fmt:'m', u:'US$M'},
+    {l:'Inventories', f:val('inv'), fmt:'m', u:'US$M'},
+    YOY('inv'),
+    {l:'Days of inventory (on cost of sales)', f:days('inv','cogs'), fmt:'mm1', u:'days', sub:1},
+    {l:'Accounts receivable, net and other', f:val('ar'), fmt:'m', u:'US$M'},
+    YOY('ar'),
+    {l:'Days of receivables (on net sales)', f:days('ar','sales'), fmt:'mm1', u:'days', sub:1},
+    {l:'Total current assets', f:val('tca'), fmt:'m', u:'US$M', b:1},
+    {l:'Property and equipment, net', f:val('ppe'), fmt:'m', u:'US$M'},
+    YOY('ppe'),
+    PCT('% of total assets','ppe','totA'),
+    {l:'Operating leases', f:val('opLease'), fmt:'m', u:'US$M'},
+    {l:'Goodwill', f:val('gw'), fmt:'m', u:'US$M'},
+    {l:'Other assets', f:val('othA'), fmt:'m', u:'US$M'},
+    YOY('othA'),
+    {l:'Total assets', f:val('totA'), fmt:'m', u:'US$M', tot:1, key:1},
+    YOY('totA'),
+    QOQ('totA'),
+    SEC('Liabilities','bs'),
+    {l:'Accounts payable', f:val('ap'), fmt:'m', u:'US$M'},
+    YOY('ap'),
+    {l:'Days of payables (on cost of sales)', f:days('ap','cogs'), fmt:'mm1', u:'days', sub:1},
+    {l:'Accrued expenses and other', f:val('accr'), fmt:'m', u:'US$M'},
+    {l:'Unearned revenue', f:val('unearn'), fmt:'m', u:'US$M'},
+    {l:'Total current liabilities', f:val('tcl'), fmt:'m', u:'US$M', b:1},
+    {l:'Long-term lease liabilities', f:val('ltLease'), fmt:'m', u:'US$M'},
+    {l:'Long-term debt (covers any cash shortfall in projections)', f:val('ltDebt'), fmt:'m', u:'US$M'},
+    YOY('ltDebt'),
+    {l:'Other long-term liabilities', f:val('othLTL'), fmt:'m', u:'US$M'},
+    {l:'Total liabilities', f:val('totL'), fmt:'m', u:'US$M', tot:1},
+    YOY('totL'),
+    SEC('Equity','bs'),
+    {l:'Common stock and additional paid-in capital', f:val('csApic'), fmt:'m', u:'US$M'},
+    {l:'Treasury stock, at cost', f:val('treas'), fmt:'m', u:'US$M'},
+    {l:'Accumulated other comprehensive income (loss)', f:val('aoci'), fmt:'m', u:'US$M'},
+    {l:'Retained earnings', f:val('re'), fmt:'m', u:'US$M'},
+    {l:'Total stockholders’ equity', f:val('eq'), fmt:'m', u:'US$M', tot:1},
+    YOY('eq'),
+    PCT('% of total assets','eq','totA'),
+    {l:'Total liabilities and stockholders’ equity', f:val('totLE'), fmt:'m', u:'US$M', tot:1, key:1},
+    {l:'Check: assets − liabilities − equity', f:val('bsCheck'), fmt:'m', u:'US$M', sub:1},
+    SEC('Ratios','bs'),
+    {l:'Cash and marketable securities', f:val('liq'), fmt:'m', u:'US$M', b:1},
+    {l:'Net cash (debt), excluding leases', f:val('netCash'), fmt:'m', u:'US$M'},
+    {l:'Working capital (current assets − current liabilities)', f:val('wc'), fmt:'m', u:'US$M'},
+    {l:'Cash conversion cycle (inventory + receivable − payable days)', f:(o,c)=>{ const a=days('inv','cogs')(o,c), b=days('ar','sales')(o,c), p=days('ap','cogs')(o,c); return isN(a)&&isN(b)&&isN(p)?a+b-p:null; }, fmt:'mm1', u:'days'},
+    {l:'Return on average equity (annualized)', f:(o,c)=>{ const e=avgOf('eq',o,c); return isN(o.ni)&&e ? o.ni*ann(c)/e : null; }, fmt:'p', u:'%'},
+    {l:'Equity to assets', f:ratio('eq','totA'), fmt:'p', u:'%'},
+
+    SEC('Operating activities','cf'),
+    {l:'Net income', f:val('cfNI'), fmt:'m', u:'US$M', b:1},
+    {l:'(+) Depreciation and amortization', f:val('cfDA'), fmt:'m', u:'US$M', ind:1, note:'Property and equipment, capitalized content costs, operating lease assets and other'},
+    {l:'(+) Stock-based compensation', f:val('cfSBC'), fmt:'m', u:'US$M', ind:1},
+    {l:'(±) Non-operating expense (income) and other', f:val('cfOthNC'), fmt:'m', u:'US$M', ind:1, note:'Before 2022 the filings also showed other operating expense (income) on its own line'},
+    {l:'(±) Deferred income taxes', f:val('cfDefTax'), fmt:'m', u:'US$M', ind:1},
+    {l:'(±) Inventories', f:val('cfInv'), fmt:'m', u:'US$M', ind:1},
+    {l:'(±) Accounts receivable, net and other', f:val('cfAR'), fmt:'m', u:'US$M', ind:1, note:'Includes other assets in quarters before 2023 (FY2021 onward in the 10-K show them apart)'},
+    {l:'(±) Other assets', f:val('cfOthA'), fmt:'m', u:'US$M', ind:1},
+    {l:'(±) Accounts payable', f:val('cfAP'), fmt:'m', u:'US$M', ind:1},
+    {l:'(±) Accrued expenses and other', f:val('cfAccr'), fmt:'m', u:'US$M', ind:1},
+    {l:'(±) Unearned revenue', f:val('cfUnearn'), fmt:'m', u:'US$M', ind:1},
+    {l:'Net cash from operating activities', f:val('CFO'), fmt:'m', u:'US$M', tot:1, key:1},
+    YOY('CFO'),
+    PCT('% of net sales','CFO','sales'),
+    {l:'Trailing twelve months', f:ttm('CFO'), fmt:'m', u:'US$M', sub:1},
+    SEC('Investing activities','cf'),
+    {l:'Purchases of property and equipment', f:val('cfCapex'), fmt:'m', u:'US$M'},
+    {l:'Proceeds from property and equipment sales and incentives', f:val('cfPPEproc'), fmt:'m', u:'US$M'},
+    {l:'Net capex', f:val('netCapex'), fmt:'m', u:'US$M', b:1, inp:1, inpY:1, ak:'capex', akT:'abs'},
+    YOY('netCapex'),
+    {l:'% of net sales', f:o=>isN(o.netCapex)&&o.sales?-o.netCapex/o.sales:null, fmt:'cs', u:'%', sub:1},
+    {l:'Acquisitions, non-marketable investments and other', f:val('cfAcq'), fmt:'m', u:'US$M'},
+    {l:'Sales and maturities of marketable securities', f:val('cfSecSale'), fmt:'m', u:'US$M'},
+    {l:'Purchases of marketable securities', f:val('cfSecBuy'), fmt:'m', u:'US$M'},
+    {l:'Net cash from investing activities', f:val('CFI'), fmt:'m', u:'US$M', tot:1, key:1},
+    SEC('Financing activities','cf'),
+    {l:'Common stock repurchased', f:val('cfBuyback'), fmt:'m', u:'US$M'},
+    {l:'Short-term debt and other, net', f:val('cfSTnet'), fmt:'m', u:'US$M', note:'Shown apart from long-term debt from 2020 (2019 quarters and FY2018–19 restated)'},
+    {l:'Proceeds from long-term debt', f:val('cfLTp'), fmt:'m', u:'US$M'},
+    {l:'Repayments of long-term debt', f:val('cfLTr'), fmt:'m', u:'US$M'},
+    {l:'Principal repayments of finance leases', f:val('cfFinL'), fmt:'m', u:'US$M'},
+    {l:'Principal repayments of financing obligations', f:val('cfFinO'), fmt:'m', u:'US$M'},
+    {l:'Net cash from financing activities', f:val('CFF'), fmt:'m', u:'US$M', tot:1, key:1},
+    SEC('Change in cash','cf'),
+    {l:'Foreign currency effect', f:val('cfFX'), fmt:'m', u:'US$M'},
+    {l:'Net change in cash, cash equivalents and restricted cash', f:val('cfNet'), fmt:'m', u:'US$M', b:1},
+    {l:'Cash and restricted cash at beginning of period', f:val('cfBeg'), fmt:'m', u:'US$M'},
+    {l:'Cash and restricted cash at end of period', f:val('cfEnd'), fmt:'m', u:'US$M', tot:1, key:1},
+    {l:'Check: beginning + net change − ending', f:val('cfCheck'), fmt:'m', u:'US$M', sub:1},
+    SEC('Free cash flow','cf'),
+    {l:'Net cash from operating activities', f:val('CFO'), fmt:'m', u:'US$M'},
+    {l:'(−) Net capex', f:val('netCapex'), fmt:'m', u:'US$M', ind:1},
+    {l:'Free cash flow', f:val('fcf'), fmt:'m', u:'US$M', tot:1, key:1},
+    YOY('fcf'),
+    PCT('FCF margin (% of net sales)','fcf','sales'),
+    {l:'Trailing twelve months (as Amazon reports it)', f:ttm('fcf'), fmt:'m', u:'US$M', sub:1},
+    {l:'(−) Principal repayments of finance leases and financing obligations', f:val('cfFinLO'), fmt:'m', u:'US$M', ind:1},
+    {l:'Free cash flow less finance lease and financing obligation repayments', f:val('fcfL'), fmt:'m', u:'US$M', b:1},
+    {l:'Trailing twelve months', f:ttm('fcfL'), fmt:'m', u:'US$M', sub:1},
+    {l:'FCF conversion (% of net income)', f:o=>isN(o.fcf)&&o.ni>0?o.fcf/o.ni:null, fmt:'cs', u:'%'},
+  ];
+  // Outline structure: each row knows its section and (for sub-rows) its parent line
+  let secIdx=-1, parentIdx=-1, grpIdx=-1;
+  ROWS.forEach((r,i)=>{
+    if(r.sec){ secIdx=i; parentIdx=-1; grpIdx=-1; r.id='s'+i; r.stmt_=r.stmt; return; }
+    if(r.subh) grpIdx=i; else if(r.grpEnd) grpIdx=-1;
+    r.grp_ = r.subh ? -1 : grpIdx;
+    r.sec_=secIdx; r.id='r'+i; r.stmt_=ROWS[secIdx].stmt;
+    if(r.sub){ r.parent=parentIdx; if(parentIdx>=0) ROWS[parentIdx].hasSubs=true; } else parentIdx=i;
+  });
+
+  const DERIVED_COLS = QLAB.filter((l,i)=>i>=FIRST_SHOWN_Q && l[1]==='4');
+  const SHEET = modelSheet({ROWS, BLOCKS, qpDefault, BQ, BY, isInput, stKey:'pvg-amzn-outline',
+    ids:{seg:'amStmtSeg', title:'amStmtTitle', sub:'amStmtSub', table:'amModelTable', hide:'amHideSubs'},
+    coName:'Amazon.com, Inc. (AMZN)', unitNote:'US$ in millions, except per-share data',
+    STMT:{is:['Income statement','US$M · segments and product groups from the 10-Q / 10-K notes'], bs:['Balance sheet','US$M · period-end balances'], cf:['Cash flow statement','US$M · three-month flows as filed; Q4 = FY − 9M']},
+    derivedCols:DERIVED_COLS, colNote:c=>c.v.note||'',
+    isDerived:(r,c)=>!!(r.der && r.der.includes(c.v.lab)),
+    cellTitle:(r,c)=>r.ghk && GH[c.v.lab]?.src ? GH[c.v.lab].src : '',
+    btSkip:r=>ROWS[r.sec_]?.sec?.startsWith('Guidance'),
+    cellAttr:(r,c)=>{ const kind=editKind(r,c); return kind ? ` data-ak="${r.ak}" data-kind="${kind}" data-j="${colIdx(c)}" data-t="${r.akT||'pct'}" tabindex="0"` : ''; }});
+
+  // ---- Editing ----
+  // Which assumption set a cell edits: projected quarters (q) or annual-only years (y)
+  const editKind = (r,c) => !r.ak ? null : (r.inp && c.kind==='q' && c.v.proj) ? 'q' : (r.inpY && c.v.annualOnly) ? 'y' : null;
+  const colIdx = c => c.kind==='q' ? c.qi-QLAB.length : c.yi-(Y.length-XLAB.length);
+  // Display value of an assumption, in the units typed by the user (percent, or US$M)
+  const shown = (kind,k,j,t) => { const v=SETS[kind][k][j]; return t==='pct' ? +(v*100).toFixed(2) : t==='abs' ? -v : v; };
+  const parse = (txt,t) => { const n=parseFloat(String(txt).replace(/[,%$\s()]/g,'')); if(!isN(n)) return null; const neg=/^\s*(-|\()/.test(txt);
+    const v=neg?-Math.abs(n):n; return t==='pct' ? v/100 : t==='abs' ? Math.abs(v) : v; };
+  function submit(changes){
+    changes.forEach(({kind,k,j,v})=>{ if(SETS[kind]?.[k] && isN(v)) SETS[kind][k][j]=v; });
+    const sv={q:{},y:{}};
+    for(const kind of ['q','y']) for(const k in SETS[kind]) if(JSON.stringify(SETS[kind][k])!==JSON.stringify(DEFAULTS[kind][k])) sv[kind][k]=SETS[kind][k];
+    try{ localStorage.setItem(ASM_KEY, JSON.stringify(sv)); }catch(e){}
+    project(); refreshBlocks(); SHEET.render();
+  }
+  function reset(){
+    for(const kind of ['q','y']) for(const k in SETS[kind]) SETS[kind][k].splice(0, SETS[kind][k].length, ...DEFAULTS[kind][k]);
+    try{ localStorage.removeItem(ASM_KEY); }catch(e){}
+    project(); refreshBlocks(); SHEET.render();
+  }
+  const edited = () => { try{ const sv=JSON.parse(localStorage.getItem(ASM_KEY)||'{}'); return Object.keys(sv.q||{}).length+Object.keys(sv.y||{}).length>0; }catch(e){ return false; } };
+  return {...SHEET, Q, Y, BQ, BY, GH, submit, reset, shown, parse, edited};
 })();
 
 /* =====================================================================
@@ -2907,6 +3646,66 @@ document.getElementById('modelTable').addEventListener('click',e=>{
 });
 document.getElementById('stmtSeg').addEventListener('click',e=>{ const b=e.target.closest('button'); if(b) MODEL.setStmt(b.dataset.stmt); });
 
+// ---- Amazon model: outline controls, valuation subtabs and editable assumptions ----
+let amznRendered=false, amvtab='model';
+function renderAmznModel(){ if(amznRendered) return; AMZN_MODEL.render(); amznRendered=true; amEditUI(); }
+document.getElementById('amHideSubs').addEventListener('change',e=>{ AMZN_MODEL.setHideSubs(e.target.checked); amEditUI(); });
+document.getElementById('amOlExpand').addEventListener('click',()=>{ AMZN_MODEL.expandAll(); amEditUI(); });
+document.getElementById('amOlCollapse').addEventListener('click',()=>{ AMZN_MODEL.collapseAll(); amEditUI(); });
+document.getElementById('amStmtSeg').addEventListener('click',e=>{ const b=e.target.closest('button'); if(b){ AMZN_MODEL.setStmt(b.dataset.stmt); amEditUI(); } });
+document.querySelectorAll('.amvtab').forEach(t=>t.addEventListener('click',()=>{
+  amvtab=t.dataset.amvtab;
+  document.querySelectorAll('.amvtab').forEach(x=>x.classList.toggle('active',x===t));
+  document.querySelectorAll('#am-valuation > .view').forEach(x=>x.classList.toggle('active',x.id==='amv-'+amvtab));
+  if(amvtab==='model') renderAmznModel();
+}));
+// Edits are staged cell by cell (Enter, Tab or leaving the cell) and applied together with "Submit assumptions"
+const amPending = new Map();   // "kind|key|j" -> {kind,k,j,v,txt}
+const amKey = td => `${td.dataset.kind}|${td.dataset.ak}|${td.dataset.j}`;
+const amShown = td => String(AMZN_MODEL.shown(td.dataset.kind, td.dataset.ak, +td.dataset.j, td.dataset.t));
+function amEditUI(){
+  const n=amPending.size;
+  document.getElementById('amSubmit').disabled=!n;
+  document.getElementById('amDiscard').disabled=!n;
+  document.getElementById('amEditMsg').textContent = n ? `${n} change${n>1?'s':''} pending — press Submit to recalculate` : AMZN_MODEL.edited() ? 'Using your saved assumptions' : 'Using default assumptions';
+  // staged values stay visible after a re-render (outline toggles, statement switch)
+  document.querySelectorAll('#amModelTable td.edit').forEach(td=>{ const p=amPending.get(amKey(td)); if(p && !td.querySelector('input')){ td.classList.add('dirty'); td.textContent=p.txt; } });
+}
+function amOpenCell(td){
+  if(td.querySelector('input')) return;
+  const t=td.dataset.t, prev=td.innerHTML, p=amPending.get(amKey(td));
+  td.innerHTML='<input type="text" inputmode="decimal" aria-label="Edit assumption">';
+  const inp=td.firstChild; inp.value = p ? p.txt.replace(/%$/,'') : amShown(td); inp.focus(); inp.select();
+  let done=false;
+  const close = commit => {
+    if(done) return; done=true;
+    const txt=inp.value.trim(), v=AMZN_MODEL.parse(txt,t);
+    if(commit && v!==null && txt!==amShown(td)){
+      amPending.set(amKey(td), {kind:td.dataset.kind, k:td.dataset.ak, j:+td.dataset.j, v, txt:t==='pct'?txt.replace(/%$/,'')+'%':txt});
+      td.classList.add('dirty'); td.textContent=amPending.get(amKey(td)).txt;
+    } else if(commit && v!==null){ amPending.delete(amKey(td)); td.classList.remove('dirty'); td.innerHTML=prev; }
+    else { td.innerHTML=prev; }
+    amEditUI();
+  };
+  inp.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){ e.preventDefault(); close(true); }
+    else if(e.key==='Escape'){ e.preventDefault(); close(false); }
+    else if(e.key==='Tab'){ e.preventDefault(); close(true);
+      const cells=[...document.querySelectorAll('#amModelTable td.edit')], i=cells.indexOf(td), nx=cells[i+(e.shiftKey?-1:1)]; if(nx) amOpenCell(nx); }
+  });
+  inp.addEventListener('blur',()=>close(true));
+}
+document.getElementById('amModelTable').addEventListener('click',e=>{
+  const td=e.target.closest('td.edit'); if(td) return amOpenCell(td);
+  const b=e.target.closest('button.ol, button.chev');
+  if(b){ AMZN_MODEL.toggle(b.dataset.ol, b.dataset.id); return amEditUI(); }
+  const sec=e.target.closest('tr.sec'); if(sec){ AMZN_MODEL.toggle('sec', sec.dataset.sec); amEditUI(); }
+});
+document.getElementById('amModelTable').addEventListener('keydown',e=>{ const td=e.target.closest('td.edit'); if(td && e.key==='Enter' && !td.querySelector('input')){ e.preventDefault(); amOpenCell(td); } });
+document.getElementById('amSubmit').addEventListener('click',()=>{ const ch=[...amPending.values()]; amPending.clear(); AMZN_MODEL.submit(ch); amEditUI(); });
+document.getElementById('amDiscard').addEventListener('click',()=>{ amPending.clear(); AMZN_MODEL.render(); amEditUI(); });
+document.getElementById('amReset').addEventListener('click',()=>{ if(!confirm('Reset every assumption to its default value?')) return; amPending.clear(); AMZN_MODEL.reset(); amEditUI(); });
+
 /* =====================================================================
    BOOT
    ===================================================================== */
@@ -2928,6 +3727,9 @@ const COMPANIES = [
     short:'SoFi Technologies', tint:'0,162,199',
     logo:{src:'Sofi/logo-mark.svg', text:'SoFi', bg:'#2E75B6'},
     quote:()=>MKT },
+  { ticker:'AMZN', name:'Amazon.com, Inc.', exchange:'NASDAQ', sector:'E-commerce · Cloud (AWS) · Advertising',
+    short:'Amazon', tint:'255,153,0',
+    logo:{text:'amzn', bg:'#FF9900'} },
 ];
 const logoHTML = (c,size) => c.logo.src
   ? `<span class="logo-c ${size}"><img src="${c.logo.src}" alt="${c.name}"></span>`
@@ -2940,7 +3742,7 @@ document.getElementById('coGrid').innerHTML = COMPANIES.map(c=>`
     <div class="nm">${c.name}</div>
   </button>`).join('');
 
-let page='companies';
+let page='companies', curCo='SOFI';
 function showCompanies(){
   page='companies';
   document.getElementById('page-companies').classList.add('active');
@@ -2959,11 +3761,13 @@ function showCompany(ticker){
   // price and daily change sit next to the company name
   const pxHTML = qt ? `<span class="px-in" title="${c.exchange}: ${c.ticker} · ${qt.asOf}${qt.time?' '+qt.time:''} · Interactive Brokers">$${qt.price.toFixed(2)}<span class="px-c ${up?'pos':'neg'}">${up?'▲':'▼'} ${up?'+':'−'}${Math.abs(qt.chgPct).toFixed(2)}%</span></span>` : '';
   document.getElementById('coName').innerHTML=`<span>${c.short||c.name}</span>${pxHTML}`;
+  curCo=c.ticker;
+  document.querySelectorAll('.co-pane').forEach(x=>x.classList.toggle('active',x.dataset.co===curCo));
   document.getElementById('page-companies').classList.remove('active');
   document.getElementById('page-company').classList.add('active');
   if(location.hash!=='#'+ticker) location.hash=ticker;
   window.scrollTo(0,0);
-  renderView(current);
+  showMain(mainTab);
 }
 document.getElementById('coGrid').addEventListener('click',e=>{ const b=e.target.closest('.co-card'); if(b) showCompany(b.dataset.ticker); });
 document.getElementById('navCompanies').addEventListener('click',showCompanies);
@@ -2971,12 +3775,13 @@ document.getElementById('backBtn').addEventListener('click',showCompanies);
 window.addEventListener('hashchange',()=>{ const t=location.hash.slice(1); t ? showCompany(t) : showCompanies(); });
 
 let current='crecimiento', mainTab='tesis', vtab='model';
-function renderView(v){ if(page!=='company' || mainTab!=='tesis') return; VIEWS[v].forEach(fn=>fn()); }
+function renderView(v){ if(page!=='company' || mainTab!=='tesis' || curCo!=='SOFI') return; VIEWS[v].forEach(fn=>fn()); }
 function showMain(m){
   mainTab=m;
   document.querySelectorAll('.mtab').forEach(x=>x.classList.toggle('active',x.dataset.main===m));
-  document.querySelectorAll('.mview').forEach(x=>x.classList.toggle('active',x.id==='m-'+m));
+  document.querySelectorAll('.co-pane .mview').forEach(x=>x.classList.toggle('active',x.dataset.main===m));
   try{ localStorage.setItem('pvg-main',m); }catch(e){}
+  if(curCo==='AMZN'){ if(m==='valuation' && amvtab==='model') renderAmznModel(); return; }
   if(m==='earnings') EARN.render();
   if(m==='valuation' && vtab==='model') renderModel();
   if(m==='valuation' && vtab==='ave') AVE.render();
@@ -3055,7 +3860,7 @@ const FOLD = (() => {
   const DEFAULT_CLOSED = new Set(['Borrower characteristics by quarter','Charge-offs and delinquencies by quarter','Credit performance',"Outside SoFi's credit box",
     'Partners and commitments','How much is committed','Economics','What Anthony Noto repeats on every call','How the loop works',
     'Analyst Q&A','Open questions from analysts','Capital and book value','Products by segment','Technology Platform accounts','Contribution profit by segment']);
-  const SKIP = el => el.closest('#vv-model');       // the Model sheet keeps its own outline
+  const SKIP = el => el.closest('#vv-model, #amv-model');       // the Model sheet keeps its own outline
   const idOf = (card, i) => { const v=card.closest('.view, .mview'); const t=(card.querySelector('.card-t')?.textContent||'card'+i).trim(); return (v?.id||'x')+'|'+t; };
   function enhance(root=document){
     root.querySelectorAll('.card').forEach((card,i)=>{
@@ -3102,7 +3907,7 @@ const FOLD = (() => {
   document.addEventListener('click', e=>{ const b=e.target.closest('[data-fa]'); if(b) FOLD.all(b.dataset.fa==='1'); });
   new MutationObserver(()=>enhance()).observe(document.getElementById('page-company'), {childList:true, subtree:true});
   enhance();
-  return {enhance, all(open){ document.querySelectorAll('.mview.active .view.active .card.fold').forEach(c=>{ c.classList.toggle('closed',!open); st['c|'+c.dataset.fold]=!open;
+  return {enhance, all(open){ document.querySelectorAll('.co-pane.active .mview.active .view.active .card.fold').forEach(c=>{ c.classList.toggle('closed',!open); st['c|'+c.dataset.fold]=!open;
     if(open) c.querySelectorAll('canvas').forEach(cv=>{ const ch=Chart.getChart(cv); if(ch) ch.resize(); }); }); save(); }};
 })();
 try{ const m=localStorage.getItem('pvg-main'); if(m && document.getElementById('m-'+m)) showMain(m); }catch(e){}
