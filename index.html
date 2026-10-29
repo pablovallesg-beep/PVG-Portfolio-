@@ -2696,7 +2696,9 @@ const AMZN_MODEL = (() => {
   refreshBlocks();
   const yoyBase = c => c.kind==='q' ? Q[c.qi-4] : Y[c.yi-1];
   const prevBase = c => c.kind==='q' ? Q[c.qi-1] : Y[c.yi-1];
-  const isInput = (r,c) => (r.inp && c.kind==='q' && c.v.proj) || (r.inpY && c.v.annualOnly);
+  const FY_LAB = 'FY2027E';   // fiscal year built from four projected quarters, editable at the annual level
+  const isFY = c => c.kind==='y' && c.v.lab===FY_LAB;
+  const isInput = (r,c) => (r.inp && c.kind==='q' && c.v.proj) || (r.inpY && (c.v.annualOnly || isFY(c)));
 
   // ---- Row helpers ----
   const val = k => o=>o[k];
@@ -2976,14 +2978,37 @@ const AMZN_MODEL = (() => {
 
   // ---- Editing ----
   // Which assumption set a cell edits: projected quarters (q) or annual-only years (y)
-  const editKind = (r,c) => !r.ak ? null : (r.inp && c.kind==='q' && c.v.proj) ? 'q' : (r.inpY && c.v.annualOnly) ? 'y' : null;
-  const colIdx = c => c.kind==='q' ? c.qi-QLAB.length : c.yi-(Y.length-XLAB.length);
+  const editKind = (r,c) => !r.ak ? null : (r.inp && c.kind==='q' && c.v.proj) ? 'q' : (r.inpY && c.v.annualOnly) ? 'y' : (r.inpY && isFY(c)) ? 'fy' : null;
+  const colIdx = c => c.kind==='q' ? c.qi-QLAB.length : isFY(c) ? 0 : c.yi-(Y.length-XLAB.length);
+  // FY2027E has no assumption set of its own: an annual value shifts that year's four quarterly assumptions by the same
+  // amount (capex: scales them) until the year shows the typed value, so the quarterly pattern is kept.
+  const FY_J = PLAB.map((l,j)=>l.slice(3,5)===FY_LAB.slice(4,6)?j:-1).filter(j=>j>=0);
+  const fyRow = k => ROWS.find(r=>r.ak===k && r.inpY);
+  const fyVal = k => { const r=fyRow(k), yi=Y.findIndex(o=>o.lab===FY_LAB), c={v:Y[yi], kind:'y', yi}, v=r.f(c.v,c); return isN(v) && r.akT==='abs' ? -v : v; };
+  function solveFY(k, target){
+    const s=SETS.q[k], base=FY_J.map(j=>s[j]), mult=k==='capex';
+    const err = d => { FY_J.forEach((j,n)=>s[j] = mult ? base[n]*d : base[n]+(k==='othInc' ? d/FY_J.length : d)); project(); const v=fyVal(k); return isN(v) ? v-target : null; };
+    let d0=mult?1:0, e0=err(d0);
+    if(!isN(e0)) return;
+    let d1 = mult ? (target+e0 ? d0*target/(target-e0) : 1) : d0-e0, e1=err(d1);
+    for(let n=0; n<12 && isN(e1) && Math.abs(e1)>(k==='capex'||k==='othInc' ? 0.01 : 1e-9) && e1!==e0; n++){
+      const d2=d1-e1*(d1-d0)/(e1-e0); d0=d1; e0=e1; d1=d2; e1=err(d1);
+    }
+  }
   // Display value of an assumption, in the units typed by the user (percent, or US$M)
-  const shown = (kind,k,j,t) => { const v=SETS[kind][k][j]; return t==='pct' ? +(v*100).toFixed(2) : t==='abs' ? -v : v; };
+  const shown = (kind,k,j,t) => { const v = kind==='fy' ? fyVal(k) : SETS[kind][k][j];
+    return t==='pct' ? +(v*100).toFixed(2) : kind==='fy' ? Math.round(v) : t==='abs' ? -v : v; };
   const parse = (txt,t) => { const n=parseFloat(String(txt).replace(/[,%$\s()]/g,'')); if(!isN(n)) return null; const neg=/^\s*(-|\()/.test(txt);
     const v=neg?-Math.abs(n):n; return t==='pct' ? v/100 : t==='abs' ? Math.abs(v) : v; };
   function submit(changes){
     changes.forEach(({kind,k,j,v})=>{ if(SETS[kind]?.[k] && isN(v)) SETS[kind][k][j]=v; });
+    // annual FY2027E edits go last, in sheet order (segment growth before segment margins)
+    const fy=changes.filter(c=>c.kind==='fy' && SETS.q[c.k] && isN(c.v)).sort((a,b)=>ROWS.indexOf(fyRow(a.k))-ROWS.indexOf(fyRow(b.k)));
+    // later lines move earlier ones (capex changes cash and so interest income): repeat until every typed value holds
+    for(let pass=0; pass<6 && fy.length; pass++){
+      project(); fy.forEach(({k,v})=>solveFY(k,v));
+      if(fy.every(({k,v})=>{ const x=fyVal(k); return !isN(x) || Math.abs(x-v) < (k==='capex'||k==='othInc' ? 0.5 : 5e-6); })) break;
+    }
     const sv={q:{},y:{}};
     for(const kind of ['q','y']) for(const k in SETS[kind]) if(JSON.stringify(SETS[kind][k])!==JSON.stringify(DEFAULTS[kind][k]))
       sv[kind][k]=Object.fromEntries(SETS[kind][k].map((v,j)=>[LABS[kind][j],v]).filter(([lab,v],j)=>v!==DEFAULTS[kind][k][j]));
@@ -3732,6 +3757,8 @@ const VIEWS={
 /* =====================================================================
    COMPANIES — registry and navigation
    ===================================================================== */
+// Amazon quote: same shape as SoFi's MKT (price, daily change vs prior close, timestamp, shares outstanding)
+const MKT_AMZN = {price:229.05, chg:-25.55, chgPct:-10.04, asOf:'Oct 29, 2026', time:'16:19', src:'Interactive Brokers, realtime last trade', shares:10811, sharesSrc:"shares outstanding at Sep 30, 2026 (Q3'26 release)"};
 const COMPANIES = [
   { ticker:'SOFI', name:'SoFi Technologies, Inc.', exchange:'NASDAQ', sector:'Fintech · Digital banking',
     short:'SoFi Technologies', tint:'0,162,199',
@@ -3739,7 +3766,8 @@ const COMPANIES = [
     quote:()=>MKT },
   { ticker:'AMZN', name:'Amazon.com, Inc.', exchange:'NASDAQ', sector:'E-commerce · Cloud (AWS) · Advertising',
     short:'Amazon', tint:'255,153,0',
-    logo:{src:'Amzn/logo-mark.svg', text:'Amazon', bg:'#FF9900'} },
+    logo:{src:'Amzn/logo-mark.svg', text:'Amazon', bg:'#FF9900'},
+    quote:()=>MKT_AMZN },
 ];
 const logoHTML = (c,size) => c.logo.src
   ? `<span class="logo-c ${size}"><img src="${c.logo.src}" alt="${c.name}"></span>`
@@ -3909,7 +3937,7 @@ const FOLD = (() => {
       if(!closed) card.querySelectorAll('canvas').forEach(cv=>{ const c=Chart.getChart(cv); if(c) c.resize(); });
     }
   });
-  document.querySelectorAll('#m-tesis > .subtabs, #m-earnings > .subtabs, #m-valuation > .subtabs').forEach(nav=>{
+  document.querySelectorAll('.co-pane .mview > .subtabs').forEach(nav=>{
     const b=document.createElement('span'); b.className='fold-bar';
     b.innerHTML='<button data-fa="1">+ Expand all</button><button data-fa="0">− Collapse all</button>';
     nav.appendChild(b);
