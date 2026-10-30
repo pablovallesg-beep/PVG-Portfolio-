@@ -197,6 +197,7 @@ html.mobile .px-v{font-size:22px}
 .xl tr.sec td.c-lab{background:var(--sec-bg)}
 .xl tr.spacer td{height:22px;border-right:0;border-bottom:0;background:var(--card-bg)}
 .xl tr.spacer td.p{background:var(--card-bg)}
+.xl tr.spacer.sm td{height:10px}
 .xl tbody tr:not(.sec):not(.spacer) td.c-lab{padding-left:22px}
 .xl tr.b td{font-weight:600}
 .xl tr.b td.c-lab,.xl tr.tot td.c-lab{padding-left:14px}
@@ -855,7 +856,12 @@ html.mobile .xl-wrap{max-height:calc(100vh - 190px)}
         <div id="amAveCards" class="ave-cards"></div>
         <div class="src" id="amAveSrc"></div>
       </section>
-      <section class="view" id="amv-guidance"><div class="card"><div class="stmt-empty"><b>Guidance Revisions</b>Coming next: how the quarterly ranges and the annual capex plan moved.</div></div></section>
+      <section class="view" id="amv-guidance">
+        <div class="ave-bar"><div class="stmt-seg" id="amGrYear"></div></div>
+        <div class="card"><div class="card-h"><div><span class="card-t" id="amGrTitle"></span><span class="card-sub">first guide → last guide → actual or model</span></div></div><div class="tbl-wrap" id="amGrSum"></div></div>
+        <div id="amGrCards" class="ave-cards"></div>
+        <div class="src" id="amGrSrc"></div>
+      </section>
       <section class="view" id="amv-dcf">
         <div class="card"><div class="card-h"><span class="card-t">Trading multiples by year</span><span class="card-sub">at the current price · GAAP figures from the Model</span></div><div class="tbl-wrap" id="amDcfMult"></div></div>
         <div class="dcf-top">
@@ -1502,6 +1508,7 @@ function modelSheet(cfg){
         body+=`<tr class="sec${open?'':' closed'}" data-sec="${r.id}"><td class="c-lab">${chev('sec',r.id,open,(open?'Collapse ':'Expand ')+r.sec)}${r.sec}${open?'':`<span class="sec-n">${n} lines</span>`}</td><td class="c-unit"></td>${cells(()=>'<td></td>')}</tr>`;
         return;
       }
+      if(r.spacer){ if(!state.sec.has(ROWS[r.sec_]?.id)) body+=`<tr class="spacer sm"><td class="c-lab"></td><td class="c-unit"></td>${cells(()=>'<td></td>')}</tr>`; return; }
       if(!visible(r)) return;
       const tds = cells((c,b,bt)=>{
         if(r.subh) return `<td class="n${b.proj?' p':''}"></td>`;
@@ -1520,7 +1527,7 @@ function modelSheet(cfg){
         return `<td class="${cls.join(' ')}"${t}${attr}>${s}</td>`;
       });
       const rc=[r.sub?'sub':'', r.tot?'tot':'', r.key?'kt':'', r.b?'b':'', r.ind?'ind':'', r.subh?'subh':''].join(' ');
-      const tog = r.subh ? chev('grp',r.id,!state.grp.has(r.id),(state.grp.has(r.id)?'Expand ':'Collapse ')+r.l) : r.hasSubs && !state.hideSubs ? chev('row',r.id,!state.row.has(r.id),'Show / hide growth and ratios') : (r.sub?'':'<span class="ol-sp"></span>');
+      const tog = r.subh || r.grpHead ? chev('grp',r.id,!state.grp.has(r.id),(state.grp.has(r.id)?'Expand ':'Collapse ')+r.l) : r.hasSubs && !state.hideSubs ? chev('row',r.id,!state.row.has(r.id),'Show / hide growth and ratios') : (r.sub?'':'<span class="ol-sp"></span>');
       body+=`<tr class="${rc}"><td class="c-lab" title="${r.note||r.l}">${tog}${r.l}</td><td class="c-unit">${r.u||''}</td>${tds}</tr>`;
     });
     const el=document.getElementById(ids.table);
@@ -2487,16 +2494,16 @@ const AMZN_MODEL = (() => {
   const pick = i => { const o={}; for(const k in RAW) o[k]=RAW[k][i]; return o; };
 
   // ---- Projection assumptions (input cells) ----
-  // Quarterly: one value per projected quarter (Q4'26E … Q4'27E). Q4'26E is set inside the Q3'26 release guidance
-  // (net sales $240–247B, operating income $28.5–33.5B); Q4'26E cash capex completes the ~$220B FY2026 plan ($172.2B in 9M'26).
+  // Quarterly: one value per projected quarter (Q4'26E … Q4'27E). Q4'26E lands on the midpoint of the Q3'26 release guidance
+  // (net sales $240–247B → $243.5B, operating income $28.5–33.5B → $31.0B); Q4'26E cash capex completes the ~$220B FY2026 plan ($172.2B in 9M'26).
   // AWS growth follows the Q3'26 call ("north of 40% in each of 2027 and in 2028"); 2027 capex is "meaningfully more" than
   // 2026 — set at about the Q3'26 run rate ($75.9B) and rising, ~+43% YoY in line with AWS growth.
   const ASM = {
-    gNA:     [0.090,0.090,0.090,0.090,0.090],   // segment net sales YoY
+    gNA:     [0.089054,0.090,0.090,0.090,0.090],   // segment net sales YoY (Q4'26E: net sales at the $243.5B guidance midpoint)
     gIN:     [0.090,0.100,0.100,0.100,0.100],
     gAWS:    [0.400,0.410,0.410,0.420,0.420],
     prodMix: [0.400,0.375,0.370,0.370,0.390],   // net product sales / total net sales
-    mNA:     [0.078,0.080,0.080,0.075,0.085],   // segment operating margin
+    mNA:     [0.075240,0.080,0.080,0.075,0.085],   // segment operating margin (Q4'26E: operating income at the $31.0B guidance midpoint)
     mAWS:    [0.380,0.380,0.380,0.380,0.370],
     mIN:     [0.030,0.036,0.040,0.037,0.030],
     yield:   [0.036,0.036,0.036,0.036,0.036],   // interest income / prior cash + marketable securities (annualized)
@@ -2795,19 +2802,39 @@ const AMZN_MODEL = (() => {
     YOY('segAWS_s', {inp:1, inpY:1, ak:'gAWS'}),
     QOQ('segAWS_s'),
     PCT('% of total net sales','segAWS_s','sales'),
-    // ---- Net sales by type ----
+    // ---- Net sales by type: product / service, then the product and service groups of the segment note ----
     {l:'By type', f:()=>null, subh:1},
     {l:'Net product sales', f:val('prodSales'), fmt:'m', u:'US$M', ind:1},
     YOY('prodSales'),
     PCT('% of total net sales','prodSales','sales',{inp:1, inpY:1, ak:'prodMix'}),
     {l:'Net service sales', f:val('servSales'), fmt:'m', u:'US$M', ind:1},
     YOY('servSales'),
-    {l:'Cost of sales', f:o=>neg(o.cogs), fmt:'m', u:'US$M', ind:1, grpEnd:1},
+    {l:'Online stores', f:val('pgOnline'), fmt:'m', u:'US$M', ind:1, note:'Groups of similar products and services (segment note); they add up to total net sales and are not projected'},
+    YOY('pgOnline'),
+    PCT('% of total net sales','pgOnline','sales'),
+    {l:'Physical stores', f:val('pgPhys'), fmt:'m', u:'US$M', ind:1},
+    YOY('pgPhys'),
+    {l:'Third-party seller services', f:val('pg3P'), fmt:'m', u:'US$M', ind:1},
+    YOY('pg3P'),
+    PCT('% of total net sales','pg3P','sales'),
+    {l:'Advertising services', f:val('pgAds'), fmt:'m', u:'US$M', ind:1, note:'Reported separately from Q1 2021 (FY2019 onward in the 10-K); earlier quarters sit inside Other'},
+    YOY('pgAds'),
+    PCT('% of total net sales','pgAds','sales'),
+    {l:'Subscription services', f:val('pgSub'), fmt:'m', u:'US$M', ind:1},
+    YOY('pgSub'),
+    {l:'AWS', f:val('pgAWS'), fmt:'m', u:'US$M', ind:1},
+    YOY('pgAWS'),
+    {l:'Other', f:val('pgOther'), fmt:'m', u:'US$M', ind:1, note:'Before Q1 2021 the quarterly filings included advertising in Other'},
+    {l:'Advertising + other (comparable since 2019)', f:val('pgAdsOth'), fmt:'m', u:'US$M', ind:1},
+    YOY('pgAdsOth'),
+    {spacer:1},
+    // ---- Operating expenses: the total heads a block that folds (cost of sales and the operating lines) ----
+    {l:'Total operating expenses', f:o=>neg(o.opex), fmt:'m', u:'US$M', tot:1, grpHead:1, note:'Cost of sales plus operating expenses, as in the income statement; click the arrow to fold the lines'},
+    YOY('opex'),
+    PCT('% of net sales','opex','sales'),
+    {l:'Cost of sales', f:o=>neg(o.cogs), fmt:'m', u:'US$M', ind:1},
     YOY('cogs'),
     PCT('% of net sales','cogs','sales'),
-    {l:'Gross profit', f:val('gross'), fmt:'m', u:'US$M', tot:1, key:1},
-    YOY('gross'),
-    PCT('Gross margin','gross','sales'),
     {l:'Fulfillment', f:o=>neg(o.fulf), fmt:'m', u:'US$M', ind:1},
     YOY('fulf'),
     PCT('% of net sales','fulf','sales'),
@@ -2822,9 +2849,12 @@ const AMZN_MODEL = (() => {
     PCT('% of net sales','ga','sales'),
     {l:'Other operating expense (income), net', f:o=>neg(o.othOp), fmt:'m', u:'US$M', ind:1},
     PCT('% of net sales','othOp','sales'),
-    {l:'Total operating expenses (excl. cost of sales)', f:o=>neg(o.opexX), fmt:'m', u:'US$M', b:1},
+    {l:'Operating expenses excl. cost of sales', f:o=>neg(o.opexX), fmt:'m', u:'US$M', ind:1, b:1},
     YOY('opexX'),
     PCT('% of net sales','opexX','sales'),
+    {l:'Gross profit (net sales − cost of sales)', f:val('gross'), fmt:'m', u:'US$M', b:1, grpEnd:1},
+    YOY('gross'),
+    PCT('Gross margin','gross','sales'),
     {l:'Operating income', f:val('opInc'), fmt:'m', u:'US$M', tot:1, key:1},
     YOY('opInc'),
     {l:'Operating margin', f:ratio('opInc','sales'), fmt:'p', u:'%', sub:1},
@@ -2877,27 +2907,6 @@ const AMZN_MODEL = (() => {
     {l:'EBITDA before stock-based compensation', f:val('ebitdaS'), fmt:'m', u:'US$M', tot:1},
     YOY('ebitdaS'),
     {l:'Margin', f:ratio('ebitdaS','sales'), fmt:'p', u:'%', sub:1},
-
-    SEC('Net sales by groups of similar products and services'),
-    {l:'Online stores', f:val('pgOnline'), fmt:'m', u:'US$M'},
-    YOY('pgOnline'),
-    PCT('% of total net sales','pgOnline','sales'),
-    {l:'Physical stores', f:val('pgPhys'), fmt:'m', u:'US$M'},
-    YOY('pgPhys'),
-    {l:'Third-party seller services', f:val('pg3P'), fmt:'m', u:'US$M'},
-    YOY('pg3P'),
-    PCT('% of total net sales','pg3P','sales'),
-    {l:'Advertising services', f:val('pgAds'), fmt:'m', u:'US$M', note:'Reported separately from Q1 2021 (FY2019 onward in the 10-K); earlier quarters sit inside Other'},
-    YOY('pgAds'),
-    PCT('% of total net sales','pgAds','sales'),
-    {l:'Subscription services', f:val('pgSub'), fmt:'m', u:'US$M'},
-    YOY('pgSub'),
-    {l:'AWS', f:val('pgAWS'), fmt:'m', u:'US$M'},
-    YOY('pgAWS'),
-    {l:'Other', f:val('pgOther'), fmt:'m', u:'US$M', note:'Before Q1 2021 the quarterly filings included advertising in Other'},
-    {l:'Advertising + other (comparable since 2019)', f:val('pgAdsOth'), fmt:'m', u:'US$M', b:1},
-    YOY('pgAdsOth'),
-    {l:'Total net sales', f:o=>isN(o.pgOnline)?o.sales:null, fmt:'m', u:'US$M', tot:1, note:'Product groups are not projected'},
 
     SEC('Guidance (quarterly, given with the prior quarter)'),
     ...GROW('sales','Net sales','sales'),
@@ -3013,9 +3022,10 @@ const AMZN_MODEL = (() => {
   let secIdx=-1, parentIdx=-1, grpIdx=-1;
   ROWS.forEach((r,i)=>{
     if(r.sec){ secIdx=i; parentIdx=-1; grpIdx=-1; r.id='s'+i; r.stmt_=r.stmt; return; }
-    if(r.subh) grpIdx=i; else if(r.grpEnd) grpIdx=-1;
-    r.grp_ = r.subh ? -1 : grpIdx;
     r.sec_=secIdx; r.id='r'+i; r.stmt_=ROWS[secIdx].stmt;
+    if(r.spacer){ grpIdx=-1; r.grp_=-1; return; }
+    if(r.subh || r.grpHead) grpIdx=i; else if(r.grpEnd) grpIdx=-1;
+    r.grp_ = r.subh || r.grpHead || (r.sub && parentIdx===grpIdx) ? -1 : grpIdx;
     if(r.sub){ r.parent=parentIdx; if(parentIdx>=0) ROWS[parentIdx].hasSubs=true; } else parentIdx=i;
   });
 
@@ -3496,47 +3506,42 @@ const AM_DCF = (() => {
    ===================================================================== */
 // From SoFi's earnings releases (8-K Ex. 99.1) and calls: every full-year guide (first and each update) and the actual.
 const GR_DATA = {"FY2022":{"adjRev":{"steps":[{"d":"2022-03-01","lo":1570,"hi":1570,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887422000029/q42021earningsrelease.htm","n":"Single number."},{"d":"2022-04-06","lo":1470,"hi":1470,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887422000047/exhibit991_8-k462022.htm","n":"Cut (student-loan moratorium extension). Single number."},{"d":"2022-05-10","lo":1505,"hi":1510,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887422000064/q12022earningsrelease.htm"},{"d":"2022-08-02","lo":1508,"hi":1513,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887422000180/q22022earningsrelease.htm"},{"d":"2022-11-01","lo":1517,"hi":1522,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887422000236/q32022earningsrelease.htm"}],"act":1540.492,"actSrc":"https://www.sec.gov/Archives/edgar/data/1818874/000181887423000005/q42022earningsrelease.htm"},"ebitda":{"steps":[{"d":"2022-03-01","lo":180,"hi":180,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887422000029/q42021earningsrelease.htm","n":"Single number."},{"d":"2022-04-06","lo":100,"hi":100,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887422000047/exhibit991_8-k462022.htm","n":"Cut. Single number."},{"d":"2022-05-10","lo":100,"hi":105,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887422000064/q12022earningsrelease.htm"},{"d":"2022-08-02","lo":104,"hi":109,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887422000180/q22022earningsrelease.htm"},{"d":"2022-11-01","lo":115,"hi":120,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887422000236/q32022earningsrelease.htm"}],"act":143.346,"actSrc":"https://www.sec.gov/Archives/edgar/data/1818874/000181887423000005/q42022earningsrelease.htm"}},"FY2023":{"adjRev":{"steps":[{"d":"2023-01-30","lo":1925,"hi":2000,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887423000005/q42022earningsrelease.htm"},{"d":"2023-05-01","lo":1955,"hi":2020,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887423000076/q12023earningsrelease.htm"},{"d":"2023-07-31","lo":1974,"hi":2034,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887423000140/q22023earningsrelease.htm"},{"d":"2023-10-30","lo":2045,"hi":2065,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887423000165/q32023earningsrelease.htm"}],"act":2073.94,"actSrc":"https://www.sec.gov/Archives/edgar/data/1818874/000181887424000004/q42023earningsrelease.htm"},"ebitda":{"steps":[{"d":"2023-01-30","lo":260,"hi":280,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887423000005/q42022earningsrelease.htm"},{"d":"2023-05-01","lo":268,"hi":288,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887423000076/q12023earningsrelease.htm"},{"d":"2023-07-31","lo":333,"hi":343,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887423000140/q22023earningsrelease.htm"},{"d":"2023-10-30","lo":386,"hi":396,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887423000165/q32023earningsrelease.htm"}],"act":431.737,"actSrc":"https://www.sec.gov/Archives/edgar/data/1818874/000181887424000004/q42023earningsrelease.htm"}},"FY2024":{"adjRev":{"steps":[{"d":"2024-01-29","lo":2365,"hi":2405,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887424000004/q42023earningsrelease.htm","n":"Jan 29, 2024 guide was given as segment growth (Lending 92-95% of 2023; TP+FS +50%), not a dollar figure. Dollar range is SoFi's own statement of the 'implied prior guidance range' in the Apr 29, 2024 release (https://ww"},{"d":"2024-04-29","lo":2390,"hi":2430,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887424000115/q12024earningsrelease.htm"},{"d":"2024-07-30","lo":2425,"hi":2465,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887424000169/q22024earningsrelease.htm"},{"d":"2024-10-29","lo":2535,"hi":2550,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887424000229/q32024earningsrelease.htm","n":"Release describes the prior range as $2.43-2.47B, while the Jul 30 release said $2.425-2.465B."}],"act":2606.17,"actSrc":"https://www.sec.gov/Archives/edgar/data/1818874/000181887425000006/q42024earningsrelease.htm"},"ebitda":{"steps":[{"d":"2024-01-29","lo":580,"hi":590,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887424000004/q42023earningsrelease.htm"},{"d":"2024-04-29","lo":590,"hi":600,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887424000115/q12024earningsrelease.htm"},{"d":"2024-07-30","lo":605,"hi":615,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887424000169/q22024earningsrelease.htm"},{"d":"2024-10-29","lo":640,"hi":645,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887424000229/q32024earningsrelease.htm"}],"act":666.48,"actSrc":"https://www.sec.gov/Archives/edgar/data/1818874/000181887425000006/q42024earningsrelease.htm"},"ni":{"steps":[{"d":"2024-01-29","lo":95,"hi":105,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887424000004/q42023earningsrelease.htm"},{"d":"2024-04-29","lo":165,"hi":175,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887424000115/q12024earningsrelease.htm"},{"d":"2024-07-30","lo":175,"hi":185,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887424000169/q22024earningsrelease.htm"},{"d":"2024-10-29","lo":204,"hi":206,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887424000229/q32024earningsrelease.htm"}],"act":498.665,"basis":"GAAP","actSrc":"https://www.sec.gov/Archives/edgar/data/1818874/000181887425000006/q42024earningsrelease.htm","actAdj":227.222},"eps":{"steps":[{"d":"2024-01-29","lo":0.07,"hi":0.08,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887424000004/q42023earningsrelease.htm"},{"d":"2024-04-29","lo":0.08,"hi":0.09,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887424000115/q12024earningsrelease.htm"},{"d":"2024-07-30","lo":0.09,"hi":0.1,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887424000169/q22024earningsrelease.htm"},{"d":"2024-10-29","lo":0.11,"hi":0.12,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887424000229/q32024earningsrelease.htm"}],"act":0.39,"basis":"GAAP diluted","actSrc":"https://www.sec.gov/Archives/edgar/data/1818874/000181887425000006/q42024earningsrelease.htm","actAdj":0.15},"members":{"steps":[{"d":"2024-01-29","lo":2300,"hi":null,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887424000004/q42023earningsrelease.htm","floor":1,"n":"'At least 2.3 million' (floor only; high = null)."},{"d":"2024-04-29","lo":2300,"hi":null,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887424000115/q12024earningsrelease.htm","floor":1,"n":"Reaffirmed."},{"d":"2024-07-30","lo":2300,"hi":null,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887424000169/q22024earningsrelease.htm","floor":1,"n":"Reaffirmed."},{"d":"2024-10-29","lo":2300,"hi":null,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887424000229/q32024earningsrelease.htm","floor":1,"n":"Reaffirmed."}],"act":2585.463,"actSrc":"https://www.sec.gov/Archives/edgar/data/1818874/000181887425000006/q42024earningsrelease.htm"}},"FY2025":{"adjRev":{"steps":[{"d":"2025-01-27","lo":3200,"hi":3275,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887425000006/q42024earningsrelease.htm"},{"d":"2025-04-29","lo":3235,"hi":3310,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887425000068/a2025q1earningsrelease.htm"},{"d":"2025-07-29","lo":3375,"hi":3375,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887425000148/a2025q2earningsrelease.htm","n":"Approximate single number."},{"d":"2025-10-28","lo":3540,"hi":3540,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887425000204/a2025q3earningsrelease.htm","n":"Approximate single number."}],"act":3591.411,"actSrc":"https://www.sec.gov/Archives/edgar/data/1818874/000181887426000008/a2025q4earningsrelease.htm"},"ebitda":{"steps":[{"d":"2025-01-27","lo":845,"hi":865,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887425000006/q42024earningsrelease.htm"},{"d":"2025-04-29","lo":875,"hi":895,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887425000068/a2025q1earningsrelease.htm"},{"d":"2025-07-29","lo":960,"hi":960,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887425000148/a2025q2earningsrelease.htm","n":"Approximate single number."},{"d":"2025-10-28","lo":1035,"hi":1035,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887425000204/a2025q3earningsrelease.htm","n":"Approximate single number."}],"act":1053.898,"actSrc":"https://www.sec.gov/Archives/edgar/data/1818874/000181887426000008/a2025q4earningsrelease.htm"},"ni":{"steps":[{"d":"2025-01-27","lo":285,"hi":305,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887425000006/q42024earningsrelease.htm","n":"GAAP net income."},{"d":"2025-04-29","lo":320,"hi":330,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887425000068/a2025q1earningsrelease.htm","n":"GAAP."},{"d":"2025-07-29","lo":370,"hi":370,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887425000148/a2025q2earningsrelease.htm","n":"GAAP; approximate single number."},{"d":"2025-10-28","lo":455,"hi":455,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887425000204/a2025q3earningsrelease.htm","n":"Switched to ADJUSTED net income; approximate single number."}],"act":481.32,"basis":"GAAP and adjusted identical for FY25","actSrc":"https://www.sec.gov/Archives/edgar/data/1818874/000181887426000008/a2025q4earningsrelease.htm"},"eps":{"steps":[{"d":"2025-01-27","lo":0.25,"hi":0.27,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887425000006/q42024earningsrelease.htm","n":"GAAP EPS."},{"d":"2025-04-29","lo":0.27,"hi":0.28,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887425000068/a2025q1earningsrelease.htm","n":"GAAP."},{"d":"2025-07-29","lo":0.31,"hi":0.31,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887425000148/a2025q2earningsrelease.htm","n":"GAAP; approximate single number."},{"d":"2025-10-28","lo":0.37,"hi":0.37,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887425000204/a2025q3earningsrelease.htm","n":"Switched to ADJUSTED EPS; approximate single number."}],"act":0.39,"basis":"GAAP and adjusted diluted EPS identical for FY25","actSrc":"https://www.sec.gov/Archives/edgar/data/1818874/000181887426000008/a2025q4earningsrelease.htm"},"members":{"steps":[{"d":"2025-01-27","lo":2800,"hi":null,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887425000006/q42024earningsrelease.htm","floor":1,"n":"'At least 2.8 million' (floor only)."},{"d":"2025-04-29","lo":2800,"hi":null,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887425000068/a2025q1earningsrelease.htm","floor":1,"n":"Reaffirmed 'at least 2.8 million'."},{"d":"2025-07-29","lo":3000,"hi":null,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887425000148/a2025q2earningsrelease.htm","floor":1,"n":"'At least 3.0 million' (release); call said 'over 3 million'."},{"d":"2025-10-28","lo":3500,"hi":null,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887425000204/a2025q3earningsrelease.htm","floor":1,"n":"'At least 3.5 million' (release); call said 'approximately 3.5 million'."}],"act":3523.679,"actSrc":"https://www.sec.gov/Archives/edgar/data/1818874/000181887426000008/a2025q4earningsrelease.htm"}},"FY2026":{"adjRev":{"steps":[{"d":"2026-01-30","lo":4655,"hi":4655,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887426000008/a2025q4earningsrelease.htm","n":"Approximate single number (~30% growth)."},{"d":"2026-04-29","lo":4655,"hi":4655,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887426000020/a2026q1earningsrelease.htm","n":"Maintained."},{"d":"2026-07-29","lo":4750,"hi":4850,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887426000050/a2026q2earningsrelease.htm","n":"Range (32-35% growth)."},{"d":"2026-10-27","lo":5040,"hi":5040,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887426000065/a2026q3earningsrelease.htm","n":"Approximate single number (~40% growth)."}],"act":null},"ebitda":{"steps":[{"d":"2026-01-30","lo":1600,"hi":1600,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887426000008/a2025q4earningsrelease.htm","n":"Approximate single number."},{"d":"2026-04-29","lo":1600,"hi":1600,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887426000020/a2026q1earningsrelease.htm","n":"Maintained."},{"d":"2026-07-29","lo":1600,"hi":1600,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887426000050/a2026q2earningsrelease.htm","n":"Maintained."},{"d":"2026-10-27","lo":1660,"hi":1660,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887426000065/a2026q3earningsrelease.htm","n":"Approximate single number."}],"act":null},"ni":{"steps":[{"d":"2026-01-30","lo":825,"hi":825,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887426000008/a2025q4earningsrelease.htm","n":"ADJUSTED net income; approximate."},{"d":"2026-04-29","lo":825,"hi":825,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887426000020/a2026q1earningsrelease.htm","n":"Maintained."},{"d":"2026-07-29","lo":825,"hi":825,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887426000050/a2026q2earningsrelease.htm","n":"Maintained."},{"d":"2026-10-27","lo":840,"hi":840,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887426000065/a2026q3earningsrelease.htm","n":"Approximate."}],"act":null,"basis":"adjusted"},"eps":{"steps":[{"d":"2026-01-30","lo":0.6,"hi":0.6,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887426000008/a2025q4earningsrelease.htm","n":"ADJUSTED EPS; approximate. Assumed mid-teens tax rate."},{"d":"2026-04-29","lo":0.6,"hi":0.6,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887426000020/a2026q1earningsrelease.htm","n":"Maintained."},{"d":"2026-07-29","lo":0.6,"hi":0.6,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887426000050/a2026q2earningsrelease.htm","n":"Maintained, but now assumes ~22% tax rate (CFO: would be $0.65 at original tax rate)."},{"d":"2026-10-27","lo":0.61,"hi":0.61,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887426000065/a2026q3earningsrelease.htm","n":"Approximate."}],"act":null,"basis":"adjusted diluted"}},"FY2027":{"adjRev":{"steps":[{"d":"2026-10-27","lo":6400,"hi":6400,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887426000065/a2026q3earningsrelease.htm","n":"Approximate single number (~27% growth); given one quarter earlier than usual."}],"act":null},"ebitda":{"steps":[{"d":"2026-10-27","lo":2240,"hi":2240,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887426000065/a2026q3earningsrelease.htm","n":"Approximate (~35% margin)."}],"act":null},"ni":{"steps":[{"d":"2026-10-27","lo":1280,"hi":1280,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887426000065/a2026q3earningsrelease.htm","n":"ADJUSTED net income; approximate (~20% margin)."}],"act":null,"basis":"adjusted"},"eps":{"steps":[{"d":"2026-10-27","lo":0.9,"hi":0.9,"src":"https://www.sec.gov/Archives/edgar/data/1818874/000181887426000065/a2026q3earningsrelease.htm","n":"ADJUSTED EPS; approximate. Assumes 24% tax rate and two rate hikes (call)."}],"act":null,"basis":"adjusted diluted"}}};
-const GR = (() => {
-  const MET = [
-    {k:'adjRev', l:'Adjusted net revenue', fmt:'m', u:'US$M'},
-    {k:'ebitda', l:'Adjusted EBITDA', fmt:'m', u:'US$M'},
-    {k:'ni', l:'Net income', fmt:'m', u:'US$M'},
-    {k:'eps', l:'Diluted EPS', fmt:'ps', u:'US$'},
-    {k:'members', l:'Net new members', fmt:'k', u:'k'},
-  ];
-  const MODELK = {adjRev:'adjRev', ebitda:'ebitda', ni:'adjNI', eps:'adjEps', members:null};
+// One Guidance Revisions view per company: data {FY:{metric:{steps:[{d,lo,hi,floor,src,n}], act, actSrc, actAdj, basis, qual:[{d,text,src}]}}};
+// modelOf(metric key, model year) gives the Model estimate for years not yet reported; ids prefixed with `id`.
+function grView({data:GR_DATA, metrics:MET, modelYs, modelOf, key, id, yearDef, srcText}){
+  const $ = n => document.getElementById(id+n);
   const years = Object.keys(GR_DATA);
-  let yr = years.includes('FY2025') ? 'FY2025' : years[years.length-1];
-  try{ const v=localStorage.getItem('pvg-gr'); if(v && GR_DATA[v]) yr=v; }catch(e){}
+  let yr = years.includes(yearDef) ? yearDef : years[years.length-1];
+  try{ const v=localStorage.getItem(key); if(v && GR_DATA[v]) yr=v; }catch(e){}
   const mon = d => { const t=new Date(d+'T00:00:00'); return t.toLocaleString('en-US',{month:'short'})+'-'+String(t.getFullYear()).slice(2); };
   const mid = st => isN(st.hi) ? (st.lo+st.hi)/2 : st.lo;
   const chg = (a,b) => isN(a)&&isN(b)&&b!==0 ? (a-b)/Math.abs(b) : null;
   const pct = v => isN(v) ? `<span class="g ${Math.abs(v)<0.0005?'neu':v>0?'pos':'neg'}">${v>0?'+':v<0?'−':''}${Math.abs(v*100).toFixed(1)}%</span>` : NA;
   function render(){
-    document.getElementById('grYear').innerHTML = years.map(y=>`<button data-v="${y}" class="${y===yr?'on':''}">${y}</button>`).join('');
+    $('Year').innerHTML = years.map(y=>`<button data-v="${y}" class="${y===yr?'on':''}">${y}</button>`).join('');
     const D = GR_DATA[yr], c = C();
-    const modelY = MODEL.Y.find(y=>y.lab===yr || y.lab===yr+'E');
+    const modelY = modelYs().find(y=>y.lab===yr || y.lab===yr+'E');
     const mets = MET.filter(m=>D[m.k]);
-    const endOf = m => { const x=D[m.k]; if(isN(x.act)) return {v:x.act, lab:'Actual'}; const k=MODELK[m.k]; return k && modelY && isN(modelY[k]) ? {v:modelY[k], lab:'Model', model:true} : null; };
-    document.getElementById('grTitle').textContent = `${yr} guidance`;
+    const endOf = m => { const x=D[m.k]; if(isN(x.act)) return {v:x.act, lab:'Actual'}; const v=modelY ? modelOf(m.k, modelY) : null; return isN(v) ? {v, lab:'Model', model:true} : null; };
+    $('Title').textContent = `${yr} guidance`;
     // Summary: first, last, actual for every metric
-    document.getElementById('grSum').innerHTML = `<table class="metrics-table ave-t"><thead><tr><th>Metric</th><th>First guide</th><th>Last guide</th><th>Revisions</th><th>Last vs first</th><th>${D.adjRev && isN(D.adjRev.act)?'Actual':'Actual / model'}</th><th>vs first guide</th><th>vs last guide</th></tr></thead><tbody>${
+    $('Sum').innerHTML = `<table class="metrics-table ave-t"><thead><tr><th>Metric</th><th>First guide</th><th>Last guide</th><th>Revisions</th><th>Last vs first</th><th>${mets.every(m=>isN(D[m.k].act))?'Actual':'Actual / model'}</th><th>vs first guide</th><th>vs last guide</th></tr></thead><tbody>${
       mets.map(m=>{ const x=D[m.k], f=x.steps[0], l=x.steps[x.steps.length-1], e=endOf(m), fm=F[m.fmt];
         const rng = st => isN(st.hi)&&st.hi!==st.lo ? `${fm(st.lo)}–${fm(st.hi)}` : (st.floor?'≥ ':'')+fm(st.lo);
         return `<tr><td>${m.l}${x.basis?` <span class="card-sub">${x.basis}</span>`:''}</td><td>${rng(f)}</td><td>${rng(l)}</td><td>${x.steps.length-1}</td><td>${pct(chg(mid(l),mid(f)))}</td>
           <td>${e?(e.model?`<span class="derived" title="Model estimate (not yet reported)">${fm(e.v)}</span>`:fm(e.v)):NA}</td><td>${e?pct(chg(e.v,mid(f))):NA}</td><td>${e?pct(chg(e.v,mid(l))):NA}</td></tr>`; }).join('')
     }</tbody></table>`;
     // One card per metric: floating range bars for each guide, midpoint line, and the actual
-    const host = document.getElementById('grCards');
+    const host = $('Cards');
     host.innerHTML = mets.map(m=>`<div class="card"><div class="card-h"><div><span class="card-t">${m.l}</span><span class="card-sub">${m.u} · guidance range by date and ${isN(D[m.k].act)?'actual':'model estimate'}</span></div></div>
-      <div class="card-b"><div class="chart"><canvas id="gr-c-${m.k}"></canvas></div></div><div class="tbl-wrap" id="gr-t-${m.k}"></div></div>`).join('');
+      <div class="card-b"><div class="chart"><canvas id="${id}-c-${m.k}"></canvas></div></div><div class="tbl-wrap" id="${id}-t-${m.k}"></div></div>`).join('');
     mets.forEach(m=>{
       const x=D[m.k], st=x.steps, e=endOf(m), fm=F[m.fmt];
       const labels=[...st.map(z=>mon(z.d)), ...(e?[e.lab]:[])];
       const span = Math.max(...st.map(z=>Math.abs(mid(z))), e?Math.abs(e.v):0) || 1, thin = span*0.004;
       const range = st.map(z=>{ const hi=isN(z.hi)?z.hi:z.lo; return hi-z.lo<thin ? [z.lo-thin, hi+thin] : [z.lo, hi]; });
       const tipF = m.fmt==='ps' ? (v=>isN(v)?'$'+(+v).toFixed(2):'–') : m.fmt==='k' ? (v=>isN(v)?nf0.format(v)+'k':'–') : fmtTipM;
-      mk('gr-c-'+m.k, {type:'bar', data:{labels, datasets:[
+      mk(id+'-c-'+m.k, {type:'bar', data:{labels, datasets:[
         {type:'line', label:'Guidance midpoint', data:[...st.map(mid), null], borderColor:c.s2, backgroundColor:c.s2, pointRadius:4, borderWidth:2, tension:0, tip:tipF, order:0},
         {label:'Guidance range', data:[...range, null], backgroundColor:alpha('#2E75B6',0.22), borderColor:alpha('#2E75B6',0.5), borderWidth:1, borderRadius:3, maxBarThickness:46, order:2, grouped:false,
           tip:v=>Array.isArray(v)?`${tipF(v[0])} – ${tipF(v[1])}`:'–'},
@@ -3547,13 +3552,56 @@ const GR = (() => {
         <td>${z.floor?'≥ ':''}${fm(z.lo)}</td><td>${isN(z.hi)?fm(z.hi):NA}</td><td>${fm(mid(z))}</td><td>${i?pct(chg(mid(z),mid(st[i-1]))):NA}</td><td>${i?pct(chg(mid(z),mid(st[0]))):NA}</td><td class="gr-note">${z.n||''}</td></tr>`).join('');
       const endRow = e ? `<tr class="dif"><td>${e.model?'Model estimate':'Actual'}${x.actSrc?`<div class="gr-src"><a href="${x.actSrc}" target="_blank" rel="noopener">release ↗</a></div>`:''}</td><td colspan="2"></td><td>${fm(e.v)}</td><td>${pct(chg(e.v,mid(st[st.length-1])))}</td><td>${pct(chg(e.v,mid(st[0])))}</td>
         <td class="gr-note">${isN(x.actAdj)?`Adjusted: ${fm(x.actAdj)}. `:''}${e.model?'Not reported yet: Model tab estimate.':''}</td></tr>` : '';
-      document.getElementById('gr-t-'+m.k).innerHTML = `<table class="metrics-table ave-t"><thead><tr><th>Date</th><th>Low</th><th>High</th><th>Midpoint</th><th>vs prior</th><th>vs first</th><th style="text-align:left">Note</th></tr></thead><tbody>${rows}${endRow}</tbody></table>`;
+      // qualitative commentary (no number) given before or between the numeric guides
+      const qual = (x.qual||[]).map(z=>`<tr><td>${mon(z.d)}<div class="gr-src">${z.src?`<a href="${z.src}" target="_blank" rel="noopener">commentary ↗</a>`:'commentary'}</div></td><td colspan="5" class="gr-note" style="text-align:left">${z.text}</td><td class="gr-note">No figure given</td></tr>`).join('');
+      $('-t-'+m.k).innerHTML = `<table class="metrics-table ave-t"><thead><tr><th>Date</th><th>Low</th><th>High</th><th>Midpoint</th><th>vs prior</th><th>vs first</th><th style="text-align:left">Note</th></tr></thead><tbody>${qual}${rows}${endRow}</tbody></table>`;
     });
-    document.getElementById('grSrc').textContent = 'Source: SoFi earnings releases (8-K Exhibit 99.1, SEC EDGAR) and earnings calls; each guide links to its release. Net income and EPS were guided on a GAAP basis through mid-2025 and on an adjusted basis afterwards. Single-number guides show the same low and high; "≥" marks "at least" guides. For years not yet reported, the bar shows the Model tab estimate.';
+    $('Src').textContent = srcText;
   }
-  document.getElementById('grYear').addEventListener('click', e=>{ const b=e.target.closest('button'); if(!b) return; yr=b.dataset.v; try{ localStorage.setItem('pvg-gr',yr); }catch(_){} render(); });
+  $('Year').addEventListener('click', e=>{ const b=e.target.closest('button'); if(!b) return; yr=b.dataset.v; try{ localStorage.setItem(key,yr); }catch(_){} render(); });
   return {render};
+}
+const GR = grView({data:GR_DATA, key:'pvg-gr', id:'gr', yearDef:'FY2025', modelYs:()=>MODEL.Y,
+  metrics:[
+    {k:'adjRev', l:'Adjusted net revenue', fmt:'m', u:'US$M'},
+    {k:'ebitda', l:'Adjusted EBITDA', fmt:'m', u:'US$M'},
+    {k:'ni', l:'Net income', fmt:'m', u:'US$M'},
+    {k:'eps', l:'Diluted EPS', fmt:'ps', u:'US$'},
+    {k:'members', l:'Net new members', fmt:'k', u:'k'},
+  ],
+  modelOf:(k,y)=>{ const f={adjRev:'adjRev', ebitda:'ebitda', ni:'adjNI', eps:'adjEps', members:null}[k]; return f ? y[f] : null; },
+  srcText:'Source: SoFi earnings releases (8-K Exhibit 99.1, SEC EDGAR) and earnings calls; each guide links to its release. Net income and EPS were guided on a GAAP basis through mid-2025 and on an adjusted basis afterwards. Single-number guides show the same low and high; "≥" marks "at least" guides. For years not yet reported, the bar shows the Model tab estimate.'});
+
+// ---- Amazon: the only full-year guide is the capex plan (sales and operating income are guided one quarter ahead) ----
+// From the earnings calls (transcripts in Amzn/) and releases. US$M. Actual = cash capex net of proceeds and incentives (Model).
+const AMZN_REL = acc => `https://www.sec.gov/Archives/edgar/data/1018724/${acc}`;
+const AMZN_GR_DATA = (() => {
+  const D = {
+    FY2024:{capex:{
+      qual:[{d:'2024-04-30', text:'Q1\'24 call: "We anticipate our overall capital expenditures to meaningfully increase year-over-year in 2024" (FY2023: $48.1B).'},
+            {d:'2024-08-01', text:'Q2\'24 call: "we expect capital investments to be higher in the second half of the year" (first half: $30.5B including finance leases).'}],
+      steps:[{d:'2024-10-31', lo:75000, hi:75000, n:'Q3\'24 call: "We expect to spend approximately $75 billion in CapEx in 2024" ($51.9B of capital investments through Q3).'}]}},
+    FY2025:{capex:{
+      qual:[{d:'2024-10-31', text:'Q3\'24 call: Jassy said 2025 capex is likely to be higher than 2024 (no figure).'}],
+      steps:[{d:'2025-02-06', lo:105200, hi:105200, src:AMZN_REL('000101872425000002/amzn-20241231xex991.htm'), n:'Q4\'24 call: Q4 capital investments of $26.3B are "reasonably representative" of the 2025 rate; shown as 4 × $26.3B.'},
+             {d:'2025-07-31', lo:118500, hi:118500, src:AMZN_REL('000101872425000084/amzn-20250630xex991.htm'), n:'Q2\'25 call: Q2 cash capex of $31.4B "reasonably representative" of the quarterly rate for the second half; shown as Q1 $24.3B + Q2 $31.4B + 2 × $31.4B.'},
+             {d:'2025-10-30', lo:125000, hi:125000, src:AMZN_REL('000101872425000121/amzn-20250930xex991.htm'), n:'Q3\'25 call: "approximately $125 billion in 2025, and we expect that amount will increase in 2026."'}]}},
+    FY2026:{capex:{
+      qual:[{d:'2025-10-30', text:'Q3\'25 call: the 2025 amount "will increase in 2026" (no figure).'}],
+      steps:[{d:'2026-02-05', lo:200000, hi:200000, src:AMZN_REL('000101872426000002/amzn-20251231xex991.htm'), n:'Q4\'25 release and call: "about $200 billion in capital expenditures across Amazon in 2026".'},
+             {d:'2026-07-30', lo:220000, hi:220000, src:AMZN_REL('000101872426000024/amzn-20260630xex991.htm'), n:'Q2\'26 call: "We now believe we will spend approximately $220 billion in cash CapEx in 2026."'},
+             {d:'2026-10-29', lo:220000, hi:220000, src:AMZN_REL('000101872426000038/amzn-20260930xex991.htm'), n:'Q3\'26 release: "We continue to expect 2026 cash capital expenditures to be approximately $220 billion" ($172.2B through Q3).'}]}},
+    FY2027:{capex:{
+      steps:[{d:'2026-10-29', lo:220000, hi:null, floor:true, src:AMZN_REL('000101872426000038/amzn-20260930xex991.htm'), n:'Q3\'26 call: "expect to spend meaningfully more in 2027" than ~$220B in 2026; no figure, shown as "at least" the 2026 level.'}]}},
+  };
+  // actuals for reported years come from the Model's cash flow statement
+  for(const fy in D){ const y=AMZN_MODEL.Y.find(o=>o.lab===fy); if(y && !y.proj && isN(y.netCapex)) D[fy].capex.act=-y.netCapex; }
+  return D;
 })();
+const AM_GR = grView({data:AMZN_GR_DATA, key:'pvg-amzn-gr', id:'amGr', yearDef:'FY2026', modelYs:()=>AMZN_MODEL.Y,
+  metrics:[{k:'capex', l:'Cash capital expenditures', fmt:'m', u:'US$M'}],
+  modelOf:(k,y)=>k==='capex' && isN(y.netCapex) ? -y.netCapex : null,
+  srcText:'Source: Amazon earnings calls (transcripts) and releases (8-K Exhibit 99.1, SEC EDGAR; links on each guide). Amazon guides net sales and operating income one quarter ahead (see Actual vs Estimates); its only full-year guide is capital expenditures, often given as a run rate: those steps show the full-year figure the statement implies, with the arithmetic in the note. 2024 guides refer to capital investments (cash capex plus equipment finance leases); from 2025 Amazon guides cash capex net of proceeds and incentives, the basis of the actuals shown. FY2026 and FY2027 show the Model tab estimate until reported.'});
 
 /* =====================================================================
    THESIS — flywheel, Loan Platform Business and client credit quality
@@ -3944,6 +3992,7 @@ document.querySelectorAll('.amvtab').forEach(t=>t.addEventListener('click',()=>{
   if(amvtab==='model') renderAmznModel();
   if(amvtab==='ave') AM_AVE.render();
   if(amvtab==='dcf') AM_DCF.render();
+  if(amvtab==='guidance') AM_GR.render();
 }));
 // Edits are staged cell by cell (Enter, Tab or leaving the cell) and applied together with "Submit assumptions"
 const amPending = new Map();   // "kind|key|j" -> {kind,k,j,v,txt}
@@ -4069,7 +4118,7 @@ function showMain(m){
   document.querySelectorAll('.mtab').forEach(x=>x.classList.toggle('active',x.dataset.main===m));
   document.querySelectorAll('.co-pane .mview').forEach(x=>x.classList.toggle('active',x.dataset.main===m));
   try{ localStorage.setItem('pvg-main',m); }catch(e){}
-  if(curCo==='AMZN'){ if(m==='valuation' && amvtab==='model') renderAmznModel(); if(m==='valuation' && amvtab==='ave') AM_AVE.render(); if(m==='valuation' && amvtab==='dcf') AM_DCF.render(); if(m==='earnings') AM_EARN.render(); return; }
+  if(curCo==='AMZN'){ if(m==='valuation' && amvtab==='model') renderAmznModel(); if(m==='valuation' && amvtab==='ave') AM_AVE.render(); if(m==='valuation' && amvtab==='dcf') AM_DCF.render(); if(m==='valuation' && amvtab==='guidance') AM_GR.render(); if(m==='earnings') AM_EARN.render(); return; }
   if(m==='earnings') EARN.render();
   if(m==='valuation' && vtab==='model') renderModel();
   if(m==='valuation' && vtab==='ave') AVE.render();
