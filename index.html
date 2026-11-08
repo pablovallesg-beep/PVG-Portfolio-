@@ -2600,6 +2600,18 @@ const AMZN_MODEL = (() => {
     'FY2026E':{capexFirst:200000, capexLast:220000, src:'Feb-26 call: ~$200B cash capex · Jul-26 call: ~$220B, reaffirmed in the Q3 2026 release'},
   };
 
+  // ---- Normalized earnings ----
+  // One-time operating charges Amazon itself called out in its releases (pre-tax, US$M), added back to normalize.
+  const ONE_TIME = {
+    "Q4'22": {v:2700, d:'~$2.7B of charges for changes in estimates related to self-insurance liabilities, impairments of property and equipment and operating leases, and estimated severance costs (Q4\'22 release)'},
+    "Q1'23": {v:500,  d:'~$0.5B of charges related to estimated severance costs (Q1\'23 release)'},
+    "Q3'25": {v:4300, d:'$2.5B legal settlement with the FTC and $1.8B of estimated severance costs (Q3\'25 release)'},
+    "Q4'25": {v:2440, d:'$1.1B resolution of Italy tax disputes and a lawsuit settlement, $730M of estimated severance and $610M of asset impairments, mainly physical stores (Q4\'25 release)'},
+  };
+  const NORM_TAX = 0.21;   // US federal statutory rate applied to every pre-tax adjustment
+  // one-time charges of a period: the quarter itself, or the sum of a fiscal year's quarters
+  const oneTime = lab => !lab ? 0 : lab.startsWith('FY') ? Object.entries(ONE_TIME).filter(([q])=>'20'+q.slice(3,5)===lab.slice(2,6)).reduce((t,[,x])=>t+x.v,0) : (ONE_TIME[lab]?.v||0);
+
   // ---- Engine ----
   const sum = (...a) => a.some(v=>v===null||v===undefined) ? null : a.reduce((s,v)=>s+v,0);
   const dif = (a,b) => isN(a)&&isN(b) ? a-b : null;
@@ -2615,6 +2627,15 @@ const AMZN_MODEL = (() => {
     o.cfSTnet = sum(o.cfSTp,o.cfSTr); o.cfFinLO = sum(o.cfFinL,o.cfFinO);
     o.fcf = sum(o.CFO,o.netCapex); o.fcfL = sum(o.fcf,o.cfFinLO);
     o.cfCheck = isN(o.cfEnd)&&isN(o.cfBeg)&&isN(o.cfNet) ? (Math.round((o.cfBeg+o.cfNet-o.cfEnd)*1000)/1000 || 0) : null;
+    // Normalized net income: removes other income (expense) — mostly gains and losses on equity investments (Rivian,
+    // Anthropic), warrants and FX — and equity-method results, and adds back one-time operating charges, all after tax
+    if(isN(o.ni)){
+      o.normOT = o.back ? 0 : oneTime(o.lab);
+      o.normPre = -(o.othInc||0) + o.normOT;
+      o.normTax = -o.normPre*NORM_TAX;
+      o.normNI = o.ni - (o.eqMeth||0) + o.normPre + o.normTax;
+      o.normEps = o.shD ? o.normNI/o.shD : null;
+    }
     return o;
   }
   const COST = ['cogs','fulf','tech','mkt','ga','othOp'];
@@ -2897,6 +2918,19 @@ const AMZN_MODEL = (() => {
     QOQ('shD', {inp:1, ak:'gSh'}),
     YOY('shD', {inpY:1, ak:'gSh'}),
     {l:'Basic weighted avg. shares', f:val('shB'), fmt:'m', u:'M', der:EST.shB},
+    {spacer:1},
+    // ---- Normalized earnings: the total heads a block that folds ----
+    {l:'Normalized net income', f:val('normNI'), fmt:'m', u:'US$M', tot:1, key:1, grpHead:1, note:'Net income without other income (expense) and equity-method results, plus one-time operating charges, all after a 21% tax'},
+    YOY('normNI'),
+    {l:'Normalized net margin', f:ratio('normNI','sales'), fmt:'p', u:'%', sub:1},
+    {l:'Net income (reported)', f:val('ni'), fmt:'m', u:'US$M', ind:1},
+    {l:'(−) Other income (expense), net', f:o=>neg(o.othInc), fmt:'m', u:'US$M', ind:1, note:'Mostly valuation gains and losses on equity investments (Rivian, Anthropic), warrants and FX'},
+    {l:'(−) Equity-method investment activity, net of tax', f:o=>neg(o.eqMeth), fmt:'m', u:'US$M', ind:1},
+    {l:'(+) One-time operating charges', f:val('normOT'), fmt:'m', u:'US$M', ind:1, note:"Charges Amazon called out in its releases: Q4'22 $2.7B (self-insurance, impairments, severance), Q1'23 $0.5B (severance), Q3'25 $4.3B (FTC settlement, severance), Q4'25 $2.44B (Italy tax and lawsuit, severance, impairments)"},
+    {l:'(±) Tax on the adjustments at 21%', f:val('normTax'), fmt:'m', u:'US$M', ind:1},
+    {l:'Normalized diluted EPS', f:val('normEps'), fmt:'ps', u:'US$', b:1, grpEnd:1},
+    YOY('normEps'),
+    {l:'Normalized EPS / diluted EPS', f:o=>isN(o.normEps)&&o.epsD ? o.normEps/o.epsD : null, fmt:'x2', u:'x', sub:1},
 
     SEC('EBITDA'),
     {l:'Operating income', f:val('opInc'), fmt:'m', u:'US$M', b:1},
@@ -3169,8 +3203,8 @@ function aveView({data:AVE_DATA, metrics:AVE_METRICS, key, id, srcText, emptyYG}
     shown.forEach(m=>{
       const rs=rows(m.k), s=stats(rs);
       if(!rs.length){ document.getElementById(id+'-c-'+m.k).parentElement.innerHTML=`<div class="ave-empty">No ${st.bench==='g'?'guidance':'consensus'} available for this metric.</div>`; document.getElementById(id+'-t-'+m.k).innerHTML=''; return; }
-      const col = r => r==='up'?c.pos : r==='dn'?c.neg : c.grey;
-      mk(id+'-c-'+m.k, {type:'bar', data:{labels:rs.map(x=>x.per), datasets:[{label:'Difference', data:rs.map(x=>isN(x.s)?x.s*100:null), backgroundColor:rs.map(x=>col(x.r)), borderRadius:3, maxBarThickness:28, tip:v=>isN(v)?(v>0?'+':'')+v.toFixed(1)+'%':'–'}]},
+      const col = s => !isN(s) || Math.abs(s)<0.0005 ? c.grey : s>0 ? c.pos : c.neg;   // negative differences in red, even inside the range
+      mk(id+'-c-'+m.k, {type:'bar', data:{labels:rs.map(x=>x.per), datasets:[{label:'Difference', data:rs.map(x=>isN(x.s)?x.s*100:null), backgroundColor:rs.map(x=>col(x.s)), borderRadius:3, maxBarThickness:28, tip:v=>isN(v)?(v>0?'+':'')+v.toFixed(1)+'%':'–'}]},
         options:{...baseOpts({yTick:v=>(v>0?'+':'')+v+'%'}), animation:false, plugins:{...baseOpts().plugins, legend:{display:false}}}});
       const fm = F[m.fmt];
       const hdr = rs.map(x=>`<th>${x.per}</th>`).join('');
@@ -3381,8 +3415,9 @@ const DCF = (() => {
 // Price from Interactive Brokers (realtime snapshot); shares outstanding from the Q3'26 release.
 const MKT_AMZN = {price:229.05, chg:-25.55, chgPct:-10.04, asOf:'Oct 29, 2026', time:'16:19', src:'Interactive Brokers, realtime last trade', shares:10811, sharesSrc:"shares outstanding at Sep 30, 2026 (Q3'26 release)"};
 const AM_DCF = (() => {
-  const DEF = {price:MKT_AMZN.price, shares:MKT_AMZN.shares, rf:4.25, beta:1.15, erp:5.50, kd:null, tax:null, exitEV:null, exitPE:null, exitY:null};   // exitY null = next fiscal year
+  const DEF = {price:MKT_AMZN.price, shares:MKT_AMZN.shares, rf:4.25, beta:1.15, erp:5.50, kd:null, tax:null, exitEV:null, exitPE:null, exitY:null, epsB:'norm'};   // exitY null = next fiscal year; EPS basis normalized (Model) or GAAP
   let st = {...DEF};
+  const epsOf = y => st.epsB==='gaap' ? y.epsD : y.normEps;
   try{ const sv=JSON.parse(localStorage.getItem('pvg-amzn-dcf')||'{}'); if(sv.px!==MKT_AMZN.asOf+MKT_AMZN.time) delete sv.price; Object.assign(st, sv); }catch(e){}
   // px: a new price snapshot replaces a price saved in the browser
   const save = () => { try{ localStorage.setItem('pvg-amzn-dcf', JSON.stringify({...st, px:MKT_AMZN.asOf+MKT_AMZN.time})); }catch(e){} };
@@ -3408,14 +3443,14 @@ const AM_DCF = (() => {
     const tax = isN(st.tax) ? st.tax : taxDef, t = tax/100, ke = (st.rf + st.beta*st.erp)/100, kdAT = kd/100*(1-t);
     const wE = mcap/(mcap+debt), wD = debt/(mcap+debt), wacc = wE*ke + wD*kdAT;
     const exitEV = isN(st.exitEV) ? st.exitEV : +(ev/y27.ebitda).toFixed(1);
-    const exitPE = isN(st.exitPE) ? st.exitPE : +(st.price/y27.epsD).toFixed(1);
+    const exitPE = isN(st.exitPE) ? st.exitPE : +(st.price/epsOf(y27)).toFixed(1);
     // cash flows: stub (share of Q4 still ahead of the valuation date) + full projected years
     const stubFrac = Math.max(0, Math.min(1, (new Date('20'+stub.lab.slice(-3,-1)+'-12-31')-VAL_DATE)/864e5/stub.days));
     const flows = [{lab:stub.lab+' (stub)', o:stub, f:stubFrac, t:yrs(stub.lab.slice(0,-1))}, ...fut.map(y=>({lab:y.lab, o:y, f:1, t:yrs(y.lab.slice(0,-1))}))];
     flows.forEach(c=>{ const o=c.o; c.fcfe=o.fcf*c.f; c.fcff=(o.fcf+intAT(o,t))*c.f; c.dfW=1/Math.pow(1+wacc,c.t); c.dfE=1/Math.pow(1+ke,c.t); });
     const lastY = allFut[xi];                                                 // metric year for the forward multiple
     const tvYear = 'FY'+(+lastY.lab.slice(2,6)-1), tT = yrs(tvYear);          // TV dated Dec-31 of the prior year
-    const tvFF = exitEV*lastY.ebitda, tvFE = exitPE*lastY.epsD*st.shares;     // exit P/E × EPS = value per share, × shares outstanding
+    const tvFF = exitEV*lastY.ebitda, tvFE = exitPE*epsOf(lastY)*st.shares;     // exit P/E × EPS = value per share, × shares outstanding
     const ff = {pv: flows.reduce((s,c)=>s+c.fcff*c.dfW,0), cum: flows.reduce((s,c)=>s+c.fcff,0), tv:tvFF, pvTV: tvFF/Math.pow(1+wacc,tT)};
     ff.ev = ff.pv+ff.pvTV; ff.eq = ff.ev-netDebt; ff.ps = ff.eq/st.shares;
     const fe = {pv: flows.reduce((s,c)=>s+c.fcfe*c.dfE,0), cum: flows.reduce((s,c)=>s+c.fcfe,0), tv:tvFE, pvTV: tvFE/Math.pow(1+ke,tT)};
@@ -3441,6 +3476,7 @@ const AM_DCF = (() => {
       out('Cost of equity (CAPM)', pc(r.ke)) +
       inp('kd','Pre-tax cost of debt (%)',r.kd,0.05) + inp('tax','Tax rate (%)',r.tax,0.5) + out('After-tax cost of debt', pc(r.kdAT)) +
       out('Weights equity / debt', `${(r.wE*100).toFixed(0)}% / ${(r.wD*100).toFixed(0)}%`) + out('WACC', pc(r.wacc)) +
+      `<label>EPS basis<select data-k="epsB" class="dcf-sel"><option value="norm" ${st.epsB!=='gaap'?'selected':''}>Normalized (Model)</option><option value="gaap" ${st.epsB==='gaap'?'selected':''}>GAAP</option></select></label>` +
       `<label>Exit year (terminal value)<select data-k="exitY" class="dcf-sel">${r.allFut.map(y=>`<option ${y.lab===st.exitY?'selected':''}>${y.lab}</option>`).join('')}</select></label>` +
       inp('exitEV','Exit EV/EBITDA (x)',r.exitEV,0.5) + inp('exitPE','Exit P/E (x)',r.exitPE,0.5);
     // Multiples by year
@@ -3452,12 +3488,12 @@ const AM_DCF = (() => {
       ${row('Net sales', y=>m(y.sales), 'tot')}${row('YoY growth', y=>g(y.sales, prev(y)?.sales), 'sub')}
       ${row('EBITDA (operating income + D&A)', y=>m(y.ebitda), 'tot')}${row('Margin', y=>pc(y.ebitda/y.sales), 'sub')}
       ${row('Operating income', y=>m(y.opInc), 'tot')}${row('Margin', y=>pc(y.opInc/y.sales), 'sub')}
-      ${row('Diluted EPS', y=>F.ps(y.epsD), 'tot')}${row('YoY growth', y=>g(y.epsD, prev(y)?.epsD), 'sub')}
+      ${row('Diluted EPS, GAAP', y=>F.ps(y.epsD), st.epsB==='gaap'?'tot':'')}${row('Normalized diluted EPS (Model row)', y=>F.ps(y.normEps), st.epsB!=='gaap'?'tot':'')}${row('YoY growth', y=>g(epsOf(y), prev(y)&&epsOf(prev(y))), 'sub')}
       ${row('Free cash flow (CFO − net capex)', y=>m(y.fcf), 'tot')}
       ${row('EV / net sales', y=>x(r.ev/y.sales), 'dk')}
       ${row('EV / EBITDA', y=>x(r.ev/y.ebitda), 'dk')}
       ${row('EV / operating income', y=>x(r.ev/y.opInc), 'dk')}
-      ${row('P / E', y=>x(st.price/y.epsD), 'dk')}
+      ${row(st.epsB==='gaap'?'P / E (GAAP EPS)':'P / E (normalized EPS)', y=>x(st.price/epsOf(y)), 'dk')}
       ${row('FCF yield (FCF / market cap)', y=>pc(y.fcf/r.mcap), 'dk')}
     </tbody></table>`;
     // FCFF / FCFE tables
@@ -3467,10 +3503,10 @@ const AM_DCF = (() => {
       const line = (l, f, tv='', cls='') => `<tr class="${cls}"><td>${l}</td>${fl.map(c=>`<td class="p">${f(c)}</td>`).join('')}<td class="tv">${tv}</td></tr>`;
       const ffRows = kind==='ff'
         ? line('Free cash flow (CFO − net capex)', c=>m(c.o.fcf*c.f)) + line('+ After-tax interest expense', c=>m(intAT(c.o,r.t)*c.f)) + line('Free cash flow to the firm (FCFF)', c=>m(c.fcff), '', 'tot')
-        : line('Diluted EPS (US$)', c=>c.f<1?`<span class="card-sub">${F.ps(c.o.epsD)} for the quarter</span>`:F.ps(c.o.epsD)) + line('Free cash flow to equity (FCFE)', c=>m(c.fcfe), '', 'tot');
+        : line(st.epsB==='gaap'?'Diluted EPS, GAAP (US$)':'Normalized diluted EPS (US$)', c=>c.f<1?`<span class="card-sub">${F.ps(epsOf(c.o))} for the quarter</span>`:F.ps(epsOf(c.o))) + line('Free cash flow to equity (FCFE)', c=>m(c.fcfe), '', 'tot');
       const tvRow = kind==='ff'
         ? line('Terminal value = exit EV/EBITDA × EBITDA', ()=>'', `${r.exitEV.toFixed(1)}x × ${F.m(r.lastY.ebitda)} = ${m(R_.tv)}`)
-        : line('Terminal value = exit P/E × EPS × shares', ()=>'', `${r.exitPE.toFixed(1)}x × ${F.ps(r.lastY.epsD)} = $${(r.exitPE*r.lastY.epsD).toFixed(2)}/share × ${F.m(st.shares)}M sh. = ${m(R_.tv)}`);
+        : line('Terminal value = exit P/E × EPS × shares', ()=>'', `${r.exitPE.toFixed(1)}x × ${F.ps(epsOf(r.lastY))} = $${(r.exitPE*epsOf(r.lastY)).toFixed(2)}/share × ${F.m(st.shares)}M sh. = ${m(R_.tv)}`);
       const df = kind==='ff' ? 'dfW' : 'dfE';
       const tT = Math.pow(1+rate, -r.tT);
       const v = (l,val,cls='') => `<tr class="${cls}"><td>${l}</td><td colspan="${fl.length+1}" style="text-align:left">${val}</td></tr>`;
@@ -3487,11 +3523,11 @@ const AM_DCF = (() => {
       </tbody></table>`;
     };
     tbl('amDcfFF','ff'); tbl('amDcfFE','fe');
-    document.getElementById('amDcfSrc').textContent = `Price: ${MKT_AMZN.src}, ${MKT_AMZN.asOf} (after the Q3'26 report). Shares: ${MKT_AMZN.sharesSrc}. Net debt = long-term debt less cash, cash equivalents and marketable securities at ${r.last.lab}; lease liabilities are left out (their cost is already in operating income, EBITDA and free cash flow). Net sales, EBITDA, operating income, EPS and free cash flow come from the Model tab (actuals and estimates), so edited Model assumptions flow through here. FCFE = Amazon's free cash flow (cash from operations less purchases of property and equipment net of proceeds and incentives); projected borrowing from the Model's minimum-cash rule is not added. FCFF adds back after-tax interest expense. The ${r.flows[0].lab} counts only the part of the quarter after the valuation date (${MKT_AMZN.asOf}); cash flows are discounted from each period end. Default exit multiples equal today's FY2027E multiples; default pre-tax cost of debt = FY2025 interest expense / average long-term debt (${r.kdDef.toFixed(2)}%); default tax rate from the Model. Beta, risk-free rate and equity risk premium are assumptions to edit.`;
+    document.getElementById('amDcfSrc').textContent = `Price: ${MKT_AMZN.src}, ${MKT_AMZN.asOf} (after the Q3'26 report). Shares: ${MKT_AMZN.sharesSrc}. Net debt = long-term debt less cash, cash equivalents and marketable securities at ${r.last.lab}; lease liabilities are left out (their cost is already in operating income, EBITDA and free cash flow). Net sales, EBITDA, operating income, EPS and free cash flow come from the Model tab (actuals and estimates), so edited Model assumptions flow through here. FCFE = Amazon's free cash flow (cash from operations less purchases of property and equipment net of proceeds and incentives); projected borrowing from the Model's minimum-cash rule is not added. FCFF adds back after-tax interest expense. The ${r.flows[0].lab} counts only the part of the quarter after the valuation date (${MKT_AMZN.asOf}); cash flows are discounted from each period end. EPS: normalized by default (Model: without other income and equity-method results, with one-time operating charges added back, after a 21% tax), or GAAP. Default exit multiples equal today's FY2027E multiples; default pre-tax cost of debt = FY2025 interest expense / average long-term debt (${r.kdDef.toFixed(2)}%); default tax rate from the Model. Beta, risk-free rate and equity risk premium are assumptions to edit.`;
   }
   document.getElementById('amDcfIn').addEventListener('change', e=>{
     const k=e.target.dataset.k; if(!k) return;
-    if(k==='exitY'){ st[k]=e.target.value; save(); render(); return; }
+    if(k==='exitY' || k==='epsB'){ st[k]=e.target.value; if(k==='epsB') st.exitPE=null; save(); render(); return; }
     const v=parseFloat(e.target.value); st[k]=isNaN(v)?DEF[k]:v; save(); render();
   });
   return {render, reset(){ st={...DEF}; save(); render(); }};
