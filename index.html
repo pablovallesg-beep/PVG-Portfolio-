@@ -887,6 +887,48 @@ html.mobile .xl-wrap{max-height:calc(100vh - 190px)}
     </div>
     </div>
 
+    <!-- ============ UBER ============ -->
+    <div class="co-pane" data-co="UBER">
+    <div class="mview" id="ub-earnings" data-main="earnings">
+      <section class="view active">
+        <div class="card"><div class="card-h"><div><span class="card-t">Earnings</span><span class="card-sub">coming next</span></div></div>
+          <div class="ave-empty">Summaries of each Uber earnings release and call (Fiscal.ai transcripts), by call and by topic, as for Amazon. The Model is ready under Valuation.</div></div>
+      </section>
+    </div>
+    <div class="mview active" id="ub-tesis" data-main="tesis">
+      <section class="view active">
+        <div class="card"><div class="card-h"><div><span class="card-t">Thesis</span><span class="card-sub">coming next</span></div></div>
+          <div class="ave-empty">Mobility, Delivery and Freight: gross bookings, take rate, trips and segment profit, with what management says on each call. The Model is ready under Valuation.</div></div>
+      </section>
+    </div>
+    <div class="mview" id="ub-valuation" data-main="valuation">
+    <nav class="subtabs" role="tablist">
+      <button class="tab ubvtab active" data-ubvtab="model">Model</button>
+    </nav>
+      <section class="view active" id="ubv-model">
+        <div class="card">
+          <div class="card-h">
+            <div class="stmt-seg" id="ubStmtSeg" role="tablist">
+              <button data-stmt="is" class="on">Income statement</button>
+              <button data-stmt="bs">Balance sheet</button>
+              <button data-stmt="cf">Cash flow statement</button>
+            </div>
+            <div class="ctrls">
+              <div class="legend"><span><i style="background:#FFF4CC"></i>Input / assumption (click to edit)</span><span><i style="background:rgba(46,117,182,0.12)"></i>Projected</span><span><sup style="color:var(--warning)">*</sup> Q4 derived (FY − 9M)</span><span><u>123</u> Derived (not reported for the quarter)</span></div>
+              <div class="tbtns"><button class="tbtn" id="ubOlExpand">+ Expand all</button><button class="tbtn" id="ubOlCollapse">− Collapse all</button></div>
+              <label class="chk"><input type="checkbox" id="ubHideSubs"> Hide growth and common-size rows</label>
+            </div>
+          </div>
+          <div class="stmt-head"><span class="stmt-title" id="ubStmtTitle">Income statement</span><span class="card-sub" id="ubStmtSub"></span>
+            <span class="edit-bar"><button class="tbtn primary" id="ubSubmit" disabled>Submit assumptions</button><button class="tbtn" id="ubDiscard" disabled>Discard</button><button class="tbtn" id="ubReset">Reset to defaults</button><span class="msg" id="ubEditMsg"></span></span>
+          </div>
+          <div class="xl-wrap" id="ubModelTable"></div>
+        </div>
+        <div class="src">Source: Fiscal.ai (as-reported statements, segments and KPIs from Uber's 10-Q / 10-K filings, Q1'18–Q3'26, restated where Uber restated; Q3'26 from the 10-Q filed Nov 4, 2026). Q4 = full year − nine months for 2018–2023. Gross bookings, trips and MAPCs from the segment and KPI data; segment operating income is reported from Q1'25 and segment Adjusted EBITDA through Q4'25 (Q3'26 total Adjusted EBITDA from the Q3'26 release). Q4'26E is set on the Q3'26 release outlook: gross bookings $63.25–65.25B. Projections: gross bookings grow at the YoY rate entered, revenue = gross bookings × take rate (Freight: revenue growth), operating income = segment revenue × segment margin less corporate and unallocated costs; the expense lines split total costs with the mix of the same period a year earlier. Edited assumptions are saved in this browser.</div>
+      </section>
+    </div>
+    </div>
+
   </div>
 </div>
 
@@ -4330,6 +4372,747 @@ document.getElementById('amDiscard').addEventListener('click',()=>{ amPending.cl
 document.getElementById('amReset').addEventListener('click',()=>{ if(!confirm('Reset every assumption to its default value?')) return; amPending.clear(); AMZN_MODEL.reset(); amEditUI(); });
 
 /* =====================================================================
+   UBER — Model: income statement, balance sheet and cash flow statement (US$M).
+   Data from Fiscal.ai (as-reported statements, segments and KPIs of Uber's 10-Q / 10-K filings, Q1'18–Q3'26,
+   restated where Uber restated). Same layout and engine as the Amazon model.
+   ===================================================================== */
+const MKT_UBER = {price:68.68, chg:-0.10, chgPct:-0.15, asOf:'Nov 6, 2026', time:'19:54', src:'Interactive Brokers, last trade', shares:2041.898, sharesSrc:"shares outstanding at Oct 30, 2026 (Q3'26 10-Q cover)"};
+const UBER_MODEL = (() => {
+  // ---- Periods ----
+  // Captured series order (43 values): Q1'18 … Q3'26 (35) | FY2018 … FY2025 (8). 2018 is the base for YoY growth and is not displayed.
+  const QLAB = ["Q1'18","Q2'18","Q3'18","Q4'18","Q1'19","Q2'19","Q3'19","Q4'19","Q1'20","Q2'20","Q3'20","Q4'20","Q1'21","Q2'21","Q3'21","Q4'21","Q1'22","Q2'22","Q3'22","Q4'22","Q1'23","Q2'23","Q3'23","Q4'23","Q1'24","Q2'24","Q3'24","Q4'24","Q1'25","Q2'25","Q3'25","Q4'25","Q1'26","Q2'26","Q3'26"];
+  const QEND = QLAB.map(l=>['Mar','Jun','Sep','Dec'][+l[1]-1]+'-'+l.slice(3));
+  const QDAYS = QLAB.map(l=>{ const y=2000+(+l.slice(3)), q=+l[1]; return q===1?((y%4===0)?91:90):q===2?91:92; });
+  const PLAB = ["Q4'26E","Q1'27E","Q2'27E","Q3'27E","Q4'27E"];
+  const PEND = ['Dec-26','Mar-27','Jun-27','Sep-27','Dec-27'];
+  const PDAYS = [92,90,91,92,92];
+  const YLAB = ['FY2018','FY2019','FY2020','FY2021','FY2022','FY2023','FY2024','FY2025'];
+  const YDAYS = [365,365,366,365,365,365,366,365];
+  const XLAB = ['FY2028E','FY2029E','FY2030E'];
+  const FIRST_SHOWN_Q = 4;   // Q1'19
+  const FIRST_SHOWN_Y = 1;   // FY2019
+  const NQ = QLAB.length;
+
+  // US$M; EPS in US$; shares, trips and MAPCs in millions. Uber listed in May 2019 (Q1'19 and earlier shares are pre-IPO).
+  const RAW = {
+    // Income statement
+    sales:[2584,2768,2944,2974,3099,3166,3813,4069,3248,1913,2813,3165,2903,3929,4845,5778,6854,8073,8343,8607,8823,9230,9292,9936,10131,10700,11188,11959,11533,12651,13467,14366,13203,14191,14766,11270,13000,11139,17455,31877,37281,43978,52017],
+    cogs:[1156,1342,1510,1615,1681,1740,1860,1927,1491,924,1298,1441,1710,2099,2438,3104,4026,5153,5173,5307,5259,5515,5626,6057,6168,6488,6761,7234,6937,7611,8109,8681,7258,7815,8349,5623,6061,5154,9351,19659,22457,26651,31338],
+    ops:[372,349,387,408,434,864,498,506,503,582,365,369,423,432,475,547,574,617,617,605,640,664,683,702,685,682,687,678,668,696,735,755,763,805,875,1516,2302,1819,1877,2413,2689,2732,2854],
+    mkt:[677,715,785,974,1040,1222,1113,1251,885,736,924,1038,1103,1256,1168,1262,1263,1218,1153,1122,1262,1218,941,935,917,1115,1096,1209,1057,1210,1277,1354,1326,1515,1563,3151,4626,3583,4789,4756,4356,4337,4898],
+    rd:[340,365,434,366,409,3064,755,608,645,584,493,483,515,488,493,558,587,704,760,747,775,808,797,784,790,760,774,785,815,840,862,885,951,1043,1273,1505,4836,2205,2054,2798,3164,3109,3402],
+    ga:[429,638,460,555,423,1638,591,647,859,565,711,531,464,616,625,611,632,851,908,745,942,491,646,603,1209,686,630,1114,657,669,1183,732,798,935,1047,2082,3299,2666,2316,3136,2682,3639,3241],
+    daIS:[88,98,131,109,146,123,102,101,128,129,138,180,212,226,218,246,254,243,227,223,207,208,205,203,190,173,179,169,171,175,188,185,184,188,212,426,472,575,902,947,823,711,719],
+    opex:[3062,3507,3707,4027,4133,8651,4919,5040,4511,3520,3929,4042,4427,5117,5417,6328,7336,8786,8838,8749,9085,8904,8898,9284,9959,9904,10127,11189,10305,11201,12354,12592,11280,12301,13319,14303,21596,16002,21289,33709,36171,41179,46452],
+    opInc:[-478,-739,-763,-1053,-1034,-5485,-1106,-971,-1263,-1607,-1116,-877,-1524,-1188,-572,-550,-482,-713,-495,-142,-262,326,394,652,172,796,1061,770,1228,1450,1113,1774,1923,1890,1447,-3033,-8596,-4863,-3834,-1832,1110,2799,5565],
+    intExp:[-132,-160,-161,-195,-217,-151,-90,-101,-118,-110,-112,-118,-115,-115,-123,-130,-129,-139,-146,-151,-168,-144,-166,-155,-124,-139,-143,-117,-105,-108,-112,-115,-108,-127,-152,-648,-559,-458,-483,-565,-633,-523,-440],
+    intInc:[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0,191,169,181,193,200,175,172,176,null,null,null,null,null,484,721,743],
+    othInc:[4937,63,-54,47,260,398,49,15,-1795,-44,151,63,1710,1943,-1832,1471,-5557,-1704,-535,767,292,273,-52,1331,-678,420,1851,65,93,-19,1426,-1568,-1494,1342,-616,4993,722,-1625,3292,-7029,1360,1128,-68],
+    ebt:[4327,-836,-978,-1201,-991,-5238,-1147,-1057,-3176,-1761,-1077,-932,71,640,-2527,791,-6168,-2556,-1176,474,-138,455,176,1828,-630,1077,2769,909,1385,1504,2620,291,496,3277,855,1312,-8433,-6946,-1025,-9426,2321,4125,5800],
+    tax:[-576,-28,-1,322,-19,2,-3,-25,242,-4,-23,-23,-185,479,101,97,232,-77,-58,84,-55,-65,40,-133,-29,-57,-158,6002,402,-142,4046,40,-194,-840,-244,-283,-45,192,492,181,-213,5758,4346],
+    eqMeth:[-3,-14,-15,-10,-6,-10,-9,-9,-12,-7,-8,-7,-8,-7,-13,-9,18,17,30,42,36,4,3,5,-4,-12,-12,-10,-13,-12,-14,-14,-20,-21,-42,-42,-34,-34,-37,107,48,-38,-53],
+    niTot:[3748,-878,-994,-889,-1016,-5246,-1159,-1091,-2946,-1772,-1108,-962,-122,1112,-2439,879,-5918,-2616,-1204,600,-157,394,219,1700,-663,1008,2599,6901,1774,1350,6652,317,282,2416,569,987,-8512,-6788,-570,-9138,2156,9845,10093],
+    ni:[3748,-878,-986,-887,-1012,-5236,-1162,-1096,-2936,-1775,-1089,-969,-108,1144,-2424,892,-5930,-2601,-1206,595,-157,394,221,1429,-654,1015,2612,6883,1776,1355,6626,296,263,2394,512,997,-8506,-6768,-496,-9141,1887,9856,10053],
+    epsB:[2,-1.99,-2.21,null,-2.23,-4.72,-0.68,-0.64,-1.7,-1.02,-0.62,-0.54,-0.06,0.61,-1.28,0.46,-3.03,-1.32,-0.61,0.3,-0.08,0.19,0.11,0.69,-0.31,0.49,1.24,3.27,0.85,0.65,3.18,0.14,0.13,1.18,0.25,null,-6.81,-3.86,-0.26,-4.64,0.93,4.71,4.82],
+    epsD:[1.84,-2.01,-2.21,null,-2.26,-4.72,-0.68,-0.64,-1.7,-1.02,-0.62,-0.54,-0.06,0.58,-1.28,0.44,-3.04,-1.33,-0.61,0.29,-0.08,0.18,0.1,0.66,-0.32,0.47,1.2,3.21,0.83,0.63,3.11,0.14,0.13,1.17,0.25,null,-6.81,-3.86,-0.29,-4.65,0.87,4.56,4.73],
+    shB:[437.1,441,445.8,447.7,453.5,1110.7,1700.2,1710.3,1724.4,1738.9,1755,1793.1,1858.5,1875.2,1899,1936.7,1954,1964.3,1979.3,1994.8,2009.6,2026.8,2044.7,2060.9,2078.5,2092.2,2101.7,2105.9,2092.5,2091.1,2084.2,2073.5,2052.2,2036.5,2038.4,443.4,1248.4,1753,1892.5,1972.1,2035.7,2094.6,2085.3],
+    shD:[475.2,441.4,445.8,481.6,453.6,1110.7,1700.2,1710.3,1724.4,1738.9,1755,1793.1,1858.5,1956,1899,2005.6,1957.7,1968.9,1979.3,2060.6,2009.6,2079.3,2108.5,2121.9,2080.2,2150,2154.5,2141.4,2122.6,2125.6,2124.4,2106,2071.4,2050.2,2050.3,479,1248.4,1753,1895.5,1974.9,2091.8,2150.5,2119.7],
+    // Segments and KPIs (segment data from Q4'19; segment operating income from Q1'25; segment Adjusted EBITDA through Q4'25)
+    mobRev:[null,null,null,null,null,null,null,3050,2467,787,1364,1471,853,1618,2205,2277,2518,3553,3822,4136,4330,4894,5071,5537,5633,6134,6409,6911,6496,7288,7682,8204,6798,7363,7520,9288,10707,6089,6953,14029,19832,25087,29670],
+    delRev:[null,null,null,null,null,null,null,418,527,886,1136,1355,1741,1963,2238,2420,2512,2688,2770,2931,3093,3057,2935,3119,3214,3293,3470,3773,3777,4102,4477,4892,5068,5245,5488,772,1401,3904,8362,10901,12204,13750,17248],
+    frRev:[null,null,null,null,null,null,null,219,199,211,288,313,301,348,402,1081,1824,1832,1751,1540,1400,1279,1286,1280,1284,1273,1309,1275,1260,1261,1308,1270,1337,1583,1758,356,731,1011,2132,6947,5245,5141,5099],
+    othRev:[null,null,null,null,null,null,null,60,55,29,25,26,8,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,17,161,135,8,null,null,null,null],
+    mobGB:[null,null,null,null,null,null,null,13512,10874,3046,5905,6789,6773,8640,9883,11340,10723,13364,13684,14894,14981,16728,17903,19285,18670,20554,21002,22798,21182,23762,25111,27442,26394,28988,29512,null,null,null,null,null,null,null,null],
+    delGB:[null,null,null,null,null,null,null,4374,4683,6961,8550,10050,12461,12912,12828,13444,13903,13876,13684,14315,15026,15595,16094,17011,17699,18126,18663,20126,20377,21734,23322,25431,25992,27463,28539,null,null,null,null,null,null,null,null],
+    frGB:[null,null,null,null,null,null,null,219,198,212,290,313,302,348,402,1082,1823,1838,1751,1540,1401,1278,1284,1279,1282,1272,1308,1273,1259,1260,1307,1267,1334,1571,1768,null,null,null,null,null,null,null,null],
+    othGB:[null,null,null,null,null,null,null,26,21,5,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],
+    totGB:[null,null,null,null,null,null,null,18131,15776,10224,14745,17152,19536,21900,23113,25866,26449,29078,29119,30749,31408,33601,35281,37575,37651,39952,40973,44197,42818,46756,49740,54140,53720,58022,59819,49799,65001,57897,90415,115395,137865,162773,193454],
+    mobOI:[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,1587,1729,1864,2027,2029,2215,2362,null,null,null,null,null,null,null,7207],
+    delOI:[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,671,766,811,905,961,1055,1057,null,null,null,null,null,null,null,3153],
+    frOI:[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,-25,-26,-40,-18,-30,-24,-33,null,null,null,null,null,null,null,-109],
+    mobAE:[null,null,null,null,null,null,null,742,581,50,245,293,298,179,544,575,618,771,898,1012,1060,1170,1287,1446,1479,1567,1682,1769,1753,1905,2038,2203,null,null,null,1541,2071,1169,1596,3299,4963,6497,7899],
+    delAE:[null,null,null,null,null,null,null,-461,-313,-232,-183,-145,-200,-161,-12,25,30,99,181,241,288,329,413,476,528,588,628,727,763,873,921,1015,null,null,null,-601,-1372,-873,-348,551,1506,2471,3572],
+    frAE:[null,null,null,null,null,null,null,-55,-64,-49,-73,-41,-29,-41,-35,-25,2,5,1,-8,-23,-14,-13,-14,-21,-12,-19,-22,-7,-6,-20,0,null,null,null,-102,-217,-227,-130,0,-64,-74,-33],
+    othAE:[null,null,null,null,null,null,null,-841,-816,-606,-614,-561,-428,-486,-489,-489,-482,-511,-564,-580,-564,-569,-595,-625,-604,-573,-601,-632,-641,-653,-683,-731,null,null,null,-2685,-3207,-2597,-1892,-2137,-2353,-2410,-2708],
+    mapc:[null,null,null,null,null,null,null,111,103,55,78,93,98,101,109,118,115,122,124,131,130,137,142,150,149,156,161,171,170,180,189,202,199,208,215,91,111,93,118,131,150,171,202],
+    trips:[null,null,null,null,null,null,null,1907,1661,737,1184,1443,1447,1511,1641,1769,1713,1872,1953,2104,2124,2282,2441,2601,2572,2765,2868,3068,3036,3268,3512,3751,3643,3867,4061,5220,6904,5025,6368,7642,9448,11273,13567],
+    geoUS:[null,null,null,null,null,null,null,2458,2075,1125,1598,1813,1849,1984,2648,3613,4562,4936,5000,4976,5132,5129,4940,5235,5473,5825,6006,6314,6219,6561,6698,6991,7128,7609,7814,6226,8465,6611,10094,19474,20436,23618,26469],
+    geoLA:[null,null,null,null,null,null,null,531,478,213,302,302,302,307,390,418,432,481,518,547,565,627,642,678,710,679,679,727,717,789,829,992,978,1022,1100,1963,1862,1295,1417,1978,2512,2795,3327],
+    geoEM:[null,null,null,null,null,null,null,531,473,358,590,665,225,929,1064,995,1127,1846,1878,2093,2094,2412,2560,2838,2756,2987,3196,3590,3321,3897,4388,4758,3420,3752,3975,1495,1852,2086,3213,6944,9904,12529,16364],
+    geoAP:[null,null,null,null,null,null,null,227,222,217,323,385,527,709,743,752,733,810,947,991,1032,1062,1150,1185,1192,1209,1307,1328,1276,1404,1552,1625,1677,1808,1877,749,821,1147,2731,3481,4429,5036,5857],
+    // Balance sheet: period-end balances (2018 quarters before Q4 not shown)
+    cash:[null,null,null,6406,5745,11744,12650,10873,8165,6754,6154,5647,4836,4443,6482,4295,4184,4397,4865,4208,4045,4995,4448,4680,5019,4497,6150,5893,5132,6438,8432,7105,5558,4870,9558,6406,10873,5647,4295,4208,4680,5893,7105],
+    stInv:[null,null,null,null,null,null,null,440,831,1033,1132,1180,819,560,null,null,null,null,null,103,121,538,725,727,744,1795,2913,1084,894,932,654,528,533,521,510,null,440,1180,null,103,727,1084,528],
+    rcCur:[null,null,null,67,136,137,33,99,193,123,218,250,247,324,414,631,543,526,593,680,897,909,833,805,808,776,933,545,1253,1191,477,631,1872,1646,1988,67,99,250,631,680,805,545,631],
+    ar:[null,null,null,919,1074,1290,1154,1214,683,604,773,1073,1075,1201,1333,2439,2476,2459,2468,2779,2571,2576,3000,3404,3708,3783,3719,3333,3489,3769,3773,3827,3895,4298,4427,919,1214,1073,2439,2779,3404,3333,3827],
+    othCA:[null,null,null,1266,975,1129,1316,1299,1242,1148,1135,1732,1318,1255,1455,1454,1462,1369,1442,1479,1562,1646,1673,1681,1795,1632,1616,1390,1582,1777,1803,1902,965,1194,1386,1266,1299,1732,1454,1479,1681,1390,1902],
+    tca:[null,null,null,8658,7930,14300,15153,13925,11114,9662,9412,9882,8295,7783,9684,8819,8665,8751,9368,9249,9196,10664,10679,11297,12074,12483,15331,12245,12350,14107,15139,13993,12823,12529,17869,8658,13925,9882,8819,9249,11297,12245,13993],
+    rcNC:[null,null,null,1736,1801,1809,1958,1095,1171,1224,1394,1494,1524,1687,2894,2879,2865,2941,3176,1789,1851,2556,1584,1519,2157,2608,1920,2172,2215,2038,2574,1911,680,661,616,1736,1095,1494,2879,1789,1519,2172,1911],
+    rInv:[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,1614,1964,1808,3944,4779,4812,5061,6552,7019,7371,7864,7882,8874,9026,9486,8768,null,null,null,null,1614,4779,7019,8874],
+    invest:[null,null,null,10355,10396,10415,10412,10527,8687,8813,8983,9052,11794,13774,12239,11806,6247,4572,3643,4401,4718,5108,5091,6101,5587,6203,7921,8460,8746,8660,10330,9178,8109,8759,7975,10355,10527,9052,11806,4401,6101,8460,9178],
+    eqInv:[null,null,null,1312,1320,1370,1393,1364,1299,1062,1190,1079,1127,1097,971,800,624,521,902,870,740,59,50,353,354,342,314,302,338,331,315,287,268,3773,3498,1312,1364,1079,800,870,353,302,287],
+    ppe:[null,null,null,1641,1325,1447,1537,1731,1851,1846,1883,1814,1757,1776,1781,1853,1853,1861,1942,2082,2142,2116,2100,2073,2033,2034,1982,1952,1941,1948,1930,1897,1842,1809,1816,1641,1731,1814,1853,2082,2073,1952,1897],
+    rou:[null,null,null,null,1323,1337,1538,1594,1589,1441,1327,1274,1267,1238,1218,1388,1439,1481,1405,1449,1335,1295,1259,1241,1216,1181,1190,1158,1162,1153,1126,1114,1458,1558,1634,null,1594,1274,1388,1449,1241,1158,1114],
+    intang:[null,null,null,82,78,78,74,71,560,533,654,1564,1455,1378,1278,2412,2269,2122,1992,1874,1766,1607,1511,1425,1335,1265,1192,1125,1065,1187,1104,1048,990,1132,1370,82,71,1564,2412,1874,1425,1125,1048],
+    gw:[null,null,null,153,153,167,167,167,2566,2518,2988,6109,6352,6448,6447,8420,8435,8359,8300,8263,8185,8151,8140,8151,8089,8083,8086,8066,8069,8907,8917,8931,8919,9472,10577,153,167,6109,8420,8263,8151,8066,8931],
+    dta:[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,170,null,null,null,6171,6592,6524,10710,10951,10844,10162,10118,null,null,null,null,null,170,6171,10951],
+    othNCA:[null,null,null,51,64,57,60,1287,1253,1141,1063,984,1084,1070,372,397,415,406,384,518,554,704,1591,1590,1942,2254,2629,2574,2973,3263,3317,3618,4926,6460,6826,51,1287,984,397,518,1590,2574,3618],
+    totA:[null,null,null,23988,24390,30980,32292,31761,30090,28240,28894,33252,34655,36251,36884,38774,32812,31014,31112,32109,32451,34068,35949,38699,39599,41514,47117,51244,52822,55982,63344,61802,59885,65801,71067,23988,31761,33252,38774,32109,38699,51244,61802],
+    ap:[null,null,null,150,151,167,126,272,215,253,240,235,232,429,310,860,862,810,774,728,712,694,799,790,833,752,802,858,873,1022,1119,1013,1189,1366,1479,150,272,235,860,728,790,858,1013],
+    insST:[null,null,null,941,961,977,1023,1121,1073,1248,1289,1243,1216,1221,1379,1442,1415,1449,1433,1692,1658,1729,1823,2077,2082,2387,2523,2754,2873,3107,3268,3387,3467,3758,4220,941,1121,1243,1442,1692,2077,2754,3387],
+    stDebt:[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,1997,null,null,null,null,null,null,null,null,null],
+    accr:[null,null,null,3168,3602,4426,4223,4246,5343,4390,5392,5387,5840,6034,6437,6722,6375,6686,6813,6433,6313,6212,6783,6587,7078,7179,7510,7864,8367,8557,8734,7920,7337,7750,8807,3168,4246,5387,6722,6433,6587,7864,7920],
+    tcl:[null,null,null,4259,4714,5570,5372,5639,6631,5891,6921,6865,7288,7684,8126,9024,8652,8945,9020,8853,8683,8635,9405,9454,9993,10318,10835,11476,12113,12686,13121,12320,11993,14871,14506,4259,5639,6865,9024,8853,9454,11476,12320],
+    insLT:[null,null,null,1996,2137,2217,2271,2297,2421,2161,2113,2223,2224,2268,2577,2546,2709,2865,3036,3028,3412,3931,4337,4909,5346,5733,6623,7042,7599,8183,8611,9076,9437,9528,9489,1996,2297,2223,2546,3028,4909,7042,9076],
+    ltDebt:[null,null,null,6869,6939,4526,5711,5707,5703,6691,6667,7560,7801,7798,9279,9276,9273,9271,9268,9265,9257,9255,9252,9459,9457,9454,10986,8347,8350,9578,10615,10521,10514,10726,15664,6869,5707,7560,9276,9265,9459,8347,10521],
+    ltLease:[null,null,null,null,1225,1274,1459,1523,1519,1525,1527,1544,1531,1513,1488,1644,1681,1711,1626,1673,1629,1597,1565,1550,1520,1492,1496,1454,1447,1438,1412,1390,1710,1830,1897,null,1523,1544,1644,1673,1550,1454,1390],
+    othLTL:[null,null,null,4072,3587,1485,1428,1412,1498,1451,1484,1306,1740,1244,1129,935,679,659,762,786,798,822,871,645,784,734,638,449,408,467,430,412,419,447,548,4072,1412,1306,935,786,645,449,412],
+    totL:[null,null,null,17196,18602,15072,16241,16578,17772,17719,18712,19498,20584,20507,22599,23425,22994,23451,23712,23605,23779,24240,25430,26017,27100,27731,30578,28768,29917,32352,34189,33719,34073,37402,42104,17196,16578,19498,23425,23605,26017,28768,33719],
+    mezz:[null,null,null,14177,14220,-14,309,311,290,282,549,787,473,1569,229,204,205,194,430,430,419,408,394,654,651,631,946,93,93,183,158,165,171,180,388,14177,311,787,204,430,654,93,165],
+    apic:[null,null,null,668,682,30193,30513,30739,31035,31267,31549,35931,36182,35588,37282,38608,38977,39523,40020,40550,41030,41637,42147,42264,42743,43062,42825,42801,41406,40625,39499,38101,35527,35698,35501,668,30739,35931,38608,40550,42264,42801,38101],
+    aoci:[null,null,null,-188,-246,-167,-185,-187,-395,-644,-445,-535,654,681,1168,-524,-505,-705,-410,-443,-598,-443,-480,-421,-437,-479,-424,-517,-485,-435,-430,-432,-421,-432,-461,-188,-187,-535,-524,-443,-421,-517,-432],
+    re:[null,null,null,-7865,-8868,-14104,-15266,-16362,-19298,-21073,-22162,-23130,-23238,-22094,-24518,-23626,-29556,-32157,-33363,-32767,-32924,-32530,-32309,-30594,-31248,-30233,-27621,-20726,-18946,-17592,-10935,-10628,-10355,-7950,-7381,-7865,-16362,-23130,-23626,-32767,-30594,-20726,-10628],
+    eqU:[null,null,null,-7385,-8432,15922,15062,14190,11342,9550,8942,12266,13598,14175,13931,14458,8916,6661,6247,7340,7508,8664,9358,11249,11058,12350,14780,21558,21975,22598,28134,27041,24751,27316,27659,-7385,14190,12266,14458,7340,11249,21558,27041],
+    nciEq:[null,null,null,null,null,null,680,682,686,689,691,701,null,null,125,687,697,708,723,734,745,756,767,779,790,802,813,825,837,849,863,877,890,903,916,null,682,701,687,734,779,825,877],
+    eq:[null,null,null,-7385,-8432,15922,15742,14872,12028,10239,9633,12967,13598,14175,14056,15145,9613,7369,6970,8074,8253,9420,10125,12028,11848,13152,15593,22383,22812,23447,28997,27918,25641,28219,28575,-7385,14872,12967,15145,8074,12028,22383,27918],
+    totLE:[null,null,null,23988,24390,30980,32292,31761,30090,28240,28894,33252,34655,36251,36884,38774,32812,31014,31112,32109,32451,34068,35949,38699,39599,41514,47117,51244,52822,55982,63344,61802,59885,65801,71067,23988,31761,33252,38774,32109,38699,51244,61802],
+    // Cash flow statement: three-month flows
+    cfNI:[3748,-878,-994,-889,-1016,-5246,-1159,-1091,-2946,-1772,-1108,-962,-122,1112,-2439,879,-5918,-2616,-1204,600,-157,394,219,1700,-663,1008,2599,6901,1774,1350,6652,317,282,2416,569,987,-8512,-6788,-570,-9138,2156,9845,10093],
+    cfDA:[88,98,131,109,146,123,102,101,128,129,138,180,212,226,218,246,254,243,227,223,207,208,205,203,194,181,186,176,178,181,195,193,191,195,218,426,472,575,902,947,823,737,747],
+    cfSBC:[61,20,64,25,11,3941,401,243,277,131,183,236,281,272,281,334,359,470,482,482,470,504,492,469,484,455,438,419,435,475,465,451,473,550,591,170,4596,827,1168,1793,1935,1796,1826],
+    cfDefTax:[486,-16,-50,-385,4,-35,-24,-33,-273,-9,10,6,120,-487,-115,-210,-281,14,16,-190,10,6,16,-6,-16,-7,124,-6128,-412,87,-4167,-287,106,665,118,35,-88,-266,-692,-441,26,-6027,-4779],
+    cfSecG:[-1984,0,0,-12,-16,2,13,-1,114,2,7,125,-63,-1912,56,-1142,5570,1677,550,-752,-320,-386,96,-1000,721,388,-1664,-556,-51,17,-1505,1602,1474,-1612,null,-1996,-2,125,-1142,7045,-1610,-1832,97],
+    cfOthNC:[-2785,227,286,219,-71,-301,19,44,1953,156,-55,-127,-1559,15,1845,-175,4,47,-7,57,138,113,51,-212,121,-720,-43,165,-78,5,40,-45,25,238,512,-2053,-287,2050,-1793,101,90,244,-112],
+    cfAR:[-4,-17,-338,80,-210,-226,94,-65,444,73,-137,-238,-35,-114,-205,-243,-26,-103,-90,-323,168,-13,-518,-395,-422,-162,196,246,-123,-212,-22,-109,-74,-425,-99,-279,-407,142,-597,-542,-758,-142,-466],
+    cfPrep:[-175,-137,-109,-52,-75,-55,-154,-1144,178,278,236,82,79,125,543,42,22,131,-68,-88,-67,-72,-901,-231,-276,-61,-190,29,-454,-205,-80,-112,-150,-125,-564,-473,-1476,774,789,-3,-1271,-498,-851],
+    cfAP:[-66,14,-14,27,null,9,-32,118,-46,36,-24,-99,-3,188,-114,19,8,-53,-35,-53,-7,-19,112,-22,46,-70,48,62,6,125,101,-106,184,161,45,-39,95,-133,90,-133,64,86,126],
+    cfIns:[260,256,247,180,161,96,99,125,77,-85,-8,13,-27,48,469,26,134,192,159,245,350,588,501,576,696,675,790,658,675,812,592,581,443,387,423,943,481,-3,516,730,2230,2819,2660],
+    cfAccr:[74,280,367,17,344,770,-237,-96,-369,-10,352,-21,506,186,75,117,-111,437,402,-445,-186,-133,693,-259,531,133,-333,-222,374,-71,57,398,-603,412,826,738,807,-48,884,283,-100,109,758],
+    CFO:[-297,-153,-410,-681,-722,-922,-878,-1799,-463,-1071,-406,-805,-611,-341,614,-107,15,439,432,-244,606,1190,966,823,1416,1820,2151,1750,2324,2564,2328,2883,2351,2862,2639,-1541,-4321,-2745,-445,642,3585,7137,10099],
+    cfCapex:[-90,-119,-153,-196,-129,-148,-129,-182,-198,-164,-131,-123,-71,-57,-90,-80,-62,-57,-74,-59,-57,-50,-61,-55,-57,-99,-42,-44,-74,-89,-98,-75,-65,-70,-104,-558,-588,-616,-298,-252,-223,-242,-336],
+    cfPPEproc:[138,92,99,40,40,1,0,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,369,null,null,null,null,null,null,null],
+    cfMktBuy:[null,null,null,null,null,null,0,-441,-493,-519,-481,-608,-336,-190,-587,0,null,null,0,-1708,-846,-1361,-3723,-2844,-2029,-3288,-4428,-3020,-2540,-5095,-6310,-7502,-6759,-10887,-8444,null,-441,-2101,-1113,-1708,-8774,-12765,-21447],
+    cfMktSale:[null,null,null,null,null,null,0,2,100,322,379,559,696,447,1148,0,null,null,376,0,500,1127,1366,2076,2030,1821,1916,4437,2397,4636,6514,6499,6546,8119,9840,null,2,1360,2291,376,5069,10204,20046],
+    cfAcq:[null,-64,0,0,null,-7,0,0,-1346,0,-190,65,-28,-52,-31,-2203,-59,0,0,0,null,null,null,null,null,null,null,null,null,-804,0,-11,-6,-647,-902,-64,-7,-1471,-2314,-59,null,null,-815],
+    cfOthInv:[-423,0,-19,0,293,0,0,-90,81,-95,58,-85,-511,-47,776,15,-14,3,19,-2,4,692,2,4,-186,-110,-138,60,-325,-109,-53,-525,-489,-1904,-317,-442,244,-41,233,6,702,-374,-1012],
+    CFI:[-375,-91,-73,-156,204,-154,-129,-711,-1856,-456,-365,-192,-250,101,1216,-2268,-135,-54,321,-1769,-399,408,-2416,-819,-242,-1676,-2692,1433,-542,-1461,53,-1614,-773,-5389,73,-695,-790,-2869,-1201,-1637,-3226,-3177,-3564],
+    cfDebtP:[null,1478,0,1988,null,null,1189,0,null,992,500,1136,null,null,1485,-1,null,null,null,null,1121,0,0,1703,null,null,3972,0,null,1127,2232,0,null,3997,5139,3466,1189,2628,1766,null,2824,3972,3359],
+    cfDebtR:[-80,-123,-300,-7,null,null,0,-27,null,-891,0,-527,-194,0,-1,-139,-6,6,0,-80,-1137,-7,-31,-1525,-6,-7,-1973,-2000,null,null,-1200,-1150,null,-2000,-2000,-510,-27,-1418,-616,-80,-2675,-3986,-2350],
+    cfFinL:[-19,-15,-25,-30,-41,-31,-48,-18,-60,-59,-56,-49,-47,-61,-58,-60,-62,-46,-39,-37,-40,-42,-36,-53,-42,-35,-45,-50,-47,-28,-37,-45,-40,-42,-42,-89,-138,-224,-226,-184,-171,-172,-157],
+    cfBuyback:[-7,-2,-1,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,-325,-372,-555,-1785,-1363,-1463,-1912,-3011,-518,-750,null,null,null,null,null,null,-1252,-6523],
+    cfOthFin:[1220,24,13,526,-5,7106,852,-38,-3,76,-16,336,15,97,130,614,-45,45,251,28,-51,91,-9,-79,-52,176,19,-792,-30,69,-70,-11,-40,103,-40,1773,7915,393,856,279,-73,-649,-42],
+    CFF:[1114,1362,-313,2477,-46,7075,1993,-83,-63,118,428,896,-226,36,1556,414,-113,5,212,-89,-107,42,-76,46,-100,-191,1601,-3397,-1862,-195,-538,-3118,-3091,1540,2307,4640,8939,1379,1780,15,-95,-2087,-5713],
+    cfFX:[2,-104,-31,14,3,9,-35,19,-156,-19,8,75,-46,51,-50,-24,20,-118,-195,145,16,27,-69,89,-94,-56,62,-179,70,159,-27,13,-24,54,-34,-119,-4,-92,-69,-148,63,-267,215],
+    cfReclass:[-10,4,60,42,34,0,0,0,null,null,0,-349,349,0,0,0,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,96,34,-349,349,null,null,null,null],
+    cfNet:[444,1014,-827,1654,-561,6008,951,-2574,-2538,-1428,-335,-26,-1133,-153,3336,-1985,-213,272,770,-1957,116,1667,-1595,139,980,-103,1122,-393,-10,1067,1816,-1836,-1537,-933,4985,2285,3824,-4327,65,-1128,327,1606,1037],
+    cfBeg:[5828,6262,7280,6513,8209,7682,13690,14641,12067,9529,8101,7766,7391,6607,6454,9790,7805,7592,7864,8634,6677,6793,8460,6865,7004,7984,7881,9003,8610,8600,9667,11483,9647,8110,7177,5828,8209,12067,7391,7805,6677,7004,8610],
+    cfEnd:[6262,7280,6513,8209,7682,13690,14641,12067,9529,8101,7766,7391,6607,6454,9790,7805,7592,7864,8634,6677,6793,8460,6865,7004,7984,7881,9003,8610,8600,9667,11483,9647,8110,7177,12162,8209,12067,7391,7805,6677,7004,8610,9647],
+  };
+  // Annual gross bookings by segment are the sum of the four quarters when all four are reported
+  ['mobGB','delGB','frGB'].forEach(k=>YLAB.forEach((lab,j)=>{ const y=+lab.slice(2), qs=QLAB.map((l,i)=>2000+(+l.slice(3))===y?RAW[k][i]:undefined).filter(v=>v!==undefined);
+    if(RAW[k][NQ+j]===null && qs.length===4 && qs.every(isN)) RAW[k][NQ+j]=qs.reduce((a,b)=>a+b,0); }));
+  // Adjusted EBITDA as Uber reports it (sum of the segments, incl. corporate G&A and platform R&D); 2026 only from the releases
+  const ADJ_EBITDA_REL = {"Q3'26":2963};
+  // Values not reported for the period (dotted underline)
+  const EST = { frAE:["Q4'25",'FY2022'], adjE:["Q4'25",'FY2022'] };
+  const pick = i => { const o={}; for(const k in RAW) o[k]=RAW[k][i]; return o; };
+
+  // ---- Projection assumptions (input cells) ----
+  // Quarterly: one value per projected quarter (Q4'26E … Q4'27E). Q4'26E gross bookings land on the midpoint of the Q3'26
+  // release outlook ($63.25–65.25B → $64.25B). Take rates follow Q1–Q3'26, after the 2026 business model changes that the
+  // Q3'26 release says cut total revenue growth by 8 points; segment margins follow Q3'26 (segment operating income / revenue).
+  const ASM = {
+    gMob:  [0.155,0.160,0.160,0.150,0.150],   // Mobility gross bookings YoY
+    gDel:  [0.213,0.200,0.200,0.190,0.190],   // Delivery gross bookings YoY
+    gFr:   [0.350,0.250,0.150,0.100,0.100],   // Freight revenue YoY
+    trMob: [0.250,0.255,0.255,0.255,0.255],   // Mobility revenue / gross bookings
+    trDel: [0.192,0.192,0.192,0.192,0.192],
+    mMob:  [0.310,0.315,0.315,0.315,0.320],   // segment operating income / segment revenue
+    mDel:  [0.195,0.200,0.200,0.200,0.205],
+    mFr:   [-0.020,-0.015,-0.015,-0.010,-0.010],
+    corp:  [0.095,0.095,0.090,0.090,0.090],   // corporate G&A, platform R&D and unallocated items, % of revenue
+    yield: [0.033,0.033,0.033,0.033,0.033],   // interest income / prior cash, investments and restricted (annualized)
+    rate:  [0.048,0.048,0.048,0.048,0.048],   // interest expense / prior total debt (annualized)
+    othInc:[0,0,0,0,0],                       // other income (expense), US$M — equity revaluations are not forecast
+    tax:   [0.25,0.25,0.25,0.25,0.25],
+    da:    [0.015,0.015,0.015,0.015,0.015],   // D&A % of revenue
+    sbc:   [0.040,0.040,0.040,0.040,0.040],
+    gSh:   [-0.004,-0.004,-0.004,-0.004,-0.004],   // diluted shares QoQ
+    capex: [100,100,100,100,100],             // purchases of property and equipment (US$M)
+    buyback:[1000,1250,1250,1250,1250],       // share repurchases (US$M)
+  };
+  const ASMY = {
+    gMob:  [0.15,0.14,0.13],
+    gDel:  [0.17,0.15,0.14],
+    gFr:   [0.10,0.08,0.08],
+    trMob: [0.255,0.255,0.255],
+    trDel: [0.192,0.192,0.192],
+    mMob:  [0.32,0.33,0.34],
+    mDel:  [0.21,0.22,0.23],
+    mFr:   [0.00,0.01,0.02],
+    corp:  [0.085,0.080,0.075],
+    yield: [0.033,0.033,0.033],
+    rate:  [0.048,0.048,0.048],
+    othInc:[0,0,0],
+    tax:   [0.24,0.24,0.24],
+    da:    [0.014,0.014,0.014],
+    sbc:   [0.036,0.034,0.032],
+    gSh:   [-0.015,-0.015,-0.015],
+    capex: [450,480,500],
+    buyback:[5000,5500,6000],
+  };
+  const ASM_KEY='pvg-uber-asm';
+  const DEFAULTS = JSON.parse(JSON.stringify({q:ASM, y:ASMY}));
+  const SETS = {q:ASM, y:ASMY};
+  const LABS = {q:PLAB, y:XLAB};
+  function loadSaved(){
+    let sv={}; try{ sv=JSON.parse(localStorage.getItem(ASM_KEY)||'{}'); }catch(e){}
+    for(const kind of ['q','y']) for(const k in (sv[kind]||{})){
+      if(!SETS[kind][k]) continue;
+      LABS[kind].forEach((lab,j)=>{ if(isN(sv[kind][k][lab])) SETS[kind][k][j]=sv[kind][k][lab]; });
+    }
+  }
+  loadSaved();
+
+  // ---- Engine ----
+  const sum = (...a) => a.some(v=>v===null||v===undefined) ? null : a.reduce((s,v)=>s+v,0);
+  const dif = (a,b) => isN(a)&&isN(b) ? a-b : null;
+  const n0 = v => isN(v) ? v : 0;
+  function derive(o){
+    o.opexX = sum(o.ops,o.mkt,o.rd,o.ga,o.daIS);
+    o.nci = dif(o.niTot,o.ni);
+    o.segOI = sum(o.mobOI,o.delOI,o.frOI);
+    o.corp = isN(o.segOI) ? dif(o.opInc,o.segOI) : null;
+    o.adjE = ADJ_EBITDA_REL[o.lab] ?? sum(o.mobAE,o.delAE,o.frAE,o.othAE);
+    o.ebitda = sum(o.opInc,o.cfDA); o.ebitdaS = sum(o.ebitda,o.cfSBC);
+    o.liq = isN(o.cash) ? o.cash+n0(o.stInv) : null;
+    o.liqR = isN(o.cash) ? o.liq+n0(o.rcCur)+n0(o.rcNC)+n0(o.rInv) : null;
+    o.debt = isN(o.ltDebt) ? o.ltDebt+n0(o.stDebt) : null;
+    o.netCash = dif(o.liq,o.debt);
+    o.ins = sum(o.insST,o.insLT);
+    o.bsCheck = isN(o.totA)&&isN(o.totL)&&isN(o.eq) ? (Math.round((o.totA-o.totL-n0(o.mezz)-o.eq)*1000)/1000 || 0) : null;
+    o.netCapex = isN(o.cfCapex) ? o.cfCapex+n0(o.cfPPEproc) : null;
+    o.fcf = sum(o.CFO,o.netCapex);
+    o.cfDebt = isN(o.CFF) ? n0(o.cfDebtP)+n0(o.cfDebtR) : null;
+    o.cfCheck = isN(o.cfEnd)&&isN(o.cfBeg)&&isN(o.cfNet) ? (Math.round((o.cfBeg+o.cfNet+n0(o.cfReclass)-o.cfEnd)*1000)/1000 || 0) : null;
+    return o;
+  }
+  const COST = ['cogs','ops','mkt','rd','ga'];
+  // Gross bookings → revenue → net income for projected periods (quarterly or annual). Y = same period a year earlier.
+  function buildPL(o, L, Y, a, factor){
+    o.mobGB=Y.mobGB*(1+a.gMob); o.delGB=Y.delGB*(1+a.gDel);
+    o.frRev=Y.frRev*(1+a.gFr); o.frGB=o.frRev*Y.frGB/Y.frRev;
+    o.totGB=o.mobGB+o.delGB+o.frGB;
+    o.mobRev=o.mobGB*a.trMob; o.delRev=o.delGB*a.trDel;
+    o.sales=o.mobRev+o.delRev+o.frRev;
+    // operating income = Σ segment revenue × segment margin, less corporate and unallocated costs
+    o.mobOI=o.mobRev*a.mMob; o.delOI=o.delRev*a.mDel; o.frOI=o.frRev*a.mFr;
+    o.opInc=o.mobOI+o.delOI+o.frOI-a.corp*o.sales;
+    // D&A from its own assumption; the other expense lines split the rest with the mix of a year earlier
+    o.opex=o.sales-o.opInc; o.cfDA=o.sales*a.da; o.daIS=o.cfDA;
+    const base=COST.reduce((s,k)=>s+Y[k],0);
+    COST.forEach(k=>o[k]=(o.opex-o.daIS)*Y[k]/base);
+    o.intInc=a.yield*(L.liqR||0)*factor; o.intExp=-a.rate*(L.debt||0)*factor; o.othInc=a.othInc;
+    o.ebt=o.opInc+o.intInc+o.intExp+o.othInc; o.tax=-o.ebt*a.tax; o.eqMeth=0;
+    o.niTot=o.ebt+o.tax; o.ni=o.niTot-n0(Y.nci);
+    o.cfSBC=o.sales*a.sbc;
+    o.shD=L.shD*(1+a.gSh); o.shB=L.shB*(1+a.gSh); o.epsD=o.ni/o.shD; o.epsB=o.ni/o.shB;
+    o.cfCapex=-a.capex; o.cfPPEproc=0; o.cfBuyback=-a.buyback;
+    o.proj=true;
+    return o;
+  }
+  // Projected balance sheet: receivables, prepaids, payables, short-term insurance reserves and accrued liabilities keep their
+  // ratio to revenue of the prior period (the 2026 reclassification of prepaids into restricted cash makes year-earlier ratios
+  // misleading, and Uber's working capital is not very seasonal); long-term insurance reserves, restricted investments, PP&E, leases and
+  // other long-term liabilities grow with revenue; other non-current assets absorb capex less D&A; investments, goodwill,
+  // intangibles, deferred taxes and debt stay flat; equity adds net income and SBC less buybacks; cash balances, and
+  // long-term debt covers any shortfall below the minimum cash.
+  const WC = ['ar','othCA','ap','insST','accr'];
+  const GROW = ['insLT','rInv','ppe','rou','ltLease','othLTL'];
+  const FLAT = ['stInv','rcCur','rcNC','invest','eqInv','intang','gw','dta','stDebt','ltDebt','mezz','aoci'];
+  const CASH_MIN = 5000;
+  function buildBS(o, L, Y){
+    const ref = L.sales*o.days/L.days;
+    WC.forEach(k=>o[k]=L[k]*o.sales/ref);
+    const kq = Y && Y.sales ? (o.days>200 ? o.sales/Y.sales : Math.pow(o.sales/Y.sales,0.25)) : 1;
+    GROW.forEach(k=>o[k]=n0(L[k])*kq);
+    FLAT.forEach(k=>o[k]=n0(L[k]));
+    o.othNCA=L.othNCA-o.cfCapex-o.cfDA-(o.ppe-L.ppe);
+    o.apic=L.apic+o.cfSBC+o.cfBuyback; o.re=L.re+o.ni; o.nciEq=n0(L.nciEq)+o.nci0;
+    o.eqU=o.apic+o.aoci+o.re; o.eq=o.eqU+o.nciEq;
+    const liab=()=>{ o.tcl=o.ap+o.insST+o.accr+o.stDebt; o.totL=o.tcl+o.insLT+o.ltDebt+o.ltLease+o.othLTL; };
+    liab();
+    const nonCash=o.stInv+o.rcCur+o.ar+o.othCA+o.rcNC+o.rInv+o.invest+o.eqInv+o.ppe+o.rou+o.intang+o.gw+o.dta+o.othNCA;
+    o.cash=o.totL+o.mezz+o.eq-nonCash;
+    if(o.cash<CASH_MIN){ o.ltDebt+=CASH_MIN-o.cash; o.cash=CASH_MIN; liab(); }
+    o.totLE=o.totL+o.mezz+o.eq; o.totA=o.totLE;
+    o.tca=o.cash+o.stInv+o.rcCur+o.ar+o.othCA;
+    return o;
+  }
+  // Cash flow from the income statement and balance sheet changes: every balance sheet line maps to one cash flow line,
+  // so ending cash (cash + restricted cash) moves exactly with the balance sheet.
+  function buildCF(o, L){
+    const d = k => n0(o[k])-n0(L[k]);
+    o.cfNI=o.niTot; o.cfDefTax=0; o.cfSecG=0; o.cfOthNC=0;
+    o.cfAR=-d('ar'); o.cfPrep=-d('othCA'); o.cfAP=d('ap'); o.cfIns=d('insST')+d('insLT');
+    o.cfAccr=d('accr')+d('ltLease')+d('othLTL')-d('rou');
+    o.CFO=o.cfNI+o.cfDA+o.cfSBC+o.cfAR+o.cfPrep+o.cfAP+o.cfIns+o.cfAccr;
+    o.cfMktBuy=-(d('stInv')+d('rInv')); o.cfMktSale=0; o.cfAcq=0;
+    o.cfOthInv=-(d('invest')+d('eqInv')+d('intang')+d('gw')+d('dta'));
+    o.CFI=o.cfCapex+o.cfPPEproc+o.cfMktBuy+o.cfMktSale+o.cfAcq+o.cfOthInv;
+    const dd=d('ltDebt')+d('stDebt');
+    o.cfDebtP=Math.max(dd,0); o.cfDebtR=Math.min(dd,0); o.cfFinL=0; o.cfOthFin=d('mezz');
+    o.CFF=o.cfDebtP+o.cfDebtR+o.cfFinL+o.cfBuyback+o.cfOthFin;
+    o.cfFX=0; o.cfReclass=0; o.cfNet=o.CFO+o.CFI+o.CFF;
+    o.cfBeg=L.cfEnd; o.cfEnd=o.cfBeg+o.cfNet;
+    return derive(o);
+  }
+  const at = (obj,j) => Object.fromEntries(Object.entries(obj).map(([k,v])=>[k,v[j]]));
+  // the projection carries the year-earlier non-controlling interests; derive() recomputes nci from niTot − ni
+  const build = (o,L,Yq,a,f) => { const p=buildPL(o,L,Yq,a,f); p.nci0=n0(Yq.nci); return buildCF(buildBS(derive(p),L,Yq),L); };
+
+  const Q = QLAB.map((_,i)=>derive({...pick(i), days:QDAYS[i], lab:QLAB[i], end:QEND[i]}));
+  const Y = YLAB.map((lab,j)=>derive({...pick(NQ+j), days:YDAYS[j], lab, end:'Dec-'+lab.slice(-2)}));
+  const STOCK=['cash','stInv','rcCur','ar','othCA','tca','rcNC','rInv','invest','eqInv','ppe','rou','intang','gw','dta','othNCA','totA',
+    'ap','insST','stDebt','accr','tcl','insLT','ltDebt','ltLease','othLTL','totL','mezz','apic','aoci','re','eqU','nciEq','eq','totLE'];
+  const FLOW=['sales','cogs','ops','mkt','rd','ga','daIS','opex','opInc','intExp','intInc','othInc','ebt','tax','eqMeth','niTot','ni',
+    'mobRev','delRev','frRev','mobGB','delGB','frGB','totGB','mobOI','delOI','frOI',
+    'cfNI','cfDA','cfSBC','cfDefTax','cfSecG','cfOthNC','cfAR','cfPrep','cfAP','cfIns','cfAccr','CFO','cfCapex','cfPPEproc','cfMktBuy','cfMktSale','cfAcq','cfOthInv','CFI',
+    'cfDebtP','cfDebtR','cfFinL','cfBuyback','cfOthFin','CFF','cfFX','cfReclass','cfNet'];
+  function yearFrom(qs, lab, end, note){
+    const o={days:qs.reduce((s,q)=>s+q.days,0), lab, end, proj:true, fromQ:true, note};
+    STOCK.forEach(k=>o[k]=qs[3][k]);
+    FLOW.forEach(k=>o[k]=sum(...qs.map(q=>isN(q[k])?q[k]:(k.startsWith('cf')?0:q[k]))));
+    o.cfBeg=qs[0].cfBeg; o.cfEnd=qs[3].cfEnd;
+    const avg=k=>qs.every(q=>q[k])?qs.reduce((s,q)=>s+q[k],0)/4:null;
+    o.shD=avg('shD'); o.shB=avg('shB');
+    o.epsD=o.shD?o.ni/o.shD:null; o.epsB=o.shB?o.ni/o.shB:null;
+    return derive(o);
+  }
+  const Q126 = QLAB.indexOf("Q1'26");
+  function project(){
+    Q.length=NQ; Y.length=YLAB.length;
+    PLAB.forEach((lab,j)=>{
+      const i=Q.length, L=Q[i-1], Yq=Q[i-4];
+      Q.push(build({days:PDAYS[j], lab, end:PEND[j]}, L, Yq, at(ASM,j), PDAYS[j]/365));
+    });
+    Y.push(yearFrom(Q.slice(Q126,Q126+4),'FY2026E','Dec-26',' · 3A+1E'), yearFrom(Q.slice(Q126+4,Q126+8),'FY2027E','Dec-27'));
+    XLAB.forEach((lab,j)=>{
+      const P=Y[Y.length-1];
+      Y.push(build({days:365, lab, end:'Dec-'+lab.slice(4,6), annualOnly:true}, P, P, at(ASMY,j), 1));
+    });
+  }
+  project();
+
+  // ---- Back-projections ("projected at the time"): run rate with the data available at the end of the prior quarter.
+  // Possible from Q2'25, the first quarter whose prior quarter reports segment operating income.
+  const gr = (a,b) => isN(a)&&isN(b)&&b>0 ? a/b-1 : 0;
+  const rt = (a,b) => isN(a)&&isN(b)&&b ? a/b : 0;
+  const clampTax = (t,p) => isN(t)&&isN(p)&&p>0 ? Math.min(Math.max(-t/p,0),0.35) : 0.25;
+  const BQ = {}, BY = {};
+  for(let i=QLAB.indexOf("Q2'25");i<NQ;i++){
+    const L=Q[i-1], L2=Q[i-2], Yq=Q[i-4], LY=Q[i-5], f=L.days/365;
+    const a = {
+      gMob:gr(L.mobGB,LY.mobGB), gDel:gr(L.delGB,LY.delGB), gFr:gr(L.frRev,LY.frRev),
+      trMob:rt(L.mobRev,L.mobGB), trDel:rt(L.delRev,L.delGB),
+      mMob:rt(L.mobOI,L.mobRev), mDel:rt(L.delOI,L.delRev), mFr:rt(L.frOI,L.frRev), corp:-rt(L.corp,L.sales),
+      yield:L2.liqR ? n0(L.intInc)/f/L2.liqR : 0, rate:L2.debt ? -L.intExp/f/L2.debt : 0, othInc:0,
+      tax:clampTax(L.tax,L.ebt), da:rt(L.cfDA,L.sales), sbc:rt(L.cfSBC,L.sales),
+      gSh:gr(L.shD,L2.shD), capex:-L.cfCapex, buyback:-n0(L.cfBuyback),
+    };
+    BQ[i]=build({days:QDAYS[i], lab:QLAB[i], end:QEND[i], back:true}, L, Yq, a, QDAYS[i]/365);
+  }
+
+  // Displayed blocks
+  const CUR_FY = QLAB[NQ-1][1]==='4' ? YLAB.length-1 : YLAB.length;
+  const BLOCKS = [
+    {id:'qa', title:'Quarterly · Actual', short:'Q · Act.',  proj:false, cols:[]},
+    {id:'qp', title:'Estimates Qs',       short:'Q · Proj.', proj:true,  cols:[]},
+    {id:'ya', title:'Annual · Actual',    short:'Y · Act.',  proj:false, cols:[]},
+    {id:'yp', title:'Annual · Projected', short:'Y · Proj.', proj:true,  cols:[]},
+  ];
+  const CUR_YY = QLAB[NQ-1].slice(3,5), LAST_IS_Q4 = QLAB[NQ-1][1]==='4';
+  const qpDefault = [];
+  function refreshBlocks(){
+    BLOCKS[0].cols = Q.slice(FIRST_SHOWN_Q, NQ).map((v,k)=>({v, kind:'q', qi:FIRST_SHOWN_Q+k}));
+    BLOCKS[1].cols = Q.slice(NQ).map((v,k)=>({v, kind:'q', qi:NQ+k}));
+    BLOCKS[2].cols = Y.slice(FIRST_SHOWN_Y, CUR_FY+1).map((v,k)=>({v, kind:'y', yi:FIRST_SHOWN_Y+k}));
+    BLOCKS[3].cols = Y.slice(CUR_FY+1).map((v,k)=>({v, kind:'y', yi:CUR_FY+1+k}));
+    qpDefault.splice(0, qpDefault.length, ...BLOCKS[1].cols.filter(c=>LAST_IS_Q4 ? c.v.lab.slice(3,5)===String(+CUR_YY+1).padStart(2,'0') : c.v.lab.slice(3,5)===CUR_YY));
+  }
+  refreshBlocks();
+  const yoyBase = c => c.kind==='q' ? Q[c.qi-4] : Y[c.yi-1];
+  const prevBase = c => c.kind==='q' ? Q[c.qi-1] : Y[c.yi-1];
+  const FY_LAB = 'FY2027E';
+  const isFY = c => c.kind==='y' && c.v.lab===FY_LAB;
+  const isInput = (r,c) => (r.inp && c.kind==='q' && c.v.proj) || (r.inpY && (c.v.annualOnly || isFY(c)));
+
+  // ---- Row helpers ----
+  const val = k => o=>o[k];
+  const ratio = (a,b) => o=> (isN(o[a])&&isN(o[b])&&o[b]!==0) ? o[a]/o[b] : null;
+  const growth = (cur, base) => !isN(cur)||!isN(base) ? null : base<=0 ? NaN : (Math.abs(cur/base-1)>=10 ? NaN : cur/base-1);
+  const YOY = (k, extra={}) => ({l:'YoY growth', f:(o,c)=>growth(o[k], yoyBase(c)?.[k]), fmt:'g', u:'%', sub:1, ...extra});
+  const QOQ = (k, extra={}) => ({l:'QoQ growth', f:(o,c)=>c.kind==='q'?growth(o[k], prevBase(c)?.[k]):null, fmt:'g', u:'%', sub:1, ...extra});
+  const PCT = (l, a, b, extra={}) => ({l, f:ratio(a,b), fmt:'cs', u:'%', sub:1, ...extra});
+  const SEC = (t, stmt='is') => ({sec:t, stmt});
+  const neg = v => isN(v) ? (v===0 ? 0 : -v) : v;
+  const ann = c => c.kind==='q' ? 365/c.v.days : 1;
+  const avgOf = (k,o,c) => { const p=prevBase(c)?.[k]; return isN(o[k])&&isN(p) ? (o[k]+p)/2 : null; };
+  const days = (num,den) => (o,c) => isN(o[num])&&o[den] ? o[num]/o[den]*o.days : null;
+  const ttm = k => (o,c) => { if(c.kind!=='q') return o[k]; const p=[1,2,3].map(n=>Q[c.qi-n]?.[k]); return isN(o[k])&&p.every(isN) ? o[k]+p[0]+p[1]+p[2] : null; };
+
+  const ROWS = [
+    SEC('Operating metrics'),
+    {l:'Gross bookings', f:val('totGB'), fmt:'m', u:'US$M', tot:1, key:1},
+    YOY('totGB'),
+    QOQ('totGB'),
+    {l:'Mobility gross bookings', f:val('mobGB'), fmt:'m', u:'US$M', ind:1},
+    YOY('mobGB', {inp:1, inpY:1, ak:'gMob'}),
+    PCT('% of gross bookings','mobGB','totGB'),
+    {l:'Delivery gross bookings', f:val('delGB'), fmt:'m', u:'US$M', ind:1},
+    YOY('delGB', {inp:1, inpY:1, ak:'gDel'}),
+    PCT('% of gross bookings','delGB','totGB'),
+    {l:'Freight gross bookings', f:val('frGB'), fmt:'m', u:'US$M', ind:1},
+    YOY('frGB'),
+    {l:'Trips', f:val('trips'), fmt:'m', u:'M', b:1, note:'Not projected'},
+    YOY('trips'),
+    {l:'Gross bookings per trip', f:(o)=>isN(o.totGB)&&o.trips ? o.totGB/o.trips : null, fmt:'usd2', u:'US$', sub:1},
+    {l:'Monthly active platform consumers (MAPCs)', f:val('mapc'), fmt:'m', u:'M', b:1, note:'Average monthly users in the last month of the period; not projected'},
+    YOY('mapc'),
+    {l:'Monthly trips per MAPC', f:(o,c)=>isN(o.trips)&&o.mapc ? o.trips/(c.kind==='q'?3:12)/o.mapc : null, fmt:'x2', u:'x', sub:1},
+    {l:'Take rate (revenue / gross bookings)', f:ratio('sales','totGB'), fmt:'p', u:'%', b:1},
+
+    SEC('Income statement'),
+    {l:'Revenue', f:val('sales'), fmt:'m', u:'US$M', tot:1, key:1},
+    YOY('sales'),
+    QOQ('sales'),
+    {l:'By segment', f:()=>null, subh:1},
+    {l:'Mobility', f:val('mobRev'), fmt:'m', u:'US$M', ind:1},
+    YOY('mobRev'),
+    PCT('Take rate (revenue / gross bookings)','mobRev','mobGB',{inp:1, inpY:1, ak:'trMob'}),
+    PCT('% of revenue','mobRev','sales'),
+    {l:'Delivery', f:val('delRev'), fmt:'m', u:'US$M', ind:1},
+    YOY('delRev'),
+    PCT('Take rate (revenue / gross bookings)','delRev','delGB',{inp:1, inpY:1, ak:'trDel'}),
+    PCT('% of revenue','delRev','sales'),
+    {l:'Freight', f:val('frRev'), fmt:'m', u:'US$M', ind:1},
+    YOY('frRev', {inp:1, inpY:1, ak:'gFr'}),
+    PCT('% of revenue','frRev','sales'),
+    {l:'All other', f:val('othRev'), fmt:'m', u:'US$M', ind:1, note:'Other Bets (until 2021)'},
+    {l:'By geography', f:()=>null, subh:1},
+    {l:'United States and Canada', f:val('geoUS'), fmt:'m', u:'US$M', ind:1, note:'Not projected'},
+    YOY('geoUS'),
+    {l:'Latin America', f:val('geoLA'), fmt:'m', u:'US$M', ind:1},
+    YOY('geoLA'),
+    {l:'Europe, Middle East and Africa', f:val('geoEM'), fmt:'m', u:'US$M', ind:1},
+    YOY('geoEM'),
+    {l:'Asia Pacific', f:val('geoAP'), fmt:'m', u:'US$M', ind:1},
+    YOY('geoAP'),
+    {spacer:1},
+    {l:'Cost of revenue (excl. D&A)', f:o=>neg(o.cogs), fmt:'m', u:'US$M', ind:1},
+    YOY('cogs'),
+    PCT('% of revenue','cogs','sales'),
+    {l:'Total operating expenses (excl. cost of revenue)', f:o=>neg(o.opexX), fmt:'m', u:'US$M', tot:1, grpHead:1, note:'Operations and support, sales and marketing, R&D, G&A and D&A; click the arrow to fold the lines'},
+    YOY('opexX'),
+    PCT('% of revenue','opexX','sales'),
+    {l:'Operations and support', f:o=>neg(o.ops), fmt:'m', u:'US$M', ind:1},
+    PCT('% of revenue','ops','sales'),
+    {l:'Sales and marketing', f:o=>neg(o.mkt), fmt:'m', u:'US$M', ind:1},
+    YOY('mkt'),
+    PCT('% of revenue','mkt','sales'),
+    {l:'Research and development', f:o=>neg(o.rd), fmt:'m', u:'US$M', ind:1},
+    YOY('rd'),
+    PCT('% of revenue','rd','sales'),
+    {l:'General and administrative', f:o=>neg(o.ga), fmt:'m', u:'US$M', ind:1},
+    PCT('% of revenue','ga','sales'),
+    {l:'Depreciation and amortization', f:o=>neg(o.daIS), fmt:'m', u:'US$M', ind:1},
+    PCT('% of revenue','daIS','sales'),
+    {spacer:1},
+    {l:'Income (loss) from operations', f:val('opInc'), fmt:'m', u:'US$M', tot:1, key:1},
+    YOY('opInc'),
+    {l:'Operating margin', f:ratio('opInc','sales'), fmt:'p', u:'%', sub:1},
+    {l:'% of gross bookings', f:ratio('opInc','totGB'), fmt:'p', u:'%', sub:1},
+    {l:'By segment (segment operating income, reported from Q1\'25)', f:()=>null, subh:1},
+    {l:'Mobility', f:val('mobOI'), fmt:'m', u:'US$M', ind:1},
+    YOY('mobOI'),
+    PCT('Margin on segment revenue','mobOI','mobRev',{inp:1, inpY:1, ak:'mMob'}),
+    PCT('% of segment gross bookings','mobOI','mobGB'),
+    {l:'Delivery', f:val('delOI'), fmt:'m', u:'US$M', ind:1},
+    YOY('delOI'),
+    PCT('Margin on segment revenue','delOI','delRev',{inp:1, inpY:1, ak:'mDel'}),
+    PCT('% of segment gross bookings','delOI','delGB'),
+    {l:'Freight', f:val('frOI'), fmt:'m', u:'US$M', ind:1},
+    PCT('Margin on segment revenue','frOI','frRev',{inp:1, inpY:1, ak:'mFr'}),
+    {l:'Corporate G&A, platform R&D and unallocated items', f:val('corp'), fmt:'m', u:'US$M', ind:1, note:'Income from operations less the three segments: corporate G&A and platform R&D plus items Uber leaves out of segment profit (legal and regulatory reserves, restructuring, SBC and others)'},
+    {l:'% of revenue', f:o=>isN(o.corp)&&o.sales ? -o.corp/o.sales : null, fmt:'cs', u:'%', sub:1, inp:1, inpY:1, ak:'corp'},
+    {spacer:1},
+    {l:'Adjusted EBITDA (as reported by Uber)', f:val('adjE'), fmt:'m', u:'US$M', tot:1, grpHead:1, note:'Sum of the segment Adjusted EBITDA (through Q4\'25); Q3\'26 from the Q3\'26 release; not projected', der:EST.adjE},
+    YOY('adjE'),
+    {l:'% of gross bookings', f:ratio('adjE','totGB'), fmt:'p', u:'%', sub:1},
+    {l:'Mobility', f:val('mobAE'), fmt:'m', u:'US$M', ind:1},
+    PCT('% of segment gross bookings','mobAE','mobGB'),
+    {l:'Delivery', f:val('delAE'), fmt:'m', u:'US$M', ind:1},
+    PCT('% of segment gross bookings','delAE','delGB'),
+    {l:'Freight', f:val('frAE'), fmt:'m', u:'US$M', ind:1, der:EST.frAE, note:'Q4\'25 = FY2025 − nine months'},
+    {l:'Corporate G&A and platform R&D (and Other Bets until 2021)', f:val('othAE'), fmt:'m', u:'US$M', ind:1, grpEnd:1},
+    {spacer:1},
+    {l:'Total non-operating income (expense)', f:o=>sum(n0(o.intInc),o.intExp,o.othInc), fmt:'m', u:'US$M', tot:1, grpHead:1, note:'Interest income, interest expense and other income (expense); click the arrow to fold the lines'},
+    {l:'Interest income', f:val('intInc'), fmt:'m', u:'US$M', ind:1, note:'Shown on its own line from Q3\'24; before that it sits in other income (expense)'},
+    {l:'Yield on prior cash, investments and restricted cash and investments (annualized)', f:(o,c)=>{ const p=prevBase(c)?.liqR; return isN(o.intInc)&&p ? o.intInc*ann(c)/p : null; }, fmt:'p', u:'%', sub:1, inp:1, inpY:1, ak:'yield'},
+    {l:'Interest expense', f:val('intExp'), fmt:'m', u:'US$M', ind:1},
+    {l:'Rate on prior total debt (annualized)', f:(o,c)=>{ const p=prevBase(c)?.debt; return isN(o.intExp)&&p ? -o.intExp*ann(c)/p : null; }, fmt:'p', u:'%', sub:1, inp:1, inpY:1, ak:'rate'},
+    {l:'Other income (expense), net', f:val('othInc'), fmt:'m', u:'US$M', ind:1, inp:1, inpY:1, ak:'othInc', akT:'num', note:'Mostly revaluations of equity stakes (e.g. Didi, Grab, Aurora) and gains on divestitures; not forecast'},
+    {spacer:1},
+    {l:'Income before income taxes', f:val('ebt'), fmt:'m', u:'US$M', tot:1},
+    {l:'Pre-tax margin', f:ratio('ebt','sales'), fmt:'p', u:'%', sub:1},
+    {l:'(Provision for) benefit from income taxes', f:val('tax'), fmt:'m', u:'US$M', note:'Q4\'24 and Q3\'25 include large benefits from releases of the tax valuation allowance'},
+    {l:'Effective tax rate', f:o=>isN(o.tax)&&o.ebt>0?-o.tax/o.ebt:null, fmt:'p', u:'%', sub:1, inp:1, inpY:1, ak:'tax'},
+    {l:'Income (loss) from equity method investments', f:val('eqMeth'), fmt:'m', u:'US$M'},
+    {l:'Net income including non-controlling interests', f:val('niTot'), fmt:'m', u:'US$M', b:1},
+    {l:'Non-controlling interests', f:o=>neg(o.nci), fmt:'m', u:'US$M', ind:1, note:'Projected at the value of a year earlier'},
+    {l:'Net income attributable to Uber', f:val('ni'), fmt:'m', u:'US$M', tot:1, key:1},
+    YOY('ni'),
+    {l:'Net margin', f:ratio('ni','sales'), fmt:'p', u:'%', sub:1},
+    {l:'EPS – basic', f:val('epsB'), fmt:'ps', u:'US$'},
+    {l:'EPS – diluted', f:val('epsD'), fmt:'ps', u:'US$', b:1},
+    YOY('epsD'),
+    {l:'Diluted weighted avg. shares', f:val('shD'), fmt:'m', u:'M', note:'Pre-IPO share counts before Q2\'19'},
+    QOQ('shD', {inp:1, ak:'gSh'}),
+    YOY('shD', {inpY:1, ak:'gSh'}),
+    {l:'Basic weighted avg. shares', f:val('shB'), fmt:'m', u:'M'},
+
+    SEC('EBITDA'),
+    {l:'Income (loss) from operations', f:val('opInc'), fmt:'m', u:'US$M', b:1},
+    {l:'(+) Depreciation and amortization (cash flow statement)', f:val('cfDA'), fmt:'m', u:'US$M', ind:1},
+    PCT('% of revenue','cfDA','sales',{inp:1, inpY:1, ak:'da'}),
+    {l:'EBITDA', f:val('ebitda'), fmt:'m', u:'US$M', tot:1, key:1},
+    YOY('ebitda'),
+    {l:'EBITDA margin', f:ratio('ebitda','sales'), fmt:'p', u:'%', sub:1},
+    {l:'(+) Stock-based compensation', f:val('cfSBC'), fmt:'m', u:'US$M', ind:1},
+    PCT('% of revenue','cfSBC','sales',{inp:1, inpY:1, ak:'sbc'}),
+    {l:'EBITDA before stock-based compensation', f:val('ebitdaS'), fmt:'m', u:'US$M', tot:1, note:'Not the same as Uber\'s Adjusted EBITDA, which also excludes legal and regulatory reserves, restructuring and other items'},
+    YOY('ebitdaS'),
+    {l:'% of gross bookings', f:ratio('ebitdaS','totGB'), fmt:'p', u:'%', sub:1},
+
+    SEC('Assets','bs'),
+    {l:'Cash and cash equivalents (balancing item in projections, min. $5B)', f:val('cash'), fmt:'m', u:'US$M'},
+    {l:'Short-term investments', f:val('stInv'), fmt:'m', u:'US$M'},
+    {l:'Restricted cash and cash equivalents', f:val('rcCur'), fmt:'m', u:'US$M'},
+    {l:'Accounts receivable, net', f:val('ar'), fmt:'m', u:'US$M'},
+    {l:'Days of receivables (on revenue)', f:days('ar','sales'), fmt:'mm1', u:'days', sub:1},
+    {l:'Prepaid expenses and other current assets', f:val('othCA'), fmt:'m', u:'US$M'},
+    {l:'Total current assets', f:val('tca'), fmt:'m', u:'US$M', b:1},
+    {l:'Restricted cash and cash equivalents, non-current', f:val('rcNC'), fmt:'m', u:'US$M'},
+    {l:'Restricted investments', f:val('rInv'), fmt:'m', u:'US$M', note:'Mostly collateral for the insurance reserves'},
+    {l:'Investments', f:val('invest'), fmt:'m', u:'US$M', note:'Equity stakes and other investments, at fair value'},
+    {l:'Equity method investments', f:val('eqInv'), fmt:'m', u:'US$M'},
+    {l:'Property and equipment, net', f:val('ppe'), fmt:'m', u:'US$M'},
+    {l:'Operating lease right-of-use assets', f:val('rou'), fmt:'m', u:'US$M'},
+    {l:'Intangible assets, net', f:val('intang'), fmt:'m', u:'US$M'},
+    {l:'Goodwill', f:val('gw'), fmt:'m', u:'US$M'},
+    {l:'Deferred tax assets', f:val('dta'), fmt:'m', u:'US$M'},
+    {l:'Other non-current assets', f:val('othNCA'), fmt:'m', u:'US$M', note:'In projections it absorbs capex less D&A beyond the growth of PP&E'},
+    {l:'Total assets', f:val('totA'), fmt:'m', u:'US$M', tot:1, key:1},
+    YOY('totA'),
+    SEC('Liabilities','bs'),
+    {l:'Accounts payable', f:val('ap'), fmt:'m', u:'US$M'},
+    {l:'Short-term insurance reserves', f:val('insST'), fmt:'m', u:'US$M'},
+    {l:'Short-term debt', f:val('stDebt'), fmt:'m', u:'US$M'},
+    {l:'Accrued and other current liabilities (incl. current lease liabilities)', f:val('accr'), fmt:'m', u:'US$M'},
+    {l:'Total current liabilities', f:val('tcl'), fmt:'m', u:'US$M', b:1},
+    {l:'Long-term insurance reserves', f:val('insLT'), fmt:'m', u:'US$M'},
+    {l:'Long-term debt (covers any cash shortfall in projections)', f:val('ltDebt'), fmt:'m', u:'US$M'},
+    {l:'Operating lease liabilities, non-current', f:val('ltLease'), fmt:'m', u:'US$M'},
+    {l:'Other non-current liabilities', f:val('othLTL'), fmt:'m', u:'US$M'},
+    {l:'Total liabilities', f:val('totL'), fmt:'m', u:'US$M', tot:1},
+    YOY('totL'),
+    {l:'Redeemable non-controlling interests and preferred stock', f:val('mezz'), fmt:'m', u:'US$M', note:'Redeemable convertible preferred stock until the May 2019 IPO'},
+    SEC('Equity','bs'),
+    {l:'Common stock and additional paid-in capital', f:val('apic'), fmt:'m', u:'US$M', note:'Uber charges share repurchases against paid-in capital'},
+    {l:'Accumulated other comprehensive income (loss)', f:val('aoci'), fmt:'m', u:'US$M'},
+    {l:'Accumulated deficit', f:val('re'), fmt:'m', u:'US$M'},
+    {l:'Total Uber stockholders’ equity', f:val('eqU'), fmt:'m', u:'US$M', b:1},
+    {l:'Non-redeemable non-controlling interests', f:val('nciEq'), fmt:'m', u:'US$M'},
+    {l:'Total equity', f:val('eq'), fmt:'m', u:'US$M', tot:1},
+    YOY('eq'),
+    {l:'Total liabilities, redeemable interests and equity', f:val('totLE'), fmt:'m', u:'US$M', tot:1, key:1},
+    {l:'Check: assets − liabilities − redeemable − equity', f:val('bsCheck'), fmt:'m', u:'US$M', sub:1},
+    SEC('Ratios','bs'),
+    {l:'Cash and short-term investments', f:val('liq'), fmt:'m', u:'US$M', b:1},
+    {l:'Total debt', f:val('debt'), fmt:'m', u:'US$M'},
+    {l:'Net cash (debt), excluding leases', f:val('netCash'), fmt:'m', u:'US$M'},
+    {l:'Insurance reserves (short + long term)', f:val('ins'), fmt:'m', u:'US$M'},
+    PCT('% of revenue (annualized)','ins','sales',{f:(o,c)=>isN(o.ins)&&o.sales ? o.ins/(o.sales*ann(c)) : null}),
+    {l:'Return on average Uber equity (annualized)', f:(o,c)=>{ const e=avgOf('eqU',o,c); return isN(o.ni)&&e>0 ? o.ni*ann(c)/e : null; }, fmt:'p', u:'%'},
+    {l:'Equity to assets', f:ratio('eq','totA'), fmt:'p', u:'%'},
+
+    SEC('Operating activities','cf'),
+    {l:'Net income including non-controlling interests', f:val('cfNI'), fmt:'m', u:'US$M', b:1},
+    {l:'(+) Depreciation and amortization', f:val('cfDA'), fmt:'m', u:'US$M', ind:1},
+    {l:'(+) Stock-based compensation', f:val('cfSBC'), fmt:'m', u:'US$M', ind:1},
+    {l:'(±) Deferred income taxes', f:val('cfDefTax'), fmt:'m', u:'US$M', ind:1},
+    {l:'(±) Losses (gains) on debt and equity securities', f:val('cfSecG'), fmt:'m', u:'US$M', ind:1},
+    {l:'(±) Other non-cash items', f:val('cfOthNC'), fmt:'m', u:'US$M', ind:1, note:'Divestiture gains, impairments, FX and other; the remainder to net cash from operating activities'},
+    {l:'(±) Accounts receivable', f:val('cfAR'), fmt:'m', u:'US$M', ind:1},
+    {l:'(±) Prepaid expenses and other assets', f:val('cfPrep'), fmt:'m', u:'US$M', ind:1, note:'Includes collateral held by insurer and operating lease right-of-use assets'},
+    {l:'(±) Accounts payable', f:val('cfAP'), fmt:'m', u:'US$M', ind:1},
+    {l:'(±) Accrued insurance reserves', f:val('cfIns'), fmt:'m', u:'US$M', ind:1},
+    {l:'(±) Accrued expenses, other liabilities and lease liabilities', f:val('cfAccr'), fmt:'m', u:'US$M', ind:1},
+    {l:'Net cash from operating activities', f:val('CFO'), fmt:'m', u:'US$M', tot:1, key:1},
+    YOY('CFO'),
+    PCT('% of revenue','CFO','sales'),
+    {l:'Trailing twelve months', f:ttm('CFO'), fmt:'m', u:'US$M', sub:1},
+    SEC('Investing activities','cf'),
+    {l:'Purchases of property and equipment', f:val('cfCapex'), fmt:'m', u:'US$M', inp:1, inpY:1, ak:'capex', akT:'abs'},
+    {l:'Proceeds from sale of property and equipment', f:val('cfPPEproc'), fmt:'m', u:'US$M'},
+    {l:'Purchases of marketable securities', f:val('cfMktBuy'), fmt:'m', u:'US$M', note:'Includes the restricted investments that back the insurance reserves'},
+    {l:'Sales and maturities of marketable securities', f:val('cfMktSale'), fmt:'m', u:'US$M'},
+    {l:'Acquisitions, net of cash acquired', f:val('cfAcq'), fmt:'m', u:'US$M'},
+    {l:'Other investing activities', f:val('cfOthInv'), fmt:'m', u:'US$M', note:'Non-marketable equity securities, equity method investments, notes receivable, total return swaps and other'},
+    {l:'Net cash from investing activities', f:val('CFI'), fmt:'m', u:'US$M', tot:1, key:1},
+    SEC('Financing activities','cf'),
+    {l:'Proceeds from debt, net of issuance costs', f:val('cfDebtP'), fmt:'m', u:'US$M'},
+    {l:'Principal repayment of debt', f:val('cfDebtR'), fmt:'m', u:'US$M', note:'Includes Careem notes and revolving lines of credit'},
+    {l:'Principal payments on finance leases', f:val('cfFinL'), fmt:'m', u:'US$M'},
+    {l:'Repurchases of common stock', f:val('cfBuyback'), fmt:'m', u:'US$M', inp:1, inpY:1, ak:'buyback', akT:'abs'},
+    {l:'Other financing activities', f:val('cfOthFin'), fmt:'m', u:'US$M', note:'IPO proceeds (2019), preferred stock, subsidiary stock sales, employee stock purchases and other'},
+    {l:'Net cash from financing activities', f:val('CFF'), fmt:'m', u:'US$M', tot:1, key:1},
+    SEC('Change in cash','cf'),
+    {l:'Effect of exchange rate changes', f:val('cfFX'), fmt:'m', u:'US$M'},
+    {l:'Net change in cash, cash equivalents and restricted cash', f:val('cfNet'), fmt:'m', u:'US$M', b:1},
+    {l:'Reclassification from assets held for sale', f:val('cfReclass'), fmt:'m', u:'US$M'},
+    {l:'Cash and restricted cash at beginning of period', f:val('cfBeg'), fmt:'m', u:'US$M'},
+    {l:'Cash and restricted cash at end of period', f:val('cfEnd'), fmt:'m', u:'US$M', tot:1, key:1},
+    {l:'Check: beginning + net change − ending', f:val('cfCheck'), fmt:'m', u:'US$M', sub:1},
+    SEC('Free cash flow','cf'),
+    {l:'Net cash from operating activities', f:val('CFO'), fmt:'m', u:'US$M'},
+    {l:'(−) Purchases of property and equipment, net', f:val('netCapex'), fmt:'m', u:'US$M', ind:1},
+    {l:'Free cash flow', f:val('fcf'), fmt:'m', u:'US$M', tot:1, key:1},
+    YOY('fcf'),
+    PCT('FCF margin (% of revenue)','fcf','sales'),
+    PCT('% of gross bookings','fcf','totGB'),
+    {l:'Trailing twelve months', f:ttm('fcf'), fmt:'m', u:'US$M', sub:1},
+    {l:'(−) Repurchases of common stock', f:val('cfBuyback'), fmt:'m', u:'US$M', ind:1},
+    {l:'Buybacks as % of free cash flow', f:o=>isN(o.cfBuyback)&&o.fcf>0 ? -o.cfBuyback/o.fcf : null, fmt:'cs', u:'%', sub:1},
+    {l:'FCF conversion (% of net income)', f:o=>isN(o.fcf)&&o.ni>0?o.fcf/o.ni:null, fmt:'cs', u:'%'},
+  ];
+  // Outline structure: each row knows its section and (for sub-rows) its parent line
+  let secIdx=-1, parentIdx=-1, grpIdx=-1;
+  ROWS.forEach((r,i)=>{
+    if(r.sec){ secIdx=i; parentIdx=-1; grpIdx=-1; r.id='s'+i; r.stmt_=r.stmt; return; }
+    r.sec_=secIdx; r.id='r'+i; r.stmt_=ROWS[secIdx].stmt;
+    if(r.spacer){ grpIdx=-1; r.grp_=-1; return; }
+    if(r.subh || r.grpHead) grpIdx=i; else if(r.grpEnd) grpIdx=-1;
+    r.grp_ = r.subh || r.grpHead || (r.sub && parentIdx===grpIdx) ? -1 : grpIdx;
+    if(r.sub){ r.parent=parentIdx; if(parentIdx>=0) ROWS[parentIdx].hasSubs=true; } else parentIdx=i;
+  });
+
+  const DERIVED_COLS = QLAB.filter((l,i)=>i>=FIRST_SHOWN_Q && l[1]==='4' && +l.slice(3)<=23);
+  const SHEET = modelSheet({ROWS, BLOCKS, qpDefault, BQ, BY, isInput, stKey:'pvg-uber-outline',
+    ids:{seg:'ubStmtSeg', title:'ubStmtTitle', sub:'ubStmtSub', table:'ubModelTable', hide:'ubHideSubs'},
+    coName:'Uber Technologies, Inc. (UBER)', unitNote:'US$ in millions, except per-share data',
+    STMT:{is:['Income statement','US$M · gross bookings, trips and segments from the 10-Q / 10-K (Fiscal.ai)'], bs:['Balance sheet','US$M · period-end balances'], cf:['Cash flow statement','US$M · three-month flows']},
+    derivedCols:DERIVED_COLS, colNote:c=>c.v.note||'',
+    isDerived:(r,c)=>!!(r.der && r.der.includes(c.v.lab)),
+    cellAttr:(r,c)=>{ const kind=editKind(r,c); return kind ? ` data-ak="${r.ak}" data-kind="${kind}" data-j="${colIdx(c)}" data-t="${r.akT||'pct'}" tabindex="0"` : ''; }});
+
+  // ---- Editing (same rules as the Amazon model) ----
+  const editKind = (r,c) => !r.ak ? null : (r.inp && c.kind==='q' && c.v.proj) ? 'q' : (r.inpY && c.v.annualOnly) ? 'y' : (r.inpY && isFY(c)) ? 'fy' : null;
+  const colIdx = c => c.kind==='q' ? c.qi-NQ : isFY(c) ? 0 : c.yi-(Y.length-XLAB.length);
+  const FY_J = PLAB.map((l,j)=>l.slice(3,5)===FY_LAB.slice(4,6)?j:-1).filter(j=>j>=0);
+  const MULT = ['capex','buyback'];
+  const fyRow = k => ROWS.find(r=>r.ak===k && r.inpY);
+  const fyVal = k => { const r=fyRow(k), yi=Y.findIndex(o=>o.lab===FY_LAB), c={v:Y[yi], kind:'y', yi}, v=r.f(c.v,c); return isN(v) && r.akT==='abs' ? -v : v; };
+  const tol = k => MULT.includes(k)||k==='othInc' ? 0.01 : 1e-9;
+  function solveFY(k, target){
+    const s=SETS.q[k], base=FY_J.map(j=>s[j]), mult=MULT.includes(k) && base.some(v=>v);
+    const err = d => { FY_J.forEach((j,n)=>s[j] = mult ? base[n]*d : base[n]+((k==='othInc'||MULT.includes(k)) ? d/FY_J.length : d)); project(); const v=fyVal(k); return isN(v) ? v-target : null; };
+    let d0=mult?1:0, e0=err(d0);
+    if(!isN(e0)) return;
+    let d1 = mult ? (target+e0 ? d0*target/(target-e0) : 1) : d0-e0, e1=err(d1);
+    for(let n=0; n<12 && isN(e1) && Math.abs(e1)>tol(k) && e1!==e0; n++){
+      const d2=d1-e1*(d1-d0)/(e1-e0); d0=d1; e0=e1; d1=d2; e1=err(d1);
+    }
+  }
+  const shown = (kind,k,j,t) => { const v = kind==='fy' ? fyVal(k) : SETS[kind][k][j];
+    return t==='pct' ? +(v*100).toFixed(2) : kind==='fy' ? Math.round(v) : t==='abs' ? -v : v; };
+  const parse = (txt,t) => { const n=parseFloat(String(txt).replace(/[,%$\s()]/g,'')); if(!isN(n)) return null; const ng=/^\s*(-|\()/.test(txt);
+    const v=ng?-Math.abs(n):n; return t==='pct' ? v/100 : t==='abs' ? Math.abs(v) : v; };
+  function submit(changes){
+    changes.forEach(({kind,k,j,v})=>{ if(SETS[kind]?.[k] && isN(v)) SETS[kind][k][j]=v; });
+    const fy=changes.filter(c=>c.kind==='fy' && SETS.q[c.k] && isN(c.v)).sort((a,b)=>ROWS.indexOf(fyRow(a.k))-ROWS.indexOf(fyRow(b.k)));
+    for(let pass=0; pass<6 && fy.length; pass++){
+      project(); fy.forEach(({k,v})=>solveFY(k,v));
+      if(fy.every(({k,v})=>{ const x=fyVal(k); return !isN(x) || Math.abs(x-v) < (MULT.includes(k)||k==='othInc' ? 0.5 : 5e-6); })) break;
+    }
+    const sv={q:{},y:{}};
+    for(const kind of ['q','y']) for(const k in SETS[kind]) if(JSON.stringify(SETS[kind][k])!==JSON.stringify(DEFAULTS[kind][k]))
+      sv[kind][k]=Object.fromEntries(SETS[kind][k].map((v,j)=>[LABS[kind][j],v]).filter(([lab,v],j)=>v!==DEFAULTS[kind][k][j]));
+    try{ localStorage.setItem(ASM_KEY, JSON.stringify(sv)); }catch(e){}
+    project(); refreshBlocks(); SHEET.render();
+  }
+  function reset(){
+    for(const kind of ['q','y']) for(const k in SETS[kind]) SETS[kind][k].splice(0, SETS[kind][k].length, ...DEFAULTS[kind][k]);
+    try{ localStorage.removeItem(ASM_KEY); }catch(e){}
+    project(); refreshBlocks(); SHEET.render();
+  }
+  const edited = () => { try{ const sv=JSON.parse(localStorage.getItem(ASM_KEY)||'{}'); return Object.keys(sv.q||{}).length+Object.keys(sv.y||{}).length>0; }catch(e){ return false; } };
+  return {...SHEET, Q, Y, BQ, BY, submit, reset, shown, parse, edited};
+})();
+
+// ---- Uber model: outline controls and editable assumptions (same behaviour as the Amazon sheet) ----
+let uberRendered=false;
+function renderUberModel(){ if(uberRendered) return; UBER_MODEL.render(); uberRendered=true; ubEditUI(); }
+document.getElementById('ubHideSubs').addEventListener('change',e=>{ UBER_MODEL.setHideSubs(e.target.checked); ubEditUI(); });
+document.getElementById('ubOlExpand').addEventListener('click',()=>{ UBER_MODEL.expandAll(); ubEditUI(); });
+document.getElementById('ubOlCollapse').addEventListener('click',()=>{ UBER_MODEL.collapseAll(); ubEditUI(); });
+document.getElementById('ubStmtSeg').addEventListener('click',e=>{ const b=e.target.closest('button'); if(b){ UBER_MODEL.setStmt(b.dataset.stmt); ubEditUI(); } });
+const ubPending = new Map();
+const ubKey = td => `${td.dataset.kind}|${td.dataset.ak}|${td.dataset.j}`;
+const ubShown = td => String(UBER_MODEL.shown(td.dataset.kind, td.dataset.ak, +td.dataset.j, td.dataset.t));
+function ubEditUI(){
+  const n=ubPending.size;
+  document.getElementById('ubSubmit').disabled=!n;
+  document.getElementById('ubDiscard').disabled=!n;
+  document.getElementById('ubEditMsg').textContent = n ? `${n} change${n>1?'s':''} pending — press Submit to recalculate` : UBER_MODEL.edited() ? 'Using your saved assumptions' : 'Using default assumptions';
+  document.querySelectorAll('#ubModelTable td.edit').forEach(td=>{ const p=ubPending.get(ubKey(td)); if(p && !td.querySelector('input')){ td.classList.add('dirty'); td.textContent=p.txt; } });
+}
+function ubOpenCell(td){
+  if(td.querySelector('input')) return;
+  const t=td.dataset.t, prev=td.innerHTML, p=ubPending.get(ubKey(td));
+  td.innerHTML='<input type="text" inputmode="decimal" aria-label="Edit assumption">';
+  const inp=td.firstChild; inp.value = p ? p.txt.replace(/%$/,'') : ubShown(td); inp.focus(); inp.select();
+  let done=false;
+  const close = commit => {
+    if(done) return; done=true;
+    const txt=inp.value.trim(), v=UBER_MODEL.parse(txt,t);
+    if(commit && v!==null && txt!==ubShown(td)){
+      ubPending.set(ubKey(td), {kind:td.dataset.kind, k:td.dataset.ak, j:+td.dataset.j, v, txt:t==='pct'?txt.replace(/%$/,'')+'%':txt});
+      td.classList.add('dirty'); td.textContent=ubPending.get(ubKey(td)).txt;
+    } else if(commit && v!==null){ ubPending.delete(ubKey(td)); td.classList.remove('dirty'); td.innerHTML=prev; }
+    else { td.innerHTML=prev; }
+    ubEditUI();
+  };
+  inp.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){ e.preventDefault(); close(true); }
+    else if(e.key==='Escape'){ e.preventDefault(); close(false); }
+    else if(e.key==='Tab'){ e.preventDefault(); close(true);
+      const cells=[...document.querySelectorAll('#ubModelTable td.edit')], i=cells.indexOf(td), nx=cells[i+(e.shiftKey?-1:1)]; if(nx) ubOpenCell(nx); }
+  });
+  inp.addEventListener('blur',()=>close(true));
+}
+document.getElementById('ubModelTable').addEventListener('click',e=>{
+  const td=e.target.closest('td.edit'); if(td) return ubOpenCell(td);
+  const b=e.target.closest('button.ol, button.chev');
+  if(b){ UBER_MODEL.toggle(b.dataset.ol, b.dataset.id); return ubEditUI(); }
+  const sec=e.target.closest('tr.sec'); if(sec){ UBER_MODEL.toggle('sec', sec.dataset.sec); ubEditUI(); }
+});
+document.getElementById('ubModelTable').addEventListener('keydown',e=>{ const td=e.target.closest('td.edit'); if(td && e.key==='Enter' && !td.querySelector('input')){ e.preventDefault(); ubOpenCell(td); } });
+document.getElementById('ubSubmit').addEventListener('click',()=>{ const ch=[...ubPending.values()]; ubPending.clear(); UBER_MODEL.submit(ch); ubEditUI(); });
+document.getElementById('ubDiscard').addEventListener('click',()=>{ ubPending.clear(); UBER_MODEL.render(); ubEditUI(); });
+document.getElementById('ubReset').addEventListener('click',()=>{ if(!confirm('Reset every assumption to its default value?')) return; ubPending.clear(); UBER_MODEL.reset(); ubEditUI(); });
+
+/* =====================================================================
    BOOT
    ===================================================================== */
 const RENDER={mem,prod,seg,cp,orig};
@@ -4355,6 +5138,10 @@ const COMPANIES = [
     short:'Amazon', tint:'255,153,0',
     logo:{src:'Amzn/logo-mark.svg', text:'Amazon', bg:'#FF9900'},
     quote:()=>MKT_AMZN },
+  { ticker:'UBER', name:'Uber Technologies, Inc.', exchange:'NYSE', sector:'Mobility · Delivery · Freight',
+    short:'Uber', tint:'84,84,84',
+    logo:{src:null, text:'Uber', bg:'#000000'},
+    quote:()=>MKT_UBER },
 ];
 const logoHTML = (c,size) => c.logo.src
   ? `<span class="logo-c ${size}"><img src="${c.logo.src}" alt="${c.name}"></span>`
@@ -4407,6 +5194,7 @@ function showMain(m){
   document.querySelectorAll('.co-pane .mview').forEach(x=>x.classList.toggle('active',x.dataset.main===m));
   try{ localStorage.setItem('pvg-main',m); }catch(e){}
   if(curCo==='AMZN'){ if(m==='valuation' && amvtab==='model') renderAmznModel(); if(m==='valuation' && amvtab==='ave') AM_AVE.render(); if(m==='valuation' && amvtab==='dcf') AM_DCF.render(); if(m==='valuation' && amvtab==='guidance') AM_GR.render(); if(m==='earnings') AM_EARN.render(); if(m==='tesis') AM_TH.render(); return; }
+  if(curCo==='UBER'){ if(m==='valuation') renderUberModel(); return; }
   if(m==='earnings') EARN.render();
   if(m==='valuation' && vtab==='model') renderModel();
   if(m==='valuation' && vtab==='ave') AVE.render();
