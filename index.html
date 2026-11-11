@@ -313,6 +313,18 @@ html.mobile .tp-wrap,.tp-wrap.narrow{grid-template-columns:minmax(0,1fr)}
 .tl-g{margin:10px 0 2px;font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--accent)}
 .ec-tl{padding-left:0 !important}
 .ec-tgt td:first-child{font-weight:600}
+.th-pillars{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+.th-p{margin:0 0 8px;font-size:13px;line-height:1.55;color:var(--text-primary)}
+.th-charts{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:16px}
+.chart.sm{height:200px}
+.th-themes{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:6px 22px}
+.th-theme h4{margin:10px 0 4px}
+.th-theme p{margin:0 0 6px;font-size:13px;line-height:1.5}
+.th-theme q{display:block;font-style:italic;font-size:12.5px;color:var(--text-secondary);margin:0 0 6px;line-height:1.45}
+.th-calls{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+.th-calls .chip{font-size:10.5px;padding:1px 7px}
+.th-deb td{vertical-align:top;text-align:left!important;white-space:normal;font-size:12.5px;line-height:1.45;min-width:220px}
+html.mobile .th-pillars,html.mobile .th-charts,html.mobile .th-themes{grid-template-columns:minmax(0,1fr)}
 .th-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:16px}
 @media (max-width:1100px){.th-grid{grid-template-columns:minmax(0,1fr)}}
 html.mobile .th-grid{grid-template-columns:minmax(0,1fr)}
@@ -995,14 +1007,23 @@ html.mobile .xl-wrap{max-height:calc(100vh - 190px)}
 
 <!-- Fiscal.ai data for the generic company shells (written by build_fx.py) -->
 <script src="Uber/fiscal.js"></script>
+<script src="Uber/content.js"></script>
 <script src="Nvda/fiscal.js"></script>
+<script src="Nvda/content.js"></script>
 <script src="Spot/fiscal.js"></script>
+<script src="Spot/content.js"></script>
 <script src="Se/fiscal.js"></script>
+<script src="Se/content.js"></script>
 <script src="Tbbb/fiscal.js"></script>
+<script src="Tbbb/content.js"></script>
 <script src="Googl/fiscal.js"></script>
+<script src="Googl/content.js"></script>
 <script src="Tsm/fiscal.js"></script>
+<script src="Tsm/content.js"></script>
 <script src="Meta/fiscal.js"></script>
+<script src="Meta/content.js"></script>
 <script src="Nflx/fiscal.js"></script>
+<script src="Nflx/content.js"></script>
 <script src="Amx/fiscal.js"></script>
 <script src="Bimbo/fiscal.js"></script>
 <script src="Walmex/fiscal.js"></script>
@@ -3694,14 +3715,14 @@ function grView({data:GR_DATA, metrics:MET, modelYs, modelOf, key, id, yearDef, 
       const labels=[...st.map(z=>mon(z.d)), ...(e?[e.lab]:[])];
       const span = Math.max(...st.map(z=>Math.abs(mid(z))), e?Math.abs(e.v):0) || 1, thin = span*0.004;
       const range = st.map(z=>{ const hi=isN(z.hi)?z.hi:z.lo; return hi-z.lo<thin ? [z.lo-thin, hi+thin] : [z.lo, hi]; });
-      const tipF = m.fmt==='ps' ? (v=>isN(v)?'$'+(+v).toFixed(2):'–') : m.fmt==='k' ? (v=>isN(v)?nf0.format(v)+'k':'–') : fmtTipM;
+      const tipF = m.fmt==='ps' ? (v=>isN(v)?'$'+(+v).toFixed(2):'–') : m.fmt==='k' ? (v=>isN(v)?nf0.format(v)+'k':'–') : m.fmt==='p' ? (v=>isN(v)?(v*100).toFixed(1)+'%':'–') : m.fmt==='n2' ? (v=>isN(v)?(+v).toFixed(2):'–') : (m.fmt==='mm1'||m.fmt==='n0') ? (v=>isN(v)?nf0.format(v):'–') : fmtTipM;
       mk(id+'-c-'+m.k, {type:'bar', data:{labels, datasets:[
         {type:'line', label:'Guidance midpoint', data:[...st.map(mid), null], borderColor:c.s2, backgroundColor:c.s2, pointRadius:4, borderWidth:2, tension:0, tip:tipF, order:0},
         {label:'Guidance range', data:[...range, null], backgroundColor:alpha('#2E75B6',0.22), borderColor:alpha('#2E75B6',0.5), borderWidth:1, borderRadius:3, maxBarThickness:46, order:2, grouped:false,
           tip:v=>Array.isArray(v)?`${tipF(v[0])} – ${tipF(v[1])}`:'–'},
         {label:e?e.lab:'Actual', data:[...st.map(()=>null), e?e.v:null], backgroundColor:e&&e.model?alpha(c.total,0.45):(e&&e.v>=mid(st[0])?c.pos:c.neg), borderRadius:3, maxBarThickness:46, order:1, grouped:false, tip:tipF},
-      ]}, options:{...baseOpts({yTick:v=>m.fmt==='ps'?'$'+v.toFixed(2):nf0.format(v)}), animation:false,
-        scales:{...baseOpts().scales, y:{...baseOpts().scales.y, beginAtZero:false, ticks:{...baseOpts().scales.y.ticks, callback:v=>m.fmt==='ps'?'$'+v.toFixed(2):nf0.format(v)}}}}});
+      ]}, options:{...baseOpts({yTick:v=>m.fmt==='ps'?'$'+v.toFixed(2):m.fmt==='p'?(v*100).toFixed(1)+'%':nf0.format(v)}), animation:false,
+        scales:{...baseOpts().scales, y:{...baseOpts().scales.y, beginAtZero:false, ticks:{...baseOpts().scales.y.ticks, callback:v=>m.fmt==='ps'?'$'+v.toFixed(2):m.fmt==='p'?(v*100).toFixed(1)+'%':m.fmt==='n2'?v.toFixed(2):nf0.format(v)}}}}});
       const rows = st.map((z,i)=>`<tr><td>${mon(z.d)}<div class="gr-src">${z.src?`<a href="${z.src}" target="_blank" rel="noopener">${i?'update':'first guide'} ↗</a>`:''}</div></td>
         <td>${z.floor?'≥ ':''}${fm(z.lo)}</td><td>${isN(z.hi)?fm(z.hi):NA}</td><td>${fm(mid(z))}</td><td>${i?pct(chg(mid(z),mid(st[i-1]))):NA}</td><td>${i?pct(chg(mid(z),mid(st[0]))):NA}</td><td class="gr-note">${z.n||''}</td></tr>`).join('');
       const endRow = e ? `<tr class="dif"><td>${e.model?'Model estimate':'Actual'}${x.actSrc?`<div class="gr-src"><a href="${x.actSrc}" target="_blank" rel="noopener">release ↗</a></div>`:''}</td><td colspan="2"></td><td>${fm(e.v)}</td><td>${pct(chg(e.v,mid(st[st.length-1])))}</td><td>${pct(chg(e.v,mid(st[0])))}</td>
@@ -5351,9 +5372,26 @@ const UB_DCF = (() => {
 // Uber: Actual vs Estimates and Guidance Revisions from Fiscal.ai (Uber/fiscal.js)
 // built on first use: fxAveGr and its constants are defined further down
 let UB_AG_ = undefined;
+const ubActOf = (k,y) => ({revenue:y.sales, gross_bookings:y.totGB, ebitda_adjusted:y.adjE, net_income:y.ni, eps_gaap:y.epsD, ebit:y.opInc,
+  free_cash_flow:y.fcf, capex:isN(y.netCapex)?Math.abs(y.netCapex):null})[k] ?? null;
 const UB_AG = () => UB_AG_ !== undefined ? UB_AG_ : (UB_AG_ = window.FISCAL?.UBER?.ave ? fxAveGr({A:window.FISCAL.UBER.ave, p:'ub', short:'Uber', cur:'USD',
-  modelYs:()=>UBER_MODEL.Y.concat(UBER_MODEL.Q), modelOf:(k,y)=>({revenue:y.sales, ebitda_adjusted:y.adjE, net_income:y.ni, eps_gaap:y.epsD})[k] ?? null,
+  modelYs:()=>UBER_MODEL.Y.concat(UBER_MODEL.Q), modelOf:ubActOf, guide:window.CONTENT?.UBER?.guidance, actOf:ubActOf,
+  periodObj:per=>UBER_MODEL.Q.concat(UBER_MODEL.Y).find(o=>o.lab===per || o.lab===per+'E'),
   guideNote:'Uber guides gross bookings, Adjusted EBITDA and (from 2026) non-GAAP EPS one quarter ahead. ', ebitda:true}) : null);
+// Uber Earnings and Thesis from Uber/content.js (built on first use, after the content views are defined)
+let UB_CT_ = undefined;
+const UB_CT = () => {
+  if(UB_CT_ !== undefined) return UB_CT_;
+  const CT = window.CONTENT?.UBER; UB_CT_ = {earn:null, th:null}; if(!CT) return UB_CT_;
+  if(CT.earnings){ const el=document.getElementById('ub-earnings'); el.outerHTML = earnHTML('ub-e-','ub-earnings');
+    UB_CT_.earn = earnView({data:CT.earnings, topics:CT.topics||['Guidance & outlook'], key:'pvg-uber-earn', root:'ub-earnings', px:'ub-e-', co:'Uber'}); }
+  if(CT.thesis){ const el=document.getElementById('ub-tesis'); el.outerHTML = thesisHTML('ub').replace('class="mview active"', `id="ub-tesis" class="mview${el.classList.contains('active')?' active':''}"`);
+    const U = {totGB:['Gross bookings','m'], mobGB:['Mobility gross bookings','m'], delGB:['Delivery gross bookings','m'], frGB:['Freight gross bookings','m'], mobRev:['Mobility revenue','m'], delRev:['Delivery revenue','m'], frRev:['Freight revenue','m'],
+      mobOI:['Mobility operating income','m'], delOI:['Delivery operating income','m'], frOI:['Freight operating income','m'], adjE:['Adjusted EBITDA','m'], mobAE:['Mobility Adjusted EBITDA','m'], delAE:['Delivery Adjusted EBITDA','m'], trips:['Trips','n'], mapc:['Monthly active platform consumers','n']};
+    UB_CT_.th = thesisView({T:CT.thesis, p:'ub', short:'Uber', src:"Source: Uber's earnings calls, releases and filings, read for this dashboard (each point names its source); charts from the Uber Model (Fiscal.ai data).",
+      series:k=>{ if(!U[k]) return null; const qs=UBER_MODEL.Q.filter(o=>!o.proj).slice(-12); return {name:U[k][0], labels:qs.map(o=>o.lab), values:qs.map(o=>o[k]), fmt:'m', unit:U[k][1]==='m'?'US$M':'M'}; }}); }
+  return UB_CT_;
+};
 let ubvtab='model';
 document.querySelectorAll('.ubvtab').forEach(t=>t.addEventListener('click',()=>{
   ubvtab=t.dataset.ubvtab;
@@ -5793,13 +5831,26 @@ const GR_MET = {revenue:['Revenue','m'], gross_profit:['Gross profit','m'], ebit
   eps_gaap:['Diluted EPS (GAAP)','ps'], eps_adjusted:['Adjusted EPS','ps'], net_income:['Net income','m'], net_income_adjusted:['Adjusted net income','m'],
   ebitda_adjusted:['Adjusted EBITDA','m'], free_cash_flow:['Free cash flow','m'], capex:['Capital expenditures','m']};
 const perSort = l => l.startsWith('FY') ? +l.slice(2)+0.45 : 2000+(+l.slice(3,5))+(+l[1])/10;
-function fxAveGr({A, p, short, cur, modelYs, modelOf, guideNote, ebitda}){
+function fxAveGr({A, p, short, cur, modelYs, modelOf, guideNote, ebitda, guide, periodObj, actOf}){
+  // researched guides (content.js): every quarterly guide is the benchmark for that quarter; full years use the first and last guide
+  const GH = guide ? guideData(guide, {periodObj, actOf}) : null;
+  if(GH){
+    const AV = {rev:['revenue'], gb:['gross_bookings'], ebit:['ebit'], eps:['eps_gaap','eps_adjusted'], ebitda:['ebitda_adjusted']};
+    for(const per in GH){ const side = per.startsWith('FY') ? 'y' : 'q';
+      for(const m in AV){ const k = AV[m].find(k=>GH[per][k]); if(!k) continue;
+        const x = GH[per][k], f = x.steps[0], l = x.steps[x.steps.length-1];
+        const d = ((A[side][per] ||= {})[m] ||= {});
+        d.gLow = f.lo; d.gHigh = isN(f.hi) ? f.hi : f.lo;
+        if(side==='y'){ d.lLow = l.lo; d.lHigh = isN(l.hi) ? l.hi : l.lo; }
+        if(isN(x.act)) d.act = x.act; } }
+  }
   const U = cur==='USD' ? 'US$M' : `${cur} M · consensus in US$M`, UP = cur==='USD' ? 'US$' : `${cur} · consensus in US$`, PSF = cur==='USD' ? 'ps' : 'pn';
   const ave = aveView({data:{q:A.q, y:A.y, sources:[]}, key:'pvg-fx-'+p+'-ave', id:p+'Ave', def:{bench:'c'},
-    metrics:[{k:'rev', l:'Revenue', u:U, fmt:'m'}, {k:'ebit', l:'Operating income (EBIT)', u:U, fmt:'m'}, {k:'eps', l:'EPS', u:UP, fmt:PSF}, ...(ebitda?[{k:'ebitda', l:'Adjusted EBITDA', u:U, fmt:'m'}]:[])],   // generic: Zacks and Fiscal.ai define EBITDA differently
+    metrics:[{k:'rev', l:'Revenue', u:U, fmt:'m'}, {k:'ebit', l:'Operating income (EBIT)', u:U, fmt:'m'}, {k:'eps', l:'EPS', u:UP, fmt:PSF}, ...(ebitda?[{k:'gb', l:'Gross bookings', u:U, fmt:'m'}, {k:'ebitda', l:'Adjusted EBITDA', u:U, fmt:'m'}]:[])],   // generic: Zacks and Fiscal.ai define EBITDA differently
     emptyYG:`Fiscal.ai holds no full-year guide for ${short} for these years that has already been reported; see the Guidance Revisions tab for the current guides.`,
     srcText: st => st.bench==='g'
-      ? `Guidance: the guide Fiscal.ai captured before each report (company releases and calls). Fiscal.ai keeps the pre-report guide only for the most recent reported period, so earlier quarters are not shown; the guidance history will be added from the releases. A single guided figure counts as in line within ±1%. ${guideNote||''}Actuals: Fiscal.ai.`
+      ? (GH ? `Guidance: ${short}'s releases and calls (see Guidance Revisions for every guide with its date and source). Each quarter is compared with the guide given the prior quarter; full years with the first or the last guide. The range midpoint is the benchmark and inside the range counts as in line; single-number guides count as in line within ±1%. ${guideNote||''}Actuals: reported figures (Model tab).`
+        : `Guidance: the guide Fiscal.ai captured before each report (company releases and calls). Fiscal.ai keeps the pre-report guide only for the most recent reported period, so earlier quarters are not shown. A single guided figure counts as in line within ±1%. ${guideNote||''}Actuals: Fiscal.ai.`)
       : `Consensus: last Zacks consensus before each report (Fiscal.ai consensus history, from 2022), compared with Fiscal.ai's adjusted actuals${cur!=='USD'?' converted to US$ (Zacks reports in US$)':''}; Zacks EPS is ${A.epsBasis||'adjusted'}. EPS consensus made before a stock split is divided by the split ratio. Within ±1% counts as in line (EPS: same cent). ${ZACKS_CREDIT}`});
   // Guidance Revisions: one step per guide Fiscal.ai holds (it keeps the latest guide for each period, not each revision)
   const GR = {};
@@ -5807,32 +5858,106 @@ function fxAveGr({A, p, short, cur, modelYs, modelOf, guideNote, ebitda}){
     const x = ((GR[g.l] ||= {})[g.id] ||= {steps:[], act:null});
     x.steps.push({d:(g.iss||g.asOf||'').slice(0,10), lo:pt, hi:pt, src:g.url, n:`${FX_SRC[g.src==='guidance'?'g':g.src==='guidance_adjusted'?'ga':'gc']}${g.src==='guidance_adjusted'&&!isN(g.filed)?' (Fiscal.ai adjusted figure; the filed guide is not stored)':''}${g.ex?`: “${g.ex}”`:''}.`});
     if(isN(g.act)) x.act = g.act; });
-  const keys = Object.keys(GR).sort((a,b)=>perSort(a)-perSort(b));
-  const GRS = Object.fromEntries(keys.map(k=>[k, GR[k]]));
+  const GRS = GH && Object.keys(GH).length ? GH : Object.fromEntries(Object.keys(GR).sort((a,b)=>perSort(a)-perSort(b)).map(k=>[k, GR[k]]));
+  const keys = Object.keys(GRS);
+  const LBL = {...Object.fromEntries(Object.entries(GR_MET).map(([k,[l,f]])=>[k,[l,f==='ps'?'ps':'m',null]])),
+    gross_margin:['Gross margin','pct','%'], operating_margin:['Operating margin','pct','%'], tax_rate:['Tax rate','pct','%'], opex:['Total expenses','m',null],
+    ...(GH ? (guide.labels||{}) : {})};
   let gr = null;
   if(keys.length){
-    const mets = Object.keys(GR_MET).map(k=>({k, l:GR_MET[k][0], fmt:GR_MET[k][1]==='ps'?PSF:'m', u:GR_MET[k][1]==='ps'?(cur==='USD'?'US$':cur):(cur==='USD'?'US$M':cur+' M')}));
-    gr = grView({data:GRS, key:'pvg-fx-'+p+'-gr', id:p+'Gr', yearDef:keys.find(k=>!Object.values(GRS[k]).some(x=>isN(x.act))) || keys[keys.length-1],
+    const used = [...new Set(keys.flatMap(k=>Object.keys(GRS[k])))];
+    const mets = used.map(k=>{ const [l,f,u] = LBL[k] || [k.replace(/_/g,' ').replace(/^./,c=>c.toUpperCase()),'m',null]; const fmt = f==='ps' ? PSF : GUIDE_FMT(f);
+      return {k, l, fmt, u: u || (f==='ps' ? (cur==='USD'?'US$':cur) : f==='pct' ? '%' : (cur==='USD'?'US$M':cur+' M'))}; });
+    gr = grView({data:GRS, key:'pvg-fx-'+p+'-gr', id:p+'Gr', yearDef:keys.find(k=>k.startsWith('FY') && !Object.values(GRS[k]).some(x=>isN(x.act))) || keys.find(k=>!Object.values(GRS[k]).some(x=>isN(x.act))) || keys[keys.length-1],
       modelYs, modelOf, metrics:mets,
-      srcText:`Source: Fiscal.ai estimates (company guidance captured from ${short}'s releases and calls; each step shows Fiscal.ai's source type and, when stored, the excerpt). Fiscal.ai keeps the latest guide for each period, so this tab starts with one step per period; earlier revisions will be added from the releases. Margin guides (e.g. gross or operating margin) are shown as the amounts Fiscal.ai derives from them. For periods not yet reported, the bar shows the Model tab estimate (Fiscal.ai by default).`});
+      srcText: GH && Object.keys(GH).length
+        ? `Source: ${short}'s earnings releases, shareholder letters and calls (each step links to or names its source), read for this dashboard. Every revision is its own step with the date it was given; single-number guides show the same low and high; "≥" marks "at least" guides; margin guides stay as margins. Actuals for reported periods come from the Model tab; for periods not yet reported, the bar shows the Model tab estimate (Fiscal.ai by default).`
+        : `Source: Fiscal.ai estimates (company guidance captured from ${short}'s releases and calls; each step shows Fiscal.ai's source type and, when stored, the excerpt). Fiscal.ai keeps the latest guide for each period, so this tab starts with one step per period. Margin guides (e.g. gross or operating margin) are shown as the amounts Fiscal.ai derives from them. For periods not yet reported, the bar shows the Model tab estimate (Fiscal.ai by default).`});
   } else {
     document.getElementById(p+'GrBody').innerHTML = `<div class="card"><div class="ave-empty">Fiscal.ai holds no company guidance for ${short}: ${short} gives little or no numeric guidance, or Fiscal.ai has not captured it. Guides will be added from the releases.</div></div>`;
     document.getElementById(p+'GrSrc').textContent = 'Source: Fiscal.ai estimates.';
   }
   return {ave, gr};
 }
+// ---- Company content from <Folder>/content.js (written from the earnings calls, releases and filings):
+// earnings summaries by call and topic, the thesis, and the history of every guide with its date ----
+const earnHTML = (px, rootId) => `<div class="mview" id="${rootId}" data-main="earnings">
+      <nav class="subtabs" role="tablist"><button class="tab etab active" data-etab="prev">Previous</button><button class="tab etab" data-etab="next">Next</button></nav>
+      <section class="view active" id="${px}ev-prev"><div class="ave-bar"><div class="stmt-seg" id="${px}ecMode"><button data-v="call" class="on">By earnings call</button><button data-v="topic">By topic</button></div><div class="stmt-seg ec-pick" id="${px}ecPick"></div></div><div id="${px}ecBody"></div></section>
+      <section class="view" id="${px}ev-next"><div id="${px}enBody"></div></section>
+    </div>`;
+const thesisHTML = p => `<div class="mview active" data-main="tesis"><nav class="subtabs" role="tablist" id="${p}ThNav"></nav><section class="view active" id="${p}ThBody"></section></div>`;
+// series(key) → {name, labels, values, fmt, unit} for a segment / KPI chart, or null
+function thesisView({T, p, short, series, src}){
+  const esc = t => String(t??'').replace(/&/g,'&amp;').replace(/</g,'&lt;');
+  const segs = T.segments||[];
+  const tabs = [{v:'overview', l:'Overview'}, ...segs.map((s,i)=>({v:'s'+i, l:s.name})), ...((T.risks||[]).length||(T.debates||[]).length?[{v:'risks', l:'Risks & debates'}]:[])];
+  let cur = 'overview'; try{ const v=localStorage.getItem('pvg-th-'+p); if(tabs.some(t=>t.v===v)) cur=v; }catch(e){}
+  const nav = document.getElementById(p+'ThNav'), body = document.getElementById(p+'ThBody');
+  nav.addEventListener('click', e=>{ const b=e.target.closest('button'); if(!b) return; cur=b.dataset.v; try{ localStorage.setItem('pvg-th-'+p,cur); }catch(_){} render(); });
+  const srcTag = s => s ? ` <span class="card-sub">(${esc(s)})</span>` : '';
+  function chartCards(keys, id){
+    const ss = (keys||[]).map(series).filter(s=>s && s.values.some(isN));
+    return {html: ss.length ? `<div class="th-charts">${ss.map((s,i)=>`<div class="card"><div class="card-h"><div><span class="card-t">${esc(s.name)}</span><span class="card-sub">${esc(s.unit||'')} · quarterly</span></div></div><div class="card-b"><div class="chart sm"><canvas id="${id}-${i}"></canvas></div></div></div>`).join('')}</div>` : '', ss};
+  }
+  function draw(ss, id){
+    const c=C();
+    ss.forEach((s,i)=>{ const tip = s.fmt==='p' ? (v=>isN(v)?v.toFixed(1)+'%':'–') : (v=>isN(v)?nf0.format(v):'–');
+      mk(`${id}-${i}`, {type:'bar', data:{labels:s.labels, datasets:[{label:s.name, data:s.values, backgroundColor:s.values.map(v=>isN(v)&&v<0?c.neg:c.s2), borderRadius:3, maxBarThickness:26, tip}]},
+        options:{...baseOpts({yTick:v=>s.fmt==='p'?v+'%':nf0.format(v)}), animation:false, plugins:{...baseOpts().plugins, legend:{display:false}}}}); });
+  }
+  function render(){
+    nav.innerHTML = tabs.map(t=>`<button class="tab ${t.v===cur?'active':''}" data-v="${t.v}">${esc(t.l)}</button>`).join('');
+    if(cur==='overview'){
+      body.innerHTML = `<div class="card"><div class="ec-head"><h3>${esc(short)} thesis</h3></div><div class="ec-hl">${esc(T.summary)}</div></div>
+        <div class="th-pillars">${(T.pillars||[]).map(pl=>`<div class="card"><div class="card-h"><span class="card-t">${esc(pl.title)}</span></div><div class="ec-sec"><p class="th-p">${esc(pl.text)}</p>${(pl.evidence||[]).length?`<ul>${pl.evidence.map(e=>`<li>${esc(e.text)}${srcTag(e.src)}</li>`).join('')}</ul>`:''}</div></div>`).join('')}</div>
+        <div class="src">${esc(src)}</div>`;
+    } else if(cur==='risks'){
+      body.innerHTML = `${(T.debates||[]).length?`<div class="card"><div class="card-h"><span class="card-t">Debates</span><span class="card-sub">bull vs bear</span></div><div class="tbl-wrap"><table class="metrics-table ave-t th-deb"><thead><tr><th style="text-align:left">Question</th><th style="text-align:left">Bull</th><th style="text-align:left">Bear</th></tr></thead><tbody>${T.debates.map(d=>`<tr><td>${esc(d.q)}</td><td>${esc(d.bull)}</td><td>${esc(d.bear)}</td></tr>`).join('')}</tbody></table></div></div>`:''}
+        ${(T.risks||[]).length?`<div class="card"><div class="card-h"><span class="card-t">Risks</span></div><div class="ec-sec"><ul>${T.risks.map(r=>`<li>${esc(r.text)}${srcTag(r.src)}</li>`).join('')}</ul></div></div>`:''}
+        <div class="src">${esc(src)}</div>`;
+    } else {
+      const s = segs[+cur.slice(1)], id = p+'th-'+cur, ch = chartCards(s.segIds||s.modelKeys, id);
+      body.innerHTML = `<div class="card"><div class="ec-head"><h3>${esc(s.name)}</h3></div><div class="ec-hl">${esc(s.text)}</div></div>
+        ${ch.html}
+        ${(s.themes||[]).length?`<div class="card"><div class="card-h"><span class="card-t">What management keeps saying</span><span class="card-sub">themes across calls</span></div><div class="ec-sec th-themes">${s.themes.map(t=>`<div class="th-theme"><h4>${esc(t.theme)}</h4><p>${esc(t.text)}</p>${t.quote?`<q>${esc(t.quote)}</q>`:''}${(t.calls||[]).length?`<div class="th-calls">${t.calls.map(q=>`<span class="chip">${esc(q)}</span>`).join('')}</div>`:''}</div>`).join('')}</div></div>`:''}
+        <div class="src">${esc(src)}</div>`;
+      draw(ch.ss, id);
+    }
+  }
+  return {render};
+}
+// guidance history from content.js → grView data, with the actual taken from the Model for reported periods
+F.n0 = v => !isN(v) ? NA : nf0.format(v);
+const GUIDE_FMT = f => f==='ps' ? 'ps' : f==='pct' ? 'p' : f==='n' ? 'n0' : f==='n2' ? 'n2' : 'm';
+function guideData(G, {periodObj, actOf}){
+  const out = {};
+  for(const per of Object.keys(G.periods||{}).sort((a,b)=>perSort(a)-perSort(b))){
+    const P = G.periods[per], o = periodObj(per);
+    for(const k in P){ const x = P[k]; if(!x || !(x.steps||[]).length) continue;
+      const steps = x.steps.filter(s=>isN(s.lo)).map(s=>({...s, src: /^https?:/.test(s.src||'') ? s.src : null, n: [s.n, !/^https?:/.test(s.src||'') && s.src ? `Source: ${s.src}.` : ''].filter(Boolean).join(' ')}))
+        .sort((a,b)=>String(a.d).localeCompare(String(b.d)));
+      if(!steps.length) continue;
+      const act = o && !o.proj ? actOf(k, o) : null;
+      (out[per] ||= {})[k] = {steps, act: isN(act) ? act : null, basis: x.basis};
+    }
+  }
+  return out;
+}
 function fxPaneHTML(c){
   const p='fx'+c.ticker;
   return `
     <!-- ============ ${c.short.toUpperCase()} (Fiscal.ai shell) ============ -->
     <div class="co-pane" data-co="${c.ticker}">
-    <div class="mview" data-main="earnings">
+    ${window.CONTENT?.[c.ticker]?.earnings ? earnHTML(p+'-', p+'-earnings') : ''}
+    ${window.CONTENT?.[c.ticker]?.thesis ? thesisHTML(p) : ''}
+    <div class="mview" data-main="earnings" ${window.CONTENT?.[c.ticker]?.earnings ? 'data-skip="1"' : ''}>
       <section class="view active">
         <div class="card"><div class="card-h"><div><span class="card-t">Earnings</span><span class="card-sub">coming next</span></div></div>
           <div class="ave-empty">Summaries of each ${c.short} earnings release and call, by call and by topic, as for Amazon. The Model is ready under Valuation.</div></div>
       </section>
     </div>
-    <div class="mview active" data-main="tesis">
+    <div class="mview active" data-main="tesis" ${window.CONTENT?.[c.ticker]?.thesis ? 'data-skip="1"' : ''}>
       <section class="view active">
         <div class="card"><div class="card-h"><div><span class="card-t">Thesis</span><span class="card-sub">coming next</span></div></div>
           <div class="ave-empty">${c.thesis||'Segments, KPIs and what management says on each call.'} The Model is ready under Valuation.</div></div>
@@ -5905,9 +6030,11 @@ function fxSetup(c){
     document.getElementById(p+'ModelTable').innerHTML = `<div class="stmt-empty"><b>Model coming next</b>Fiscal.ai does not cover ${c.short} yet: income statement, balance sheet, cash flow and estimates will be built from the company's quarterly reports (BMV).</div>`;
     document.getElementById(p+'Src').textContent = `Price: ${M.D.mkt.src}, ${M.D.mkt.asOf}.`;
     ['dcf','ave','gr'].forEach(v=>pane0.querySelector(`.fxvtab[data-v="${v}"]`).style.display='none');
-    FX[c.ticker] = {render(){}}; return;
+    FX[c.ticker] = {render(){}, main(){}}; return;
   }
   const D = M.D, pane = document.querySelector(`.co-pane[data-co="${c.ticker}"]`);
+  pane.querySelectorAll('[data-skip]').forEach(e=>e.remove());       // placeholders replaced by content.js views
+  const CT = window.CONTENT?.[c.ticker];
   if(!D.est){ pane.querySelector('.edit-bar').style.display='none'; pane.querySelector('.legend').style.display='none'; }
   const msg = () => { document.getElementById(p+'EditMsg').textContent = M.edited() ? 'Using your values where underlined; the rest from Fiscal.ai' : 'All estimates from Fiscal.ai'; };
   const upd = s => s ? new Date(s).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '';
@@ -5919,7 +6046,26 @@ function fxSetup(c){
   const hasDcf = !!(D.est && D.is.length && D.mkt.shares);
   const MAPG = {revenue:'is.total_revenues', gross_profit:'is.gross_profit', ebit:'is.operating_profit', eps_gaap:'is.diluted_eps', eps_adjusted:'x.epsAdj',
     net_income:'is.net_income_attributable_to_common_shareholders', net_income_adjusted:'x.niAdj', free_cash_flow:'x.fcf', capex:'cf.purchases_of_property_plant_and_equipment'};
-  const AG = D.ave ? fxAveGr({A:D.ave, p, short:c.short, cur:D.cur, modelYs:()=>M.Y.concat(M.Q), modelOf:(k,y)=>MAPG[k] ? y[MAPG[k]] : null}) : null;
+  const actOf = (k, o) => { const g = key => o[key];
+    switch(k){
+      case 'revenue': return g('is.total_revenues'); case 'gross_profit': return g('is.gross_profit'); case 'ebit': return g('is.operating_profit');
+      case 'gross_margin': return isN(g('is.gross_profit')) && g('is.total_revenues') ? g('is.gross_profit')/g('is.total_revenues') : null;
+      case 'operating_margin': return isN(g('is.operating_profit')) && g('is.total_revenues') ? g('is.operating_profit')/g('is.total_revenues') : null;
+      case 'opex': return isN(g('is.operating_profit')) && isN(g('is.total_revenues')) ? g('is.total_revenues')-g('is.operating_profit') : null;
+      case 'tax_rate': return isN(g('is.provision_for_income_taxes')) && g('is.income_before_provision_for_income_taxes')>0 ? g('is.provision_for_income_taxes')/g('is.income_before_provision_for_income_taxes') : null;
+      case 'eps_gaap': return g('is.diluted_eps'); case 'net_income': return g('is.net_income_attributable_to_common_shareholders');
+      case 'free_cash_flow': return g('x.fcf'); case 'capex': return isN(g('cf.purchases_of_property_plant_and_equipment')) ? Math.abs(g('cf.purchases_of_property_plant_and_equipment')) : null;
+      default: return null; } };
+  const periodObj = per => M.Q.concat(M.Y).find(o=>o.lab===per || o.lab===per+'E');
+  const AG = D.ave ? fxAveGr({A:D.ave, p, short:c.short, cur:D.cur, modelYs:()=>M.Y.concat(M.Q),
+    modelOf:(k,y)=> CT?.guidance ? actOf(k, y) : (MAPG[k] ? y[MAPG[k]] : null), guide:CT?.guidance, periodObj, actOf}) : null;
+  const EARN_V = CT?.earnings ? earnView({data:CT.earnings, topics:CT.topics||['Guidance & outlook'], key:'pvg-fx-'+c.ticker+'-earn', root:p+'-earnings', px:p+'-', co:c.short}) : null;
+  const segSeries = key => { const r = D.seg.find(x=>x[0]===key); if(!r) return null;
+    const qi = D.P.map((pp,i)=>pp[0]==='Q'?i:-1).filter(i=>i>=0).slice(-12);
+    const pct = r[3]==='pct';
+    return {name:r[1], labels:qi.map(i=>`Q${D.P[i][3]}'${String(D.P[i][2]).slice(2)}`), values:qi.map(i=>r[5+i]), fmt:pct?'p':'m', unit: r[3]==='m' ? (D.cur==='USD'?'US$M':D.cur+' M') : pct ? '%' : ''}; };
+  const TH_V = CT?.thesis ? thesisView({T:CT.thesis, p, short:c.short, series:segSeries,
+    src:`Source: ${c.short}'s earnings calls, releases, shareholder letters and filings, read for this dashboard (each point names its source); charts from Fiscal.ai segment and KPI data.`}) : null;
   if(!AG){ pane.querySelector('.fxvtab[data-v="ave"]').style.display='none'; pane.querySelector('.fxvtab[data-v="gr"]').style.display='none'; }
   const DCF = hasDcf ? fxDcf(c, M) : null;
   if(!hasDcf) pane.querySelector('.fxvtab[data-v="dcf"]').style.display='none';
@@ -5931,7 +6077,7 @@ function fxSetup(c){
     else if(vt==='ave'){ if(AG) AG.ave.render(); }
     else if(vt==='gr'){ if(AG && AG.gr) AG.gr.render(); } };
   pane.querySelectorAll('.fxvtab').forEach(b=>b.addEventListener('click', ()=>{ vt=b.dataset.v; showV(); }));
-  FX[c.ticker] = { render: showV };
+  FX[c.ticker] = { render: showV, main: m => { if(m==='valuation') showV(); else if(m==='earnings' && EARN_V) EARN_V.render(); else if(m==='tesis' && TH_V) TH_V.render(); } };
   pane.addEventListener('click', e=>{
     const t=e.target.closest('[data-fx]');
     if(t){ const a=t.dataset.fx; if(a==='expand') M.expandAll(); if(a==='collapse') M.collapseAll();
@@ -6131,8 +6277,9 @@ function showMain(m){
   document.querySelectorAll('.co-pane .mview').forEach(x=>x.classList.toggle('active',x.dataset.main===m));
   try{ localStorage.setItem('pvg-main',m); }catch(e){}
   if(curCo==='AMZN'){ if(m==='valuation' && amvtab==='model') renderAmznModel(); if(m==='valuation' && amvtab==='ave') AM_AVE.render(); if(m==='valuation' && amvtab==='dcf') AM_DCF.render(); if(m==='valuation' && amvtab==='guidance') AM_GR.render(); if(m==='earnings') AM_EARN.render(); if(m==='tesis') AM_TH.render(); return; }
-  if(FX[curCo]){ if(m==='valuation') FX[curCo].render(); return; }
-  if(curCo==='UBER'){ if(m==='valuation' && ubvtab==='model') renderUberModel(); if(m==='valuation' && ubvtab==='dcf') UB_DCF.render();
+  if(FX[curCo]){ FX[curCo].main ? FX[curCo].main(m) : (m==='valuation' && FX[curCo].render()); return; }
+  if(curCo==='UBER'){ if(m==='earnings' && UB_CT().earn) UB_CT().earn.render(); if(m==='tesis' && UB_CT().th) UB_CT().th.render();
+    if(m==='valuation' && ubvtab==='model') renderUberModel(); if(m==='valuation' && ubvtab==='dcf') UB_DCF.render();
     if(m==='valuation' && ubvtab==='ave' && UB_AG()) UB_AG().ave.render(); if(m==='valuation' && ubvtab==='guidance' && UB_AG() && UB_AG().gr) UB_AG().gr.render(); return; }
   if(m==='earnings') EARN.render();
   if(m==='valuation' && vtab==='model') renderModel();
