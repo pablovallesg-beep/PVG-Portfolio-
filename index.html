@@ -66,6 +66,27 @@ html.mobile .nav-item .ic-desk{display:block}
 .page-h{padding:24px 24px 4px}
 .page-h h1{font-size:18px;font-weight:700;letter-spacing:-.4px}
 .page-h p{font-size:13px;color:var(--text-secondary);margin-top:4px}
+.grp-tabs{display:flex;flex-wrap:wrap;gap:8px;padding:12px 24px 0}
+.grp-dd{position:relative}
+.grp-tab{display:inline-flex;align-items:center;gap:7px;border:1px solid transparent;border-radius:999px;background:none;padding:7px 12px 7px 15px;font:500 13px 'Figtree',sans-serif;color:var(--text-secondary);cursor:pointer;white-space:nowrap}
+.grp-tab:hover{background:var(--card-bg)}
+.grp-dd.on .grp-tab{background:var(--card-bg);border-color:var(--border);box-shadow:var(--shadow);color:var(--text-primary);font-weight:600}
+.grp-n{font-size:11px;font-weight:600;color:var(--text-secondary);background:var(--main-bg);border:1px solid var(--border);border-radius:999px;padding:0 6px;line-height:16px}
+.grp-tab svg{width:12px;height:12px;transition:transform .15s}
+.grp-dd.open .grp-tab svg{transform:rotate(180deg)}
+.grp-menu{display:none;position:absolute;top:calc(100% + 6px);left:0;z-index:60;min-width:270px;max-height:min(60vh,440px);overflow:auto;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;box-shadow:0 16px 36px -12px rgba(20,28,43,.35);padding:6px}
+.grp-dd.open .grp-menu{display:block}
+.grp-item{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;padding:7px 8px;border-radius:8px;font:500 13px 'Figtree',sans-serif;color:var(--text-primary);cursor:pointer;text-align:left}
+.grp-item:hover,.grp-item:focus-visible{background:var(--main-bg);outline:none}
+.gi-logo{width:26px;height:26px;flex:none;border-radius:50%;background:#fff;border:1px solid var(--border);display:grid;place-items:center;overflow:hidden}
+.gi-logo img{width:64%;height:64%;object-fit:contain}
+.gi-nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gi-tk{font-size:11px;font-weight:600;color:var(--text-secondary);letter-spacing:.2px}
+.grp-none{padding:12px 10px;font-size:12.5px;color:var(--text-secondary)}
+.co-empty{grid-column:1/-1;padding:48px 20px;text-align:center;color:var(--text-secondary);font-size:13.5px;border:1px dashed var(--border);border-radius:16px}
+/* wide wordmarks get more room inside the round medallion */
+.glass img[src$="Bimbo/logo-mark.svg"],.glass img[src$="Asur/logo-mark.svg"],.glass img[src$="Femsa/logo-mark.svg"],.glass img[src$="Omab/logo-mark.svg"]{width:74%;height:74%}
+.gi-logo img[src$="Bimbo/logo-mark.svg"],.gi-logo img[src$="Asur/logo-mark.svg"],.gi-logo img[src$="Femsa/logo-mark.svg"],.gi-logo img[src$="Omab/logo-mark.svg"]{width:84%;height:84%}
 .co-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,180px));gap:16px;padding:20px 24px 40px}
 .co-card{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;cursor:pointer;font:inherit;color:inherit;transition:border-color .15s,transform .15s}
 .co-card:hover{border-color:var(--accent);transform:translateY(-1px)}
@@ -501,7 +522,7 @@ html.mobile .sidebar{flex-direction:row;align-items:center;height:auto;position:
 html.mobile .nav-item{flex-direction:row;width:auto;padding:8px 10px;gap:6px}
 html.mobile .nav-item svg{width:18px;height:18px}
 html.mobile .nav-item.view-btn{margin-top:0;margin-left:auto}
-html.mobile .page-h,html.mobile .co-grid{padding-left:16px;padding-right:16px}
+html.mobile .page-h,html.mobile .co-grid,html.mobile .grp-tabs{padding-left:16px;padding-right:16px}
 html.mobile .co-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 html.mobile .co-card{padding:18px 10px}
 html.mobile .grid{grid-template-columns:1fr}
@@ -570,6 +591,7 @@ html.mobile .xl-wrap{max-height:calc(100vh - 190px)}
       <h1>Companies</h1>
       <p>Select a company to see its detail.</p>
     </div>
+    <nav class="grp-tabs" id="grpTabs" aria-label="Company groups"></nav>
     <div class="co-grid" id="coGrid"></div>
   </div>
 
@@ -956,6 +978,13 @@ html.mobile .xl-wrap{max-height:calc(100vh - 190px)}
 <script src="Tsm/fiscal.js"></script>
 <script src="Meta/fiscal.js"></script>
 <script src="Nflx/fiscal.js"></script>
+<script src="Amx/fiscal.js"></script>
+<script src="Bimbo/fiscal.js"></script>
+<script src="Walmex/fiscal.js"></script>
+<script src="Asur/fiscal.js"></script>
+<script src="Femsa/fiscal.js"></script>
+<script src="Omab/fiscal.js"></script>
+<script src="Gmexico/fiscal.js"></script>
 <script>
 /* =====================================================================
    DATA — SoFi (US$M unless noted). Sources on each card.
@@ -1549,7 +1578,7 @@ function modelSheet(cfg){
     document.getElementById(ids.sub).textContent=STMT[state.stmt][1];
     const el0=document.getElementById(ids.table);
     if(!ROWS.some(r=>r.sec && r.stmt===state.stmt)){
-      el0.innerHTML='<div class="stmt-empty"><b>Cash flow statement</b>Coming next: operating, investing and financing cash flows by quarter and year, with the same layout as the income statement and balance sheet.</div>';
+      el0.innerHTML = cfg.emptyMsg ? cfg.emptyMsg(state.stmt) : '<div class="stmt-empty"><b>Cash flow statement</b>Coming next: operating, investing and financing cash flows by quarter and year, with the same layout as the income statement and balance sheet.</div>';
       return;
     }
     const gap = '<td class="gap"></td>', gapH = '<th class="gap"></th>';
@@ -5329,6 +5358,8 @@ function fiscalModel(tk, co){
   D.P.forEach((pp,i)=>{ const o={...pick(i), e:pp[1], end:endLab(pp[1]), fy:pp[2], fq:pp[3]};
     if(pp[0]==='Q'){ o.lab=qLab(pp[2],pp[3]); Q.push(o); } else { o.lab='FY'+pp[2]; Y.push(o); } });
   const NQ=Q.length, NY=Y.length;
+  if(!NQ && !NY) return {empty:true, D};
+  const STMTS = D.is.length>0;
   // Segment amounts reported only by quarter: the year is the sum of its four quarters
   D.seg.filter(r=>r[3]==='m').forEach(r=>{ const k='seg.'+r[0];
     Y.forEach(o=>{ if(isN(o[k])) return; const qs=Q.filter(q=>q.fy===o.fy);
@@ -5359,12 +5390,12 @@ function fiscalModel(tk, co){
     cash_and_cash_equivalents:'bs.cash_and_cash_equivalents', book_value:'bs.total_common_shareholders_equity',
     total_debt:'x.debt', net_debt:'x.netDebt', bvps:'x.bvps',
     operating_cash_flow:'cf.cash_from_operating_activities', capex:'cf.purchases_of_property_plant_and_equipment', free_cash_flow:'x.fcf'};
-  const E = D.est, Z = D.zacks;
+  const E = D.est, Z = D.zacks && Object.keys(D.zacks.m||{}).length ? D.zacks : null;
   const OV_KEY = 'pvg-fx-'+tk+'-est';
   let OV = {}; try{ OV = JSON.parse(localStorage.getItem(OV_KEY)||'{}'); }catch(e){}
-  const lastQ = Q[NQ-1].e, lastY = Y[NY-1].e;
-  const EP = E.P.map((pp,j)=>({j, t:pp[0], e:pp[1], fy:pp[2], fq:pp[3]})).filter(pp=>pp.e && (pp.t==='Q' ? pp.e>lastQ : pp.e>lastY));
-  const zFor = pp => { const j = Z.P.findIndex(z=>z[0]===pp.t && z[2]===pp.fy && (pp.t==='A' || z[3]===pp.fq)); return j; };
+  const lastQ = NQ ? Q[NQ-1].e : '', lastY = NY ? Y[NY-1].e : '';
+  const EP = !E || !STMTS ? [] : E.P.map((pp,j)=>({j, t:pp[0], e:pp[1], fy:pp[2], fq:pp[3]})).filter(pp=>pp.e && (pp.t==='Q' ? pp.e>lastQ : pp.e>lastY));
+  const zFor = pp => { if(!Z) return -1; const j = Z.P.findIndex(z=>z[0]===pp.t && z[2]===pp.fy && (pp.t==='A' || z[3]===pp.fq)); return j; };
   function estPeriod(pp){
     const lab = pp.t==='Q' ? qLab(pp.fy,pp.fq)+'E' : 'FY'+pp.fy+'E';
     const o = {e:pp.e, end:endLab(pp.e), fy:pp.fy, fq:pp.fq, lab, proj:true, src:{}, ov:{}, fx:{}};
@@ -5372,7 +5403,7 @@ function fiscalModel(tk, co){
       if(cell){ o[k]=cell[0]; o.fx[k]=cell[0]; o.src[k]=cell; }
       const u = OV[id]?.[lab]; if(isN(u)){ o[k]=u; o.ov[k]=true; } }
     const zj = zFor(pp); o.z = {};
-    if(zj>=0) for(const id in Z.m){ const c = Z.m[id][zj]; if(c){ o.z[id]=c[0]; o.z[id+'N']=c[1]; } }
+    if(zj>=0 && Z) for(const id in Z.m){ const c = Z.m[id][zj]; if(c){ o.z[id]=c[0]; o.z[id+'N']=c[1]; } }
     return derive(o);
   }
   function project(){
@@ -5389,14 +5420,16 @@ function fiscalModel(tk, co){
     {id:'ya', title:'Annual · Actual', short:'Y · Act.', proj:false, cols:[]},
     {id:'yp', title:'Annual · Estimates (Fiscal.ai)', short:'Y · Est.', proj:true, cols:[]},
   ];
+  if(!EP.length) BLOCKS.splice(0, BLOCKS.length, ...BLOCKS.filter(b=>!b.proj));   // no estimates: actual columns only
+  const BK = id => BLOCKS.find(b=>b.id===id) || {cols:[]};
   const qpDefault = [];
   function refreshBlocks(){
-    BLOCKS[0].cols = Q.slice(firstQ, NQ).map((v,k)=>({v, kind:'q', qi:firstQ+k}));
-    BLOCKS[1].cols = Q.slice(NQ).map((v,k)=>({v, kind:'q', qi:NQ+k}));
-    BLOCKS[2].cols = Y.slice(firstY, NY).map((v,k)=>({v, kind:'y', yi:firstY+k}));
-    BLOCKS[3].cols = Y.slice(NY).map((v,k)=>({v, kind:'y', yi:NY+k}));
-    const lq = Q[NQ-1], untilFy = lq.fy + 1;
-    qpDefault.splice(0, qpDefault.length, ...BLOCKS[1].cols.filter(c=>c.v.fy<=untilFy));
+    BK('qa').cols = Q.slice(firstQ, NQ).map((v,k)=>({v, kind:'q', qi:firstQ+k}));
+    BK('qp').cols = Q.slice(NQ).map((v,k)=>({v, kind:'q', qi:NQ+k}));
+    BK('ya').cols = Y.slice(firstY, NY).map((v,k)=>({v, kind:'y', yi:firstY+k}));
+    BK('yp').cols = Y.slice(NY).map((v,k)=>({v, kind:'y', yi:NY+k}));
+    const untilFy = (NQ ? Q[NQ-1].fy : 0) + 1;
+    qpDefault.splice(0, qpDefault.length, ...BK('qp').cols.filter(c=>c.v.fy<=untilFy));
   }
   refreshBlocks();
 
@@ -5437,6 +5470,7 @@ function fiscalModel(tk, co){
     const rest = D.seg.filter(r=>!used.has(r[0]));
     if(rest.length){ ROWS.push({l:'Other segments and KPIs', f:()=>null, subh:1}); rest.forEach(segRow); }
   }
+  if(STMTS){
   // Income statement
   ROWS.push(SEC('Income statement'));
   D.is.forEach(r=>{
@@ -5458,7 +5492,7 @@ function fiscalModel(tk, co){
   ROWS.push({l:'Adjusted net income (Fiscal.ai estimate)', f:val('x.niAdj'), fmt:'m', u:U, ek:'net_income_adjusted', note:'Estimates only: Fiscal.ai adjusted basis'});
   ROWS.push({l:`Adjusted diluted EPS (Fiscal.ai estimate${E.basis==='adjusted'?', the company\'s lead EPS':''})`, f:val('x.epsAdj'), fmt:PSF, u:UP, ek:'eps_adjusted', note:'Estimates only: Fiscal.ai adjusted basis'});
   // Wall Street consensus (Zacks)
-  if(Z && Object.keys(Z.m||{}).length){
+  if(Z){
     const ZU = (Z.cur||'USD')==='USD' ? 'US$M' : Z.cur+' M', ZUP = (Z.cur||'USD')==='USD' ? 'US$' : Z.cur;
     ROWS.push(SEC('Wall Street consensus (Zacks)'));
     const zr = (l,id,fmt,u,extra={}) => ROWS.push({l, f:o=>o.z?.[id] ?? null, fmt, u, ...extra});
@@ -5502,6 +5536,7 @@ function fiscalModel(tk, co){
   if(has('share_based_compensation_expense')) ROWS.push({l:'Share-based compensation', f:val('cf.share_based_compensation_expense'), fmt:'m', u:U, ind:1}, PCT('% of revenue','cf.share_based_compensation_expense','is.total_revenues'));
   if(has('repurchases_of_common_shares')) ROWS.push({l:'Buybacks as % of free cash flow', f:o=>isN(o['cf.repurchases_of_common_shares'])&&o['x.fcf']>0 ? -o['cf.repurchases_of_common_shares']/o['x.fcf'] : null, fmt:'cs', u:'%'});
   ROWS.push({l:'FCF conversion (% of net income)', f:o=>isN(o['x.fcf'])&&o['is.net_income_attributable_to_common_shareholders']>0 ? o['x.fcf']/o['is.net_income_attributable_to_common_shareholders'] : null, fmt:'cs', u:'%'});
+  }
   // drop sections left without lines (e.g. a statement without the matching total)
   for(let i=ROWS.length-1;i>=0;i--) if(ROWS[i].sec && (i===ROWS.length-1 || ROWS[i+1].sec)) ROWS.splice(i,1);
 
@@ -5521,7 +5556,8 @@ function fiscalModel(tk, co){
   const SHEET = modelSheet({ROWS, BLOCKS, qpDefault, BQ:{}, BY:{}, noBt:true, isInput:isEst, stKey:'pvg-fx-'+tk+'-outline',
     ids:{seg:p+'StmtSeg', title:p+'StmtTitle', sub:p+'StmtSub', table:p+'ModelTable', hide:p+'HideSubs'},
     coName:`${co.name} (${tk})`, unitNote:`${cur==='USD'?'US$':cur} in millions, except per-share data`,
-    STMT:{is:['Income statement',`${U} · segments, KPIs and statements from Fiscal.ai · estimates: Fiscal.ai`], bs:['Balance sheet',`${U} · period-end balances`], cf:['Cash flow statement',`${U} · three-month flows`]},
+    emptyMsg:s=>`<div class="stmt-empty"><b>${s==='bs'?'Balance sheet':s==='cf'?'Cash flow statement':'Income statement'}</b>Fiscal.ai has only segment and KPI data for ${co.short}; the statements will be added from the company's reports.</div>`,
+    STMT:{is:[STMTS?'Income statement':'Segments and KPIs',`${U} · ${STMTS?'segments, KPIs and statements from Fiscal.ai · estimates: Fiscal.ai':'from Fiscal.ai (statements and estimates not covered yet)'}`], bs:['Balance sheet',`${U} · period-end balances`], cf:['Cash flow statement',`${U} · three-month flows`]},
     colNote:c=>c.v.note||'',
     isDerived:(r,c)=>!!(c.v.proj && c.v.ov && r.ek && c.v.ov[MAP[r.ek]]),
     cellTitle:(r,c)=>{ if(!c.v.proj || !r.ek) return ''; const k=MAP[r.ek], s=c.v.src[k];
@@ -5586,12 +5622,22 @@ function fxSetup(c){
   const p='fx'+c.ticker;
   document.getElementById('page-company').insertAdjacentHTML('beforeend', fxPaneHTML(c));
   const M = fiscalModel(c.ticker, c); if(!M) return;
+  if(M.empty){
+    const pane0 = document.querySelector(`.co-pane[data-co="${c.ticker}"]`);
+    const val0 = pane0.querySelector('.mview[data-main="valuation"]');
+    val0.querySelector('.card-h').style.display='none'; val0.querySelector('.stmt-head').style.display='none';
+    document.getElementById(p+'ModelTable').innerHTML = `<div class="stmt-empty"><b>Model coming next</b>Fiscal.ai does not cover ${c.short} yet: income statement, balance sheet, cash flow and estimates will be built from the company's quarterly reports (BMV).</div>`;
+    document.getElementById(p+'Src').textContent = `Price: ${M.D.mkt.src}, ${M.D.mkt.asOf}.`;
+    FX[c.ticker] = {render(){}}; return;
+  }
   const D = M.D, pane = document.querySelector(`.co-pane[data-co="${c.ticker}"]`);
+  if(!D.est){ pane.querySelector('.edit-bar').style.display='none'; pane.querySelector('.legend').style.display='none'; }
   const msg = () => { document.getElementById(p+'EditMsg').textContent = M.edited() ? 'Using your values where underlined; the rest from Fiscal.ai' : 'All estimates from Fiscal.ai'; };
   const upd = s => s ? new Date(s).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '';
   document.getElementById(p+'Src').innerHTML = `Source: Fiscal.ai standardized financial statements, segments and KPIs (${c.ticker}, as reported in the company's filings and releases; pulled ${D.pulled}), in ${D.cur==='USD'?'US$':D.cur} millions except per-share data${c.fyNote?'; '+c.fyNote:''}. Segment amounts reported only by quarter are summed for the year. `
-    + `Estimates: Fiscal.ai (updated ${upd(D.est.updatedAt||D.est.upd)}) — company guidance where the company gives it, otherwise Fiscal.ai's model or AI estimate; hover a cell to see its source and confidence. Cost of sales and diluted shares in estimate columns are implied (revenue − gross profit; net income / EPS); lines without a Fiscal.ai estimate stay blank. Edited estimates are saved in this browser. `
-    + `Wall Street consensus${D.zacks&&D.zacks.cur&&D.zacks.cur!==D.cur?' (in '+D.zacks.cur+')':''}: Data provided by <a href="https://www.zacksdata.com" target="_blank" rel="noopener">Zacks Investment Research, Inc., www.zacksdata.com</a>.`;
+    + (c.adsNote ? c.adsNote+' ' : '')
+    + (!D.est ? `Fiscal.ai has no statements or estimates for ${c.short} yet (segments and KPIs only); they will be added from the company's reports. ` : `Estimates: Fiscal.ai (updated ${upd(D.est.updatedAt||D.est.upd)}) — company guidance where the company gives it, otherwise Fiscal.ai's model or AI estimate; hover a cell to see its source and confidence. Cost of sales and diluted shares in estimate columns are implied (revenue − gross profit; net income / EPS); lines without a Fiscal.ai estimate stay blank. Edited estimates are saved in this browser. `)
+    + (!D.zacks ? '' : `Wall Street consensus${D.zacks&&D.zacks.cur&&D.zacks.cur!==D.cur?' (in '+D.zacks.cur+')':''}: Data provided by <a href="https://www.zacksdata.com" target="_blank" rel="noopener">Zacks Investment Research, Inc., www.zacksdata.com</a>.`);
   let shown=false;
   FX[c.ticker] = { render(){ if(!shown){ M.render(); shown=true; } msg(); } };
   pane.addEventListener('click', e=>{
@@ -5640,49 +5686,75 @@ const VIEWS={
    ===================================================================== */
 // Amazon quote: same shape as SoFi's MKT (price, daily change vs prior close, timestamp, shares outstanding)
 const COMPANIES = [
-  { ticker:'SOFI', name:'SoFi Technologies, Inc.', exchange:'NASDAQ', sector:'Fintech · Digital banking',
+  { ticker:'SOFI', group:'port', name:'SoFi Technologies, Inc.', exchange:'NASDAQ', sector:'Fintech · Digital banking',
     short:'SoFi Technologies', tint:'0,162,199',
     logo:{src:'Sofi/logo-mark.svg', text:'SoFi', bg:'#2E75B6'},
     quote:()=>MKT },
-  { ticker:'AMZN', name:'Amazon.com, Inc.', exchange:'NASDAQ', sector:'E-commerce · Cloud (AWS) · Advertising',
+  { ticker:'AMZN', group:'port', name:'Amazon.com, Inc.', exchange:'NASDAQ', sector:'E-commerce · Cloud (AWS) · Advertising',
     short:'Amazon', tint:'255,153,0',
     logo:{src:'Amzn/logo-mark.svg', text:'Amazon', bg:'#FF9900'},
     quote:()=>MKT_AMZN },
-  { ticker:'UBER', name:'Uber Technologies, Inc.', exchange:'NYSE', sector:'Mobility · Delivery · Freight',
+  { ticker:'UBER', group:'port', name:'Uber Technologies, Inc.', exchange:'NYSE', sector:'Mobility · Delivery · Freight',
     short:'Uber', tint:'120,120,120',
     logo:{src:'Uber/logo-mark.svg', text:'Uber', bg:'#000000'},
     quote:()=>MKT_UBER },
-  { ticker:'NVDA', name:'NVIDIA Corporation', exchange:'NASDAQ', sector:'Semiconductors · AI data center', fiscal:1,
+  { ticker:'NVDA', group:'port', name:'NVIDIA Corporation', exchange:'NASDAQ', sector:'Semiconductors · AI data center', fiscal:1,
     short:'NVIDIA', tint:'118,185,0', logo:{src:'Nvda/logo-mark.svg', text:'NVDA', bg:'#76B900'},
     fyNote:"fiscal quarters and years (NVIDIA's fiscal year ends in late January, so FY2027 runs Feb-26 to Jan-27)",
     thesis:'Data Center (compute and networking), Gaming, Professional Visualization and Automotive: revenue, margins and supply commitments.' },
-  { ticker:'SPOT', name:'Spotify Technology S.A.', exchange:'NYSE', sector:'Audio streaming · Subscriptions · Advertising', fiscal:1,
+  { ticker:'SPOT', group:'port', name:'Spotify Technology S.A.', exchange:'NYSE', sector:'Audio streaming · Subscriptions · Advertising', fiscal:1,
     short:'Spotify', tint:'30,215,96', logo:{src:'Spot/logo-mark.svg', text:'SPOT', bg:'#1ED760'},
     fyNote:'Spotify reports in euros; the share price is in US$',
     thesis:'Premium subscribers, MAUs, ARPU and gross margin by segment (Premium and Ad-Supported).' },
-  { ticker:'SE', name:'Sea Limited', exchange:'NYSE', sector:'E-commerce (Shopee) · Digital financial services (Monee) · Gaming (Garena)', fiscal:1,
+  { ticker:'SE', group:'port', name:'Sea Limited', exchange:'NYSE', sector:'E-commerce (Shopee) · Digital financial services (Monee) · Gaming (Garena)', fiscal:1,
     short:'Sea', tint:'238,77,45', logo:{src:'Se/logo-mark.svg', text:'SE', bg:'#EE4D2D'},
     fyNote:'shares and EPS per ordinary share (one ADS = one Class A share)',
     thesis:'Shopee, Monee and Garena: GMV, take rate, loan book and bookings, with segment adjusted EBITDA.' },
-  { ticker:'TBBB', name:'BBB Foods Inc.', exchange:'NYSE', sector:'Hard-discount grocery (Tiendas 3B) · Mexico', fiscal:1,
-    short:'BBB Foods', tint:'213,43,30', logo:{src:'Tbbb/logo-mark.svg', text:'3B', bg:'#D52B1E'},
+  { ticker:'TBBB', group:'port', name:'BBB Foods Inc.', exchange:'NYSE', sector:'Hard-discount grocery (Tiendas 3B) · Mexico', fiscal:1,
+    short:'BBB Foods', tint:'238,46,36', logo:{src:'Tbbb/logo-mark.svg', text:'3B', bg:'#EE2E24'},
     fyNote:'BBB Foods reports in Mexican pesos (IFRS); the share price is in US$',
     thesis:'Store openings, same-store sales, gross margin and the path of adjusted EBITDA and cash flow.' },
-  { ticker:'GOOGL', name:'Alphabet Inc.', exchange:'NASDAQ', sector:'Search · YouTube · Google Cloud · Other Bets', fiscal:1,
+  { ticker:'GOOGL', group:'port', name:'Alphabet Inc.', exchange:'NASDAQ', sector:'Search · YouTube · Google Cloud · Other Bets', fiscal:1,
     short:'Alphabet', tint:'66,133,244', logo:{src:'Googl/logo-mark.svg', text:'G', bg:'#4285F4'},
     thesis:'Search, YouTube, subscriptions and Google Cloud: revenue, operating income by segment and capex.' },
-  { ticker:'TSM', name:'Taiwan Semiconductor Manufacturing Co.', exchange:'NYSE', sector:'Semiconductor foundry', fiscal:1,
+  { ticker:'TSM', group:'port', name:'Taiwan Semiconductor Manufacturing Co.', exchange:'NYSE', sector:'Semiconductor foundry', fiscal:1,
     short:'TSMC', tint:'200,16,46', logo:{src:'Tsm/logo-mark.svg', text:'TSMC', bg:'#C8102E'},
     fyNote:'TSMC reports in New Taiwan dollars (IFRS); shares and EPS per ADS (one ADS = five ordinary shares) and the share price in US$',
     thesis:'Revenue by technology node and platform (HPC, smartphone), gross margin and capex.' },
-  { ticker:'META', name:'Meta Platforms, Inc.', exchange:'NASDAQ', sector:'Social media · Digital advertising · Reality Labs', fiscal:1,
+  { ticker:'META', group:'port', name:'Meta Platforms, Inc.', exchange:'NASDAQ', sector:'Social media · Digital advertising · Reality Labs', fiscal:1,
     short:'Meta', tint:'4,103,223', logo:{src:'Meta/logo-mark.svg', text:'Meta', bg:'#0467DF'},
     thesis:'Family of Apps and Reality Labs: ad impressions, price per ad, daily active people, expenses and capex.' },
-  { ticker:'NFLX', name:'Netflix, Inc.', exchange:'NASDAQ', sector:'Streaming entertainment', fiscal:1,
+  { ticker:'NFLX', group:'port', name:'Netflix, Inc.', exchange:'NASDAQ', sector:'Streaming entertainment', fiscal:1,
     short:'Netflix', tint:'229,9,20', logo:{src:'Nflx/logo-mark.svg', text:'N', bg:'#E50914'},
     fyNote:'shares and EPS adjusted for the 10-for-1 split of November 2025',
     thesis:'Revenue by region, operating margin, content spend and free cash flow.' },
 ];
+// Mexico (BMV listings, prices in MXN). Fiscal.ai serves AMX, ASUR, FEMSA and OMA through their US ADRs (per-share data
+// converted to one BMV share in build_fx.py), Walmex and Grupo México with segments and KPIs only, and does not cover Bimbo.
+const ADS_NOTE = (n, what) => `Per-share figures (EPS, book value per share, shares) are per BMV ${what}: Fiscal.ai reports them per US ADS, converted at 1 ADS = ${n}; Wall Street consensus EPS is per ${what} in US$.`;
+COMPANIES.push(
+  { ticker:'AMXB', group:'mx', name:'América Móvil, S.A.B. de C.V.', exchange:'BMV', sector:'Telecom · Mobile and fixed (Telcel, Claro, Telmex)', fiscal:1,
+    short:'América Móvil', tint:'0,56,147', logo:{src:'Amx/logo-mark.svg', text:'AMX', bg:'#003893'}, adsNote:ADS_NOTE(20,'Series B share'),
+    thesis:'Mobile and fixed subscribers, ARPU and service revenue by country, EBITDA margin, capex and leverage.' },
+  { ticker:'BIMBOA', group:'mx', name:'Grupo Bimbo, S.A.B. de C.V.', exchange:'BMV', sector:'Baked goods · North America, Mexico, Latin America, Europe', fiscal:1,
+    short:'Grupo Bimbo', tint:'0,61,165', logo:{src:'Bimbo/logo-mark.svg', text:'Bimbo', bg:'#003DA5'},
+    thesis:'Volume, price and mix by region, gross margin, adjusted EBITDA and leverage.' },
+  { ticker:'WALMEX', group:'mx', name:'Wal-Mart de México, S.A.B. de C.V.', exchange:'BMV', sector:"Retail (Bodega Aurrera, Walmart, Sam's Club) · Mexico and Central America", fiscal:1,
+    short:'Walmex', tint:'0,113,206', logo:{src:'Walmex/logo-mark.svg', text:'Walmex', bg:'#0071CE'},
+    thesis:'Same-store sales, store openings by format, gross margin and EBITDA in Mexico and Central America.' },
+  { ticker:'ASURB', group:'mx', name:'Grupo Aeroportuario del Sureste, S.A.B. de C.V.', exchange:'BMV', sector:'Airports · Cancún, Southeast Mexico, Puerto Rico, Colombia', fiscal:1,
+    short:'ASUR', tint:'0,61,130', logo:{src:'Asur/logo-mark.svg', text:'ASUR', bg:'#003D82'}, adsNote:ADS_NOTE(10,'Series B share'),
+    thesis:'Passenger traffic by airport, aeronautical and commercial revenue per passenger, and adjusted EBITDA margin.' },
+  { ticker:'FEMSAUBD', group:'mx', name:'Fomento Económico Mexicano, S.A.B. de C.V.', exchange:'BMV', sector:'Retail (OXXO) · Coca-Cola FEMSA · Digital (Spin)', fiscal:1,
+    short:'FEMSA', tint:'166,25,46', logo:{src:'Femsa/logo-mark.svg', text:'FEMSA', bg:'#A6192E'}, adsNote:ADS_NOTE(10,'BD unit'),
+    thesis:'OXXO same-store sales and openings, Coca-Cola FEMSA volumes, Spin by OXXO, and capital returns.' },
+  { ticker:'OMAB', group:'mx', name:'Grupo Aeroportuario del Centro Norte, S.A.B. de C.V.', exchange:'BMV', sector:'Airports · Monterrey, Northern and Central Mexico', fiscal:1,
+    short:'OMA', tint:'200,16,46', logo:{src:'Omab/logo-mark.svg', text:'OMA', bg:'#C8102E'}, adsNote:ADS_NOTE(8,'Series B share'),
+    thesis:'Passenger traffic by airport, aeronautical and non-aeronautical revenue, tariffs and the master development program.' },
+  { ticker:'GMEXICOB', group:'mx', name:'Grupo México, S.A.B. de C.V.', exchange:'BMV', sector:'Mining (Southern Copper) · Railroads · Infrastructure', fiscal:1,
+    short:'Grupo México', tint:'215,40,47', logo:{src:'Gmexico/logo-mark.svg', text:'GMéxico', bg:'#D7282F'},
+    thesis:'Copper volumes and prices, cash costs, Southern Copper, the railroad (GMXT) and infrastructure.' },
+);
 // Fiscal.ai shells: pane, model and quote from <Folder>/fiscal.js
 COMPANIES.filter(c=>c.fiscal).forEach(c=>{ c.quote=()=>window.FISCAL?.[c.ticker]?.mkt; fxSetup(c); });
 const logoHTML = (c,size) => c.logo.src
@@ -5690,11 +5762,38 @@ const logoHTML = (c,size) => c.logo.src
   : `<span class="logo ${size}" style="background:${c.logo.bg}">${c.logo.text}</span>`;
 // Glass medallion on the company cards, tinted with each company's brand colour
 const tintVars = t => [['--tint',`rgb(${t})`],['--tint-a',`rgba(${t},.16)`],['--tint-b',`rgba(${t},.28)`],['--tint-c',`rgba(${t},.14)`],['--tint-d',`rgba(${t},.38)`],['--tint-e',`rgba(${t},.12)`]];
-document.getElementById('coGrid').innerHTML = COMPANIES.map(c=>`
+// Groups on the Companies page: each tab shows its cards and opens a dropdown to jump straight to a company
+const GROUPS = [{id:'port', name:'Portafolio'}, {id:'mx', name:'México'}, {id:'usa', name:'USA'}];
+let curGrp = 'port'; try{ const g=localStorage.getItem('pvg-grp'); if(GROUPS.some(x=>x.id===g)) curGrp=g; }catch(e){}
+const GRP_CHEV = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.25 6 7.75l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+function renderGroups(){
+  document.getElementById('grpTabs').innerHTML = GROUPS.map(g=>{ const cs=COMPANIES.filter(c=>c.group===g.id);
+    return `<div class="grp-dd${g.id===curGrp?' on':''}" data-grp="${g.id}">
+      <button class="grp-tab" data-grp="${g.id}" aria-haspopup="menu" aria-expanded="false">${g.name}<span class="grp-n">${cs.length}</span>${GRP_CHEV}</button>
+      <div class="grp-menu" role="menu">${cs.length ? cs.map(c=>`<button class="grp-item" role="menuitem" data-ticker="${c.ticker}"><span class="gi-logo">${c.logo.src?`<img src="${c.logo.src}" alt="">`:''}</span><span class="gi-nm">${c.short||c.name}</span><span class="gi-tk">${c.ticker}</span></button>`).join('') : '<div class="grp-none">No companies yet</div>'}</div>
+    </div>`; }).join('');
+  const cs = COMPANIES.filter(c=>c.group===curGrp);
+  document.getElementById('coGrid').innerHTML = cs.length ? cs.map(c=>`
   <button class="co-card gl" data-ticker="${c.ticker}" style="${tintVars(c.tint||'46,117,182').map(([k,v])=>`${k}:${v}`).join(';')}">
     ${c.logo.src?`<span class="glass"><img src="${c.logo.src}" alt="${c.name}"></span>`:logoHTML(c,'lg')}
     <div class="nm">${c.name}</div>
-  </button>`).join('');
+  </button>`).join('') : `<div class="co-empty">No companies in ${GROUPS.find(g=>g.id===curGrp).name} yet.</div>`;
+}
+const closeGrpMenus = except => document.querySelectorAll('.grp-dd.open').forEach(d=>{ if(d!==except){ d.classList.remove('open'); d.querySelector('.grp-tab').setAttribute('aria-expanded','false'); } });
+document.getElementById('grpTabs').addEventListener('click', e=>{
+  const it=e.target.closest('.grp-item'); if(it){ closeGrpMenus(); return showCompany(it.dataset.ticker); }
+  const t=e.target.closest('.grp-tab'); if(!t) return;
+  const dd=t.parentElement, open=dd.classList.contains('open');
+  if(t.dataset.grp!==curGrp){
+    curGrp=t.dataset.grp; try{ localStorage.setItem('pvg-grp',curGrp); }catch(_){}
+    renderGroups(); const nd=document.querySelector(`.grp-dd[data-grp="${curGrp}"]`);
+    nd.classList.add('open'); nd.querySelector('.grp-tab').setAttribute('aria-expanded','true'); return;
+  }
+  closeGrpMenus(dd); dd.classList.toggle('open',!open); t.setAttribute('aria-expanded',String(!open));
+});
+document.addEventListener('click', e=>{ if(!e.target.closest('.grp-dd')) closeGrpMenus(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeGrpMenus(); });
+renderGroups();
 
 let page='companies', curCo='SOFI';
 function showCompanies(){
