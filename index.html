@@ -101,9 +101,11 @@ html.mobile .nav-item .ic-desk{display:block}
   background:linear-gradient(180deg,rgba(255,255,255,.75),rgba(255,255,255,0));pointer-events:none}
 .glass img{position:relative;width:50%;height:50%;object-fit:contain;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.12))}
 /* Amazon and Uber marks: the dark marks turn light on dark backgrounds (invert + hue-rotate keeps the orange smile) */
+:root[data-theme="dark"] .glass img[src$="Se/logo-mark.svg"],
 :root[data-theme="dark"] .glass img[src$="Uber/logo-mark.svg"]{filter:invert(1) drop-shadow(0 1px 1.5px rgba(0,0,0,.12))}
 :root[data-theme="dark"] .glass img[src$="Amzn/logo-mark.svg"]{filter:invert(1) hue-rotate(180deg) drop-shadow(0 1px 1.5px rgba(0,0,0,.12))}
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .glass img[src$="Uber/logo-mark.svg"]{filter:invert(1) drop-shadow(0 1px 1.5px rgba(0,0,0,.12))}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .glass img[src$="Se/logo-mark.svg"],
+  :root:not([data-theme="light"]) .glass img[src$="Uber/logo-mark.svg"]{filter:invert(1) drop-shadow(0 1px 1.5px rgba(0,0,0,.12))}
   :root:not([data-theme="light"]) .glass img[src$="Amzn/logo-mark.svg"]{filter:invert(1) hue-rotate(180deg) drop-shadow(0 1px 1.5px rgba(0,0,0,.12))} }
 :root[data-theme="dark"] .glass{background:
     radial-gradient(120% 90% at 30% 0%,rgba(255,255,255,.22),rgba(255,255,255,.06) 55%,rgba(255,255,255,.03)),
@@ -945,6 +947,15 @@ html.mobile .xl-wrap{max-height:calc(100vh - 190px)}
   </div>
 </div>
 
+<!-- Fiscal.ai data for the generic company shells (written by build_fx.py) -->
+<script src="Nvda/fiscal.js"></script>
+<script src="Spot/fiscal.js"></script>
+<script src="Se/fiscal.js"></script>
+<script src="Tbbb/fiscal.js"></script>
+<script src="Googl/fiscal.js"></script>
+<script src="Tsm/fiscal.js"></script>
+<script src="Meta/fiscal.js"></script>
+<script src="Nflx/fiscal.js"></script>
 <script>
 /* =====================================================================
    DATA — SoFi (US$M unless noted). Sources on each card.
@@ -1554,7 +1565,7 @@ function modelSheet(cfg){
     }).reverse();   // right to left: annual projected | annual actual | quarterly projected | quarterly actual
     const cells = (fn) => blocks.map((b,bi)=>(bi?gap:'')+(b.closed?'<td class="colx"></td>':b.dcols.map(d=>fn(d.c,b,d.bt)).join(''))).join('');
     const qxBtn = b => b.more ? `<button class="ol" data-ol="qx" data-id="${b.id}" aria-expanded="${b.qxOpen}" title="${b.qxOpen?'Hide':'Show'} projected quarters beyond the current fiscal year">${b.qxOpen?'−':'+'}</button>` : '';
-    const btBtn = b => b.past ? `<button class="ol ol-txt" data-ol="bt" data-id="${b.id}" aria-expanded="${b.btOpen}" title="Show what the model would have projected for each period with data through the prior period">${b.btOpen?'− projected at the time':'+ projected at the time'}</button>` : '';
+    const btBtn = b => b.past && !cfg.noBt ? `<button class="ol ol-txt" data-ol="bt" data-id="${b.id}" aria-expanded="${b.btOpen}" title="Show what the model would have projected for each period with data through the prior period">${b.btOpen?'− projected at the time':'+ projected at the time'}</button>` : '';
     const hA = `<tr class="hA"><th class="c-lab co-name">${cfg.coName}</th><th class="c-unit"></th>${
       blocks.map((b,bi)=>(bi?gapH:'')+(b.closed
         ? `<th class="band ${b.proj?'band-p':'band-a'} colx" title="${b.title}">${btn('blk',b.id,false,'Expand '+b.title)}</th>`
@@ -5291,6 +5302,327 @@ document.querySelectorAll('.ubvtab').forEach(t=>t.addEventListener('click',()=>{
 }));
 
 /* =====================================================================
+   FISCAL.AI COMPANIES — one generic shell per company (Thesis · Earnings · Valuation › Model).
+   Actuals: Fiscal.ai standardized statements and segments / KPIs (<Folder>/fiscal.js, written by build_fx.py).
+   Estimates: Fiscal.ai's own estimates by default (company guidance where the company gives it, otherwise
+   Fiscal.ai's model); every estimate cell can be overwritten and the change is saved in this browser.
+   Wall Street consensus (Zacks, via Fiscal.ai) is shown apart for comparison.
+   ===================================================================== */
+const FX = {};
+const FX_SRC = {g:'company guidance', ga:'company guidance, moved by its record of beating guides', gc:'quarter calculated from the full-year guide', m:'Fiscal.ai model', ac:'Fiscal.ai AI estimate'};
+const FX_CONF = {h:'high', m:'medium', l:'low'};
+F.pn = v => !isN(v) ? NA : v<0 ? `(${Math.abs(v).toFixed(2)})` : v.toFixed(2);   // per-share in a currency other than US$
+F.n2 = v => !isN(v) ? NA : v<0 ? `(${Math.abs(v).toFixed(2)})` : v.toFixed(2);
+function fiscalModel(tk, co){
+  const D = window.FISCAL && window.FISCAL[tk]; if(!D) return null;
+  const p = 'fx'+tk, cur = D.cur;
+  const U = cur==='USD' ? 'US$M' : cur+' M', UP = cur==='USD' ? 'US$' : cur, PSF = cur==='USD' ? 'ps' : 'pn';
+  const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const endLab = e => MON[+e.slice(5,7)-1]+'-'+e.slice(2,4);
+  const qLab = (fy,fq) => `Q${fq}'${String(fy).slice(2)}`;
+  const n0 = v => isN(v) ? v : 0;
+  const has = id => D.is.concat(D.bs,D.cf).some(r=>r[0]===id);
+
+  // ---- Actual periods ----
+  const pick = i => { const o={}; ['is','bs','cf'].forEach(s=>D[s].forEach(r=>o[s+'.'+r[0]]=r[4+i])); D.seg.forEach(r=>o['seg.'+r[0]]=r[5+i]); return o; };
+  const Q=[], Y=[];
+  D.P.forEach((pp,i)=>{ const o={...pick(i), e:pp[1], end:endLab(pp[1]), fy:pp[2], fq:pp[3]};
+    if(pp[0]==='Q'){ o.lab=qLab(pp[2],pp[3]); Q.push(o); } else { o.lab='FY'+pp[2]; Y.push(o); } });
+  const NQ=Q.length, NY=Y.length;
+  // Segment amounts reported only by quarter: the year is the sum of its four quarters
+  D.seg.filter(r=>r[3]==='m').forEach(r=>{ const k='seg.'+r[0];
+    Y.forEach(o=>{ if(isN(o[k])) return; const qs=Q.filter(q=>q.fy===o.fy);
+      if(qs.length===4 && qs.every(q=>isN(q[k]))) o[k]=qs.reduce((s,q)=>s+q[k],0); }); });
+  const DEBT = ['short_term_debt','current_portion_of_long_term_debt','long_term_debt'].filter(id=>has(id)).map(id=>'bs.'+id);
+  function derive(o){
+    if(!o.proj){
+      o['x.ebitda'] = isN(o['is.operating_profit'])&&isN(o['cf.depreciation_and_amortization']) ? o['is.operating_profit']+o['cf.depreciation_and_amortization'] : null;
+      o['x.fcf'] = isN(o['cf.cash_from_operating_activities']) ? o['cf.cash_from_operating_activities']+n0(o['cf.purchases_of_property_plant_and_equipment']) : null;
+      o['x.debt'] = DEBT.some(k=>isN(o[k])) ? DEBT.reduce((s,k)=>s+n0(o[k]),0) : (isN(o['bs.total_assets'])&&DEBT.length ? 0 : null);
+      const liq = o['bs.total_cash_and_cash_equivalents'] ?? o['bs.cash_and_cash_equivalents'];
+      o['x.netDebt'] = isN(o['x.debt'])&&isN(liq) ? o['x.debt']-liq : null;
+      o['x.bvps'] = isN(o['bs.total_common_shareholders_equity'])&&o['is.shares_outstanding'] ? o['bs.total_common_shareholders_equity']/o['is.shares_outstanding'] : null;
+      o['x.bsCheck'] = isN(o['bs.total_assets'])&&isN(o['bs.total_liabilities_and_shareholders_equity']) ? Math.round((o['bs.total_assets']-o['bs.total_liabilities_and_shareholders_equity'])*10)/10 : null;
+    } else {
+      const rev=o['is.total_revenues'], gp=o['is.gross_profit'], ni=o['is.net_income_attributable_to_common_shareholders'], eps=o['is.diluted_eps'];
+      o['is.cost_of_sales'] = isN(rev)&&isN(gp) ? rev-gp : null;
+      o['is.diluted_weighted_average_shares_outstanding'] = isN(ni)&&eps ? ni/eps : null;
+    }
+    return o;
+  }
+  Q.forEach(derive); Y.forEach(derive);
+
+  // ---- Estimates (Fiscal.ai by default; your edits replace single cells) ----
+  const MAP = {revenue:'is.total_revenues', gross_profit:'is.gross_profit', ebit:'is.operating_profit',
+    net_income:'is.net_income_attributable_to_common_shareholders', eps_gaap:'is.diluted_eps',
+    ebitda:'x.ebitda', net_income_adjusted:'x.niAdj', eps_adjusted:'x.epsAdj',
+    cash_and_cash_equivalents:'bs.cash_and_cash_equivalents', book_value:'bs.total_common_shareholders_equity',
+    total_debt:'x.debt', net_debt:'x.netDebt', bvps:'x.bvps',
+    operating_cash_flow:'cf.cash_from_operating_activities', capex:'cf.purchases_of_property_plant_and_equipment', free_cash_flow:'x.fcf'};
+  const E = D.est, Z = D.zacks;
+  const OV_KEY = 'pvg-fx-'+tk+'-est';
+  let OV = {}; try{ OV = JSON.parse(localStorage.getItem(OV_KEY)||'{}'); }catch(e){}
+  const lastQ = Q[NQ-1].e, lastY = Y[NY-1].e;
+  const EP = E.P.map((pp,j)=>({j, t:pp[0], e:pp[1], fy:pp[2], fq:pp[3]})).filter(pp=>pp.e && (pp.t==='Q' ? pp.e>lastQ : pp.e>lastY));
+  const zFor = pp => { const j = Z.P.findIndex(z=>z[0]===pp.t && z[2]===pp.fy && (pp.t==='A' || z[3]===pp.fq)); return j; };
+  function estPeriod(pp){
+    const lab = pp.t==='Q' ? qLab(pp.fy,pp.fq)+'E' : 'FY'+pp.fy+'E';
+    const o = {e:pp.e, end:endLab(pp.e), fy:pp.fy, fq:pp.fq, lab, proj:true, src:{}, ov:{}, fx:{}};
+    for(const id in MAP){ const cell = (E.m[id]||[])[pp.j]; const k = MAP[id];
+      if(cell){ o[k]=cell[0]; o.fx[k]=cell[0]; o.src[k]=cell; }
+      const u = OV[id]?.[lab]; if(isN(u)){ o[k]=u; o.ov[k]=true; } }
+    const zj = zFor(pp); o.z = {};
+    if(zj>=0) for(const id in Z.m){ const c = Z.m[id][zj]; if(c){ o.z[id]=c[0]; o.z[id+'N']=c[1]; } }
+    return derive(o);
+  }
+  function project(){
+    Q.length=NQ; Y.length=NY;
+    EP.forEach(pp=>(pp.t==='Q'?Q:Y).push(estPeriod(pp)));
+  }
+  project();
+
+  // ---- Blocks ----
+  const firstQ = Math.max(0, Q.findIndex(o=>o.fy>=2019)), firstY = Math.max(0, Y.findIndex(o=>o.fy>=2019));
+  const BLOCKS = [
+    {id:'qa', title:'Quarterly · Actual', short:'Q · Act.', proj:false, cols:[]},
+    {id:'qp', title:'Estimates Qs · Fiscal.ai', short:'Q · Est.', proj:true, cols:[]},
+    {id:'ya', title:'Annual · Actual', short:'Y · Act.', proj:false, cols:[]},
+    {id:'yp', title:'Annual · Estimates (Fiscal.ai)', short:'Y · Est.', proj:true, cols:[]},
+  ];
+  const qpDefault = [];
+  function refreshBlocks(){
+    BLOCKS[0].cols = Q.slice(firstQ, NQ).map((v,k)=>({v, kind:'q', qi:firstQ+k}));
+    BLOCKS[1].cols = Q.slice(NQ).map((v,k)=>({v, kind:'q', qi:NQ+k}));
+    BLOCKS[2].cols = Y.slice(firstY, NY).map((v,k)=>({v, kind:'y', yi:firstY+k}));
+    BLOCKS[3].cols = Y.slice(NY).map((v,k)=>({v, kind:'y', yi:NY+k}));
+    const lq = Q[NQ-1], untilFy = lq.fy + 1;
+    qpDefault.splice(0, qpDefault.length, ...BLOCKS[1].cols.filter(c=>c.v.fy<=untilFy));
+  }
+  refreshBlocks();
+
+  // ---- Row helpers ----
+  const yoyBase = c => c.kind==='q' ? Q[c.qi-4] : Y[c.yi-1];
+  const prevBase = c => c.kind==='q' ? Q[c.qi-1] : Y[c.yi-1];
+  const growth = (a,b) => !isN(a)||!isN(b) ? null : b<=0 ? NaN : (Math.abs(a/b-1)>=10 ? NaN : a/b-1);
+  const val = k => o=>o[k];
+  const negv = k => o=> isN(o[k]) ? (o[k]===0 ? 0 : -o[k]) : null;
+  const YOY = k => ({l:'YoY growth', f:(o,c)=>growth(o[k], yoyBase(c)?.[k]), fmt:'g', u:'%', sub:1});
+  const QOQ = k => ({l:'QoQ growth', f:(o,c)=>c.kind==='q' ? growth(o[k], prevBase(c)?.[k]) : null, fmt:'g', u:'%', sub:1});
+  const PCT = (l,a,b,abs) => ({l, f:o=>isN(o[a])&&isN(o[b])&&o[b]!==0 ? (abs?Math.abs(o[a]):o[a])/o[b] : null, fmt:'cs', u:'%', sub:1});
+  const SEC = (t, stmt='is') => ({sec:t, stmt});
+  const ttm = k => (o,c) => { if(c.kind!=='q') return o[k]; const ps=[1,2,3].map(n=>Q[c.qi-n]?.[k]); return isN(o[k])&&ps.every(isN) ? o[k]+ps[0]+ps[1]+ps[2] : null; };
+  const avgOf = (k,o,c) => { const b=prevBase(c)?.[k]; return isN(o[k])&&isN(b) ? (o[k]+b)/2 : null; };
+  const EK = Object.fromEntries(Object.entries(MAP).map(([id,k])=>[k,id]));   // statement key → estimate id
+  const EXP = new Set(['cost_of_sales','selling_general_and_administrative_expenses','research_and_development_expenses','other_operating_expenses',
+    'provision_for_income_taxes','depreciation_and_amortization','general_and_administrative_expenses','selling_and_marketing_expenses',
+    'sales_and_marketing_expenses','total_operating_expenses','operating_expenses','amortization_of_intangible_assets','restructuring_charges','impairment_charges']);
+  const line = (s, r, extra={}) => { const id=r[0], k=s+'.'+id, isExp = s==='is' && (EXP.has(id) || /_expenses$/.test(id) && id!=='interest_expense');
+    const fmt = r[3]==='ps' ? PSF : r[3]==='sh' ? 'mm1' : 'm', u = r[3]==='ps' ? UP : r[3]==='sh' ? 'M' : U;
+    return {l:r[1], f:isExp ? negv(k) : val(k), fmt, u, tot:r[2]?1:0, b:r[2]?1:0, ek:EK[k], k, ...extra}; };
+
+  const ROWS = [];
+  // Segments and KPIs
+  if(D.seg.length){
+    ROWS.push(SEC('Segments and KPIs'));
+    const byId = Object.fromEntries(D.seg.map(r=>[r[0],r]));
+    const used = new Set();
+    const segRow = r => { const k='seg.'+r[0], pct=r[3]==='pct';
+      const dec = r[3]==='n' && D.seg.length && r.slice(5).some(v=>isN(v) && Math.abs(v)<1000 && Math.round(v)!==v);
+      ROWS.push({l:r[1], f:pct ? (o=>isN(o[k]) ? o[k]/100 : null) : val(k), fmt:pct ? 'p' : dec ? 'n2' : 'm', u:pct ? '%' : r[3]==='m' ? U : '', ind:1, b:r[4]?1:0});
+      if(!pct) ROWS.push(YOY(k)); };
+    D.groups.forEach(([title, ids])=>{
+      const rows = ids.map(id=>byId[id]).filter(Boolean); if(!rows.length) return;
+      ROWS.push({l:title, f:()=>null, subh:1}); rows.forEach(r=>{ used.add(r[0]); segRow(r); }); ROWS.push({spacer:1});
+    });
+    const rest = D.seg.filter(r=>!used.has(r[0]));
+    if(rest.length){ ROWS.push({l:'Other segments and KPIs', f:()=>null, subh:1}); rest.forEach(segRow); }
+  }
+  // Income statement
+  ROWS.push(SEC('Income statement'));
+  D.is.forEach(r=>{
+    const id=r[0], k='is.'+id;
+    const key = ['total_revenues','operating_profit','net_income_attributable_to_common_shareholders','diluted_eps'].includes(id);
+    ROWS.push(line('is', r, key ? {key:1} : {}));
+    if(id==='total_revenues'){ ROWS.push(YOY(k), QOQ(k)); }
+    else if(id==='gross_profit'){ ROWS.push(YOY(k), PCT('Gross margin',k,'is.total_revenues')); }
+    else if(id==='operating_profit'){ ROWS.push(YOY(k), PCT('Operating margin',k,'is.total_revenues')); }
+    else if(id==='provision_for_income_taxes'){ ROWS.push({l:'Effective tax rate', f:o=>isN(o[k])&&o['is.income_before_provision_for_income_taxes'] ? o[k]/o['is.income_before_provision_for_income_taxes'] : null, fmt:'cs', u:'%', sub:1}); }
+    else if(id==='net_income_attributable_to_common_shareholders'){ ROWS.push(YOY(k), PCT('Net margin',k,'is.total_revenues')); }
+    else if(id==='diluted_eps'){ ROWS.push(YOY(k)); }
+    else if(id==='diluted_weighted_average_shares_outstanding'){ ROWS.push(YOY(k)); }
+    else if(r[1] && EXP.has(id)){ ROWS.push(PCT('% of revenue',k,'is.total_revenues',1)); }
+  });
+  ROWS.push({spacer:1});
+  ROWS.push({l:'EBITDA (operating profit + D&A)', f:val('x.ebitda'), fmt:'m', u:U, tot:1, ek:'ebitda', note:'Actuals: operating profit plus depreciation and amortization from the cash flow statement; estimates: Fiscal.ai EBITDA'});
+  ROWS.push(YOY('x.ebitda'), PCT('EBITDA margin','x.ebitda','is.total_revenues'));
+  ROWS.push({l:'Adjusted net income (Fiscal.ai estimate)', f:val('x.niAdj'), fmt:'m', u:U, ek:'net_income_adjusted', note:'Estimates only: Fiscal.ai adjusted basis'});
+  ROWS.push({l:`Adjusted diluted EPS (Fiscal.ai estimate${E.basis==='adjusted'?', the company\'s lead EPS':''})`, f:val('x.epsAdj'), fmt:PSF, u:UP, ek:'eps_adjusted', note:'Estimates only: Fiscal.ai adjusted basis'});
+  // Wall Street consensus (Zacks)
+  if(Z && Object.keys(Z.m||{}).length){
+    const ZU = (Z.cur||'USD')==='USD' ? 'US$M' : Z.cur+' M', ZUP = (Z.cur||'USD')==='USD' ? 'US$' : Z.cur;
+    ROWS.push(SEC('Wall Street consensus (Zacks)'));
+    const zr = (l,id,fmt,u,extra={}) => ROWS.push({l, f:o=>o.z?.[id] ?? null, fmt, u, ...extra});
+    zr('Revenue — consensus','revenue','m',ZU,{b:1});
+    if(cur===(Z.cur||'USD')) ROWS.push({l:'Fiscal.ai estimate vs consensus', f:o=>isN(o.z?.revenue)&&isN(o['is.total_revenues']) ? o['is.total_revenues']/o.z.revenue-1 : null, fmt:'g', u:'%', sub:1});
+    zr('EBITDA — consensus','ebitda','m',ZU);
+    zr('EBIT — consensus','ebit','m',ZU);
+    zr(`EPS — consensus (${Z.epsBasis||'adjusted'})`,'eps',(Z.cur||'USD')==='USD'?'ps':'pn',ZUP,{b:1});
+    if(cur===(Z.cur||'USD')) ROWS.push({l:'Fiscal.ai adjusted EPS vs consensus', f:o=>isN(o.z?.eps)&&isN(o['x.epsAdj'])&&o.z.eps>0 ? o['x.epsAdj']/o.z.eps-1 : null, fmt:'g', u:'%', sub:1});
+    zr('Number of EPS estimates','epsN','m','');
+  }
+  // Balance sheet
+  let bsSec = 'Assets';
+  ROWS.push(SEC('Assets','bs'));
+  D.bs.forEach(r=>{
+    ROWS.push(line('bs', r));
+    if(r[0]==='total_assets'){ ROWS.push(SEC('Liabilities','bs')); }
+    else if(r[0]==='total_liabilities'){ ROWS.push(SEC("Shareholders' equity",'bs')); }
+  });
+  ROWS.push({l:'Check: total assets − total liabilities and equity', f:val('x.bsCheck'), fmt:'m', u:U, sub:1});
+  ROWS.push(SEC('Debt and returns','bs'));
+  ROWS.push({l:'Total debt (excl. leases)', f:val('x.debt'), fmt:'m', u:U, b:1, ek:'total_debt', note:'Short-term debt, current portion of long-term debt and long-term debt'});
+  ROWS.push({l:'Net debt (net cash if negative)', f:val('x.netDebt'), fmt:'m', u:U, ek:'net_debt', note:'Total debt less cash, cash equivalents and short-term investments'});
+  ROWS.push({l:'Book value per share', f:val('x.bvps'), fmt:PSF, u:UP, ek:'bvps', note:"Common shareholders' equity / shares outstanding at period end"});
+  ROWS.push({l:'Return on average common equity (annualized)', f:(o,c)=>{ const e=avgOf('bs.total_common_shareholders_equity',o,c), ni=o['is.net_income_attributable_to_common_shareholders']; return isN(ni)&&e>0 ? ni*(c.kind==='q'?4:1)/e : null; }, fmt:'p', u:'%'});
+  // Cash flow statement
+  ROWS.push(SEC('Operating activities','cf'));
+  D.cf.forEach(r=>{
+    const id=r[0], k='cf.'+id;
+    ROWS.push(line('cf', r, id==='cash_from_operating_activities' ? {key:1} : {}));
+    if(id==='cash_from_operating_activities'){ ROWS.push(YOY(k), PCT('% of revenue',k,'is.total_revenues'), {l:'Trailing twelve months', f:ttm(k), fmt:'m', u:U, sub:1}); ROWS.push(SEC('Investing activities','cf')); }
+    else if(id==='cash_from_investing_activities'){ ROWS.push(SEC('Financing activities','cf')); }
+    else if(id==='cash_from_financing_activities'){ ROWS.push(SEC('Change in cash','cf')); }
+  });
+  ROWS.push(SEC('Free cash flow','cf'));
+  ROWS.push({l:'Cash from operating activities', f:val('cf.cash_from_operating_activities'), fmt:'m', u:U});
+  ROWS.push({l:'(−) Capital expenditure', f:val('cf.purchases_of_property_plant_and_equipment'), fmt:'m', u:U, ind:1});
+  ROWS.push(PCT('Capex as % of revenue','cf.purchases_of_property_plant_and_equipment','is.total_revenues',1));
+  ROWS.push({l:'Free cash flow', f:val('x.fcf'), fmt:'m', u:U, tot:1, key:1, ek:'free_cash_flow'});
+  ROWS.push(YOY('x.fcf'), PCT('FCF margin (% of revenue)','x.fcf','is.total_revenues'), {l:'Trailing twelve months', f:ttm('x.fcf'), fmt:'m', u:U, sub:1});
+  if(has('share_based_compensation_expense')) ROWS.push({l:'Share-based compensation', f:val('cf.share_based_compensation_expense'), fmt:'m', u:U, ind:1}, PCT('% of revenue','cf.share_based_compensation_expense','is.total_revenues'));
+  if(has('repurchases_of_common_shares')) ROWS.push({l:'Buybacks as % of free cash flow', f:o=>isN(o['cf.repurchases_of_common_shares'])&&o['x.fcf']>0 ? -o['cf.repurchases_of_common_shares']/o['x.fcf'] : null, fmt:'cs', u:'%'});
+  ROWS.push({l:'FCF conversion (% of net income)', f:o=>isN(o['x.fcf'])&&o['is.net_income_attributable_to_common_shareholders']>0 ? o['x.fcf']/o['is.net_income_attributable_to_common_shareholders'] : null, fmt:'cs', u:'%'});
+  // drop sections left without lines (e.g. a statement without the matching total)
+  for(let i=ROWS.length-1;i>=0;i--) if(ROWS[i].sec && (i===ROWS.length-1 || ROWS[i+1].sec)) ROWS.splice(i,1);
+
+  // Outline structure: each row knows its section and (for sub-rows) its parent line
+  let secIdx=-1, parentIdx=-1, grpIdx=-1;
+  ROWS.forEach((r,i)=>{
+    if(r.sec){ secIdx=i; parentIdx=-1; grpIdx=-1; r.id='s'+i; r.stmt_=r.stmt; return; }
+    r.sec_=secIdx; r.id='r'+i; r.stmt_=ROWS[secIdx].stmt;
+    if(r.spacer){ grpIdx=-1; r.grp_=-1; return; }
+    if(r.subh) grpIdx=i;
+    r.grp_ = r.subh || (r.sub && parentIdx===grpIdx) ? -1 : grpIdx;
+    if(r.sub){ r.parent=parentIdx; if(parentIdx>=0) ROWS[parentIdx].hasSubs=true; } else parentIdx=i;
+  });
+
+  const isEst = (r,c) => !!(r.ek && c.v.proj && r.k!=='is.cost_of_sales');
+  const fmtOf = r => (v => (F[r.fmt]||F.m)(v).replace(/<[^>]+>/g,''));
+  const SHEET = modelSheet({ROWS, BLOCKS, qpDefault, BQ:{}, BY:{}, noBt:true, isInput:isEst, stKey:'pvg-fx-'+tk+'-outline',
+    ids:{seg:p+'StmtSeg', title:p+'StmtTitle', sub:p+'StmtSub', table:p+'ModelTable', hide:p+'HideSubs'},
+    coName:`${co.name} (${tk})`, unitNote:`${cur==='USD'?'US$':cur} in millions, except per-share data`,
+    STMT:{is:['Income statement',`${U} · segments, KPIs and statements from Fiscal.ai · estimates: Fiscal.ai`], bs:['Balance sheet',`${U} · period-end balances`], cf:['Cash flow statement',`${U} · three-month flows`]},
+    colNote:c=>c.v.note||'',
+    isDerived:(r,c)=>!!(c.v.proj && c.v.ov && r.ek && c.v.ov[MAP[r.ek]]),
+    cellTitle:(r,c)=>{ if(!c.v.proj || !r.ek) return ''; const k=MAP[r.ek], s=c.v.src[k];
+      if(c.v.ov[k]) return `Your value · Fiscal.ai: ${isN(c.v.fx[k]) ? fmtOf(r)(c.v.fx[k]) : 'none'} · click to edit`;
+      return s ? `Fiscal.ai estimate · ${FX_SRC[s[1]]||s[1]} · confidence ${FX_CONF[s[2]]||s[2]||'n/a'} · ${s[3]} · click to edit` : 'No Fiscal.ai estimate · click to enter one'; },
+    cellAttr:(r,c)=>isEst(r,c) ? ` data-ek="${r.ek}" data-lab="${c.v.lab}" data-fmt="${r.fmt}" tabindex="0"` : ''});
+
+  function setOv(ek, lab, v){
+    if(isN(v)){ (OV[ek] ||= {})[lab]=v; } else if(OV[ek]){ delete OV[ek][lab]; if(!Object.keys(OV[ek]).length) delete OV[ek]; }
+    try{ localStorage.setItem(OV_KEY, JSON.stringify(OV)); }catch(e){}
+    project(); refreshBlocks(); SHEET.render();
+  }
+  function reset(){ OV={}; try{ localStorage.removeItem(OV_KEY); }catch(e){} project(); refreshBlocks(); SHEET.render(); }
+  const edited = () => Object.keys(OV).length>0;
+  const current = (ek, lab) => { const o=Q.concat(Y).find(x=>x.lab===lab); return o ? o[MAP[ek]] : null; };
+  return {...SHEET, Q, Y, setOv, reset, edited, current, D};
+}
+function fxPaneHTML(c){
+  const p='fx'+c.ticker;
+  return `
+    <!-- ============ ${c.short.toUpperCase()} (Fiscal.ai shell) ============ -->
+    <div class="co-pane" data-co="${c.ticker}">
+    <div class="mview" data-main="earnings">
+      <section class="view active">
+        <div class="card"><div class="card-h"><div><span class="card-t">Earnings</span><span class="card-sub">coming next</span></div></div>
+          <div class="ave-empty">Summaries of each ${c.short} earnings release and call, by call and by topic, as for Amazon. The Model is ready under Valuation.</div></div>
+      </section>
+    </div>
+    <div class="mview active" data-main="tesis">
+      <section class="view active">
+        <div class="card"><div class="card-h"><div><span class="card-t">Thesis</span><span class="card-sub">coming next</span></div></div>
+          <div class="ave-empty">${c.thesis||'Segments, KPIs and what management says on each call.'} The Model is ready under Valuation.</div></div>
+      </section>
+    </div>
+    <div class="mview" data-main="valuation">
+    <nav class="subtabs" role="tablist"><button class="tab active">Model</button></nav>
+      <section class="view active">
+        <div class="card">
+          <div class="card-h">
+            <div class="stmt-seg" id="${p}StmtSeg" role="tablist">
+              <button data-stmt="is" class="on">Income statement</button>
+              <button data-stmt="bs">Balance sheet</button>
+              <button data-stmt="cf">Cash flow statement</button>
+            </div>
+            <div class="ctrls">
+              <div class="legend"><span><i style="background:#FFF4CC"></i>Fiscal.ai estimate (click to edit)</span><span><i style="background:rgba(46,117,182,0.12)"></i>Projected</span><span><u>123</u> Your value (replaces Fiscal.ai)</span></div>
+              <div class="tbtns"><button class="tbtn" data-fx="expand">+ Expand all</button><button class="tbtn" data-fx="collapse">− Collapse all</button></div>
+              <label class="chk"><input type="checkbox" id="${p}HideSubs"> Hide growth and common-size rows</label>
+            </div>
+          </div>
+          <div class="stmt-head"><span class="stmt-title" id="${p}StmtTitle">Income statement</span><span class="card-sub" id="${p}StmtSub"></span>
+            <span class="edit-bar"><button class="tbtn" data-fx="reset">Reset to Fiscal.ai</button><span class="msg" id="${p}EditMsg"></span></span>
+          </div>
+          <div class="xl-wrap" id="${p}ModelTable"></div>
+        </div>
+        <div class="src" id="${p}Src"></div>
+      </section>
+    </div>
+    </div>`;
+}
+function fxSetup(c){
+  const p='fx'+c.ticker;
+  document.getElementById('page-company').insertAdjacentHTML('beforeend', fxPaneHTML(c));
+  const M = fiscalModel(c.ticker, c); if(!M) return;
+  const D = M.D, pane = document.querySelector(`.co-pane[data-co="${c.ticker}"]`);
+  const msg = () => { document.getElementById(p+'EditMsg').textContent = M.edited() ? 'Using your values where underlined; the rest from Fiscal.ai' : 'All estimates from Fiscal.ai'; };
+  const upd = s => s ? new Date(s).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '';
+  document.getElementById(p+'Src').innerHTML = `Source: Fiscal.ai standardized financial statements, segments and KPIs (${c.ticker}, as reported in the company's filings and releases; pulled ${D.pulled}), in ${D.cur==='USD'?'US$':D.cur} millions except per-share data${c.fyNote?'; '+c.fyNote:''}. Segment amounts reported only by quarter are summed for the year. `
+    + `Estimates: Fiscal.ai (updated ${upd(D.est.updatedAt||D.est.upd)}) — company guidance where the company gives it, otherwise Fiscal.ai's model or AI estimate; hover a cell to see its source and confidence. Cost of sales and diluted shares in estimate columns are implied (revenue − gross profit; net income / EPS); lines without a Fiscal.ai estimate stay blank. Edited estimates are saved in this browser. `
+    + `Wall Street consensus${D.zacks&&D.zacks.cur&&D.zacks.cur!==D.cur?' (in '+D.zacks.cur+')':''}: Data provided by <a href="https://www.zacksdata.com" target="_blank" rel="noopener">Zacks Investment Research, Inc., www.zacksdata.com</a>.`;
+  let shown=false;
+  FX[c.ticker] = { render(){ if(!shown){ M.render(); shown=true; } msg(); } };
+  pane.addEventListener('click', e=>{
+    const t=e.target.closest('[data-fx]');
+    if(t){ const a=t.dataset.fx; if(a==='expand') M.expandAll(); if(a==='collapse') M.collapseAll();
+      if(a==='reset' && confirm('Replace every edited estimate with Fiscal.ai\'s?')) M.reset(); return msg(); }
+    const sb=e.target.closest('#'+p+'StmtSeg button'); if(sb){ M.setStmt(sb.dataset.stmt); return; }
+    if(!e.target.closest('#'+p+'ModelTable')) return;
+    const td=e.target.closest('td.edit'); if(td) return openCell(td);
+    const b=e.target.closest('button.ol, button.chev'); if(b) return M.toggle(b.dataset.ol, b.dataset.id);
+    const sec=e.target.closest('tr.sec'); if(sec) M.toggle('sec', sec.dataset.sec);
+  });
+  pane.addEventListener('keydown', e=>{ const td=e.target.closest('td.edit'); if(td && e.key==='Enter' && !td.querySelector('input')){ e.preventDefault(); openCell(td); } });
+  document.getElementById(p+'HideSubs').addEventListener('change', e=>M.setHideSubs(e.target.checked));
+  function openCell(td){
+    if(td.querySelector('input')) return;
+    const ek=td.dataset.ek, lab=td.dataset.lab, v=M.current(ek, lab);
+    const inp=document.createElement('input'); inp.type='text'; inp.inputMode='decimal'; inp.setAttribute('aria-label','Edit estimate'); inp.value = isN(v) ? +v.toFixed(td.dataset.fmt==='m'?1:4) : '';
+    inp.title='Enter a value (blank = back to Fiscal.ai) · Enter to save · Esc to cancel';
+    td.textContent=''; td.appendChild(inp); inp.focus(); inp.select();
+    let done=false;
+    const close = save => { if(done) return; done=true;
+      if(save){ const s=inp.value.trim(); if(!s) M.setOv(ek, lab, null); else { const n=parseFloat(s.replace(/[,$\s()]/g,'')); if(isN(n)) M.setOv(ek, lab, /^\s*(-|\()/.test(s) ? -Math.abs(n) : n); else M.render(); } }
+      else M.render();
+      msg(); };
+    inp.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); close(true); } if(e.key==='Escape'){ e.preventDefault(); close(false); } });
+    inp.addEventListener('blur', ()=>close(true));
+  }
+}
+
+/* =====================================================================
    BOOT
    ===================================================================== */
 const RENDER={mem,prod,seg,cp,orig};
@@ -5320,7 +5652,39 @@ const COMPANIES = [
     short:'Uber', tint:'120,120,120',
     logo:{src:'Uber/logo-mark.svg', text:'Uber', bg:'#000000'},
     quote:()=>MKT_UBER },
+  { ticker:'NVDA', name:'NVIDIA Corporation', exchange:'NASDAQ', sector:'Semiconductors · AI data center', fiscal:1,
+    short:'NVIDIA', tint:'118,185,0', logo:{src:'Nvda/logo-mark.svg', text:'NVDA', bg:'#76B900'},
+    fyNote:"fiscal quarters and years (NVIDIA's fiscal year ends in late January, so FY2027 runs Feb-26 to Jan-27)",
+    thesis:'Data Center (compute and networking), Gaming, Professional Visualization and Automotive: revenue, margins and supply commitments.' },
+  { ticker:'SPOT', name:'Spotify Technology S.A.', exchange:'NYSE', sector:'Audio streaming · Subscriptions · Advertising', fiscal:1,
+    short:'Spotify', tint:'30,215,96', logo:{src:'Spot/logo-mark.svg', text:'SPOT', bg:'#1ED760'},
+    fyNote:'Spotify reports in euros; the share price is in US$',
+    thesis:'Premium subscribers, MAUs, ARPU and gross margin by segment (Premium and Ad-Supported).' },
+  { ticker:'SE', name:'Sea Limited', exchange:'NYSE', sector:'E-commerce (Shopee) · Digital financial services (Monee) · Gaming (Garena)', fiscal:1,
+    short:'Sea', tint:'238,77,45', logo:{src:'Se/logo-mark.svg', text:'SE', bg:'#EE4D2D'},
+    fyNote:'shares and EPS per ordinary share (one ADS = one Class A share)',
+    thesis:'Shopee, Monee and Garena: GMV, take rate, loan book and bookings, with segment adjusted EBITDA.' },
+  { ticker:'TBBB', name:'BBB Foods Inc.', exchange:'NYSE', sector:'Hard-discount grocery (Tiendas 3B) · Mexico', fiscal:1,
+    short:'BBB Foods', tint:'213,43,30', logo:{src:'Tbbb/logo-mark.svg', text:'3B', bg:'#D52B1E'},
+    fyNote:'BBB Foods reports in Mexican pesos (IFRS); the share price is in US$',
+    thesis:'Store openings, same-store sales, gross margin and the path of adjusted EBITDA and cash flow.' },
+  { ticker:'GOOGL', name:'Alphabet Inc.', exchange:'NASDAQ', sector:'Search · YouTube · Google Cloud · Other Bets', fiscal:1,
+    short:'Alphabet', tint:'66,133,244', logo:{src:'Googl/logo-mark.svg', text:'G', bg:'#4285F4'},
+    thesis:'Search, YouTube, subscriptions and Google Cloud: revenue, operating income by segment and capex.' },
+  { ticker:'TSM', name:'Taiwan Semiconductor Manufacturing Co.', exchange:'NYSE', sector:'Semiconductor foundry', fiscal:1,
+    short:'TSMC', tint:'200,16,46', logo:{src:'Tsm/logo-mark.svg', text:'TSMC', bg:'#C8102E'},
+    fyNote:'TSMC reports in New Taiwan dollars (IFRS); shares and EPS per ADS (one ADS = five ordinary shares) and the share price in US$',
+    thesis:'Revenue by technology node and platform (HPC, smartphone), gross margin and capex.' },
+  { ticker:'META', name:'Meta Platforms, Inc.', exchange:'NASDAQ', sector:'Social media · Digital advertising · Reality Labs', fiscal:1,
+    short:'Meta', tint:'4,103,223', logo:{src:'Meta/logo-mark.svg', text:'Meta', bg:'#0467DF'},
+    thesis:'Family of Apps and Reality Labs: ad impressions, price per ad, daily active people, expenses and capex.' },
+  { ticker:'NFLX', name:'Netflix, Inc.', exchange:'NASDAQ', sector:'Streaming entertainment', fiscal:1,
+    short:'Netflix', tint:'229,9,20', logo:{src:'Nflx/logo-mark.svg', text:'N', bg:'#E50914'},
+    fyNote:'shares and EPS adjusted for the 10-for-1 split of November 2025',
+    thesis:'Revenue by region, operating margin, content spend and free cash flow.' },
 ];
+// Fiscal.ai shells: pane, model and quote from <Folder>/fiscal.js
+COMPANIES.filter(c=>c.fiscal).forEach(c=>{ c.quote=()=>window.FISCAL?.[c.ticker]?.mkt; fxSetup(c); });
 const logoHTML = (c,size) => c.logo.src
   ? `<span class="logo-c ${size}"><img src="${c.logo.src}" alt="${c.name}"></span>`
   : `<span class="logo ${size}" style="background:${c.logo.bg}">${c.logo.text}</span>`;
@@ -5372,6 +5736,7 @@ function showMain(m){
   document.querySelectorAll('.co-pane .mview').forEach(x=>x.classList.toggle('active',x.dataset.main===m));
   try{ localStorage.setItem('pvg-main',m); }catch(e){}
   if(curCo==='AMZN'){ if(m==='valuation' && amvtab==='model') renderAmznModel(); if(m==='valuation' && amvtab==='ave') AM_AVE.render(); if(m==='valuation' && amvtab==='dcf') AM_DCF.render(); if(m==='valuation' && amvtab==='guidance') AM_GR.render(); if(m==='earnings') AM_EARN.render(); if(m==='tesis') AM_TH.render(); return; }
+  if(FX[curCo]){ if(m==='valuation') FX[curCo].render(); return; }
   if(curCo==='UBER'){ if(m==='valuation' && ubvtab==='model') renderUberModel(); if(m==='valuation' && ubvtab==='dcf') UB_DCF.render(); return; }
   if(m==='earnings') EARN.render();
   if(m==='valuation' && vtab==='model') renderModel();
