@@ -74,7 +74,7 @@ html.mobile .nav-item .ic-desk{display:block}
 .grp-n{font-size:11px;font-weight:600;color:var(--text-secondary);background:var(--main-bg);border:1px solid var(--border);border-radius:999px;padding:0 6px;line-height:16px}
 .grp-tab svg{width:12px;height:12px;transition:transform .15s}
 .grp-dd.open .grp-tab svg{transform:rotate(180deg)}
-.grp-menu{display:none;position:absolute;top:calc(100% + 6px);left:0;z-index:60;min-width:270px;max-height:min(60vh,440px);overflow:auto;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;box-shadow:0 16px 36px -12px rgba(20,28,43,.35);padding:6px}
+.grp-menu{display:none;position:absolute;top:calc(100% + 6px);left:0;z-index:60;min-width:200px;max-height:min(60vh,440px);overflow:auto;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;box-shadow:0 16px 36px -12px rgba(20,28,43,.35);padding:6px}
 .grp-dd.open .grp-menu{display:block}
 .grp-item{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;padding:7px 8px;border-radius:8px;font:500 13px 'Figtree',sans-serif;color:var(--text-primary);cursor:pointer;text-align:left}
 .grp-item:hover,.grp-item:focus-visible{background:var(--main-bg);outline:none}
@@ -82,6 +82,9 @@ html.mobile .nav-item .ic-desk{display:block}
 .gi-logo img{width:64%;height:64%;object-fit:contain}
 .gi-nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .gi-tk{font-size:11px;font-weight:600;color:var(--text-secondary);letter-spacing:.2px}
+.grp-item.sel{font-weight:600}
+.gi-ck{width:14px;height:14px;flex:none;color:var(--accent)}
+.gi-ck svg{width:14px;height:14px;display:block}
 .grp-none{padding:12px 10px;font-size:12.5px;color:var(--text-secondary)}
 .co-empty{grid-column:1/-1;padding:48px 20px;text-align:center;color:var(--text-secondary);font-size:13.5px;border:1px dashed var(--border);border-radius:16px}
 /* wide wordmarks get more room inside the round medallion */
@@ -5762,34 +5765,32 @@ const logoHTML = (c,size) => c.logo.src
   : `<span class="logo ${size}" style="background:${c.logo.bg}">${c.logo.text}</span>`;
 // Glass medallion on the company cards, tinted with each company's brand colour
 const tintVars = t => [['--tint',`rgb(${t})`],['--tint-a',`rgba(${t},.16)`],['--tint-b',`rgba(${t},.28)`],['--tint-c',`rgba(${t},.14)`],['--tint-d',`rgba(${t},.38)`],['--tint-e',`rgba(${t},.12)`]];
-// Groups on the Companies page: each tab shows its cards and opens a dropdown to jump straight to a company
+// Groups on the Companies page: one dropdown (Portafolio, México, USA); picking a group shows its companies
 const GROUPS = [{id:'port', name:'Portafolio'}, {id:'mx', name:'México'}, {id:'usa', name:'USA'}];
 let curGrp = 'port'; try{ const g=localStorage.getItem('pvg-grp'); if(GROUPS.some(x=>x.id===g)) curGrp=g; }catch(e){}
 const GRP_CHEV = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.25 6 7.75l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const GRP_CHECK = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 6.3 5 8.6l4.5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const grpCount = id => COMPANIES.filter(c=>c.group===id).length;
 function renderGroups(){
-  document.getElementById('grpTabs').innerHTML = GROUPS.map(g=>{ const cs=COMPANIES.filter(c=>c.group===g.id);
-    return `<div class="grp-dd${g.id===curGrp?' on':''}" data-grp="${g.id}">
-      <button class="grp-tab" data-grp="${g.id}" aria-haspopup="menu" aria-expanded="false">${g.name}<span class="grp-n">${cs.length}</span>${GRP_CHEV}</button>
-      <div class="grp-menu" role="menu">${cs.length ? cs.map(c=>`<button class="grp-item" role="menuitem" data-ticker="${c.ticker}"><span class="gi-logo">${c.logo.src?`<img src="${c.logo.src}" alt="">`:''}</span><span class="gi-nm">${c.short||c.name}</span><span class="gi-tk">${c.ticker}</span></button>`).join('') : '<div class="grp-none">No companies yet</div>'}</div>
-    </div>`; }).join('');
+  const g0 = GROUPS.find(g=>g.id===curGrp);
+  document.getElementById('grpTabs').innerHTML = `<div class="grp-dd on">
+    <button class="grp-tab" aria-haspopup="listbox" aria-expanded="false">${g0.name}<span class="grp-n">${grpCount(g0.id)}</span>${GRP_CHEV}</button>
+    <div class="grp-menu" role="listbox">${GROUPS.map(g=>`<button class="grp-item${g.id===curGrp?' sel':''}" role="option" aria-selected="${g.id===curGrp}" data-grp="${g.id}"><span class="gi-nm">${g.name}</span><span class="gi-tk">${grpCount(g.id)}</span><span class="gi-ck">${g.id===curGrp?GRP_CHECK:''}</span></button>`).join('')}</div>
+  </div>`;
   const cs = COMPANIES.filter(c=>c.group===curGrp);
   document.getElementById('coGrid').innerHTML = cs.length ? cs.map(c=>`
   <button class="co-card gl" data-ticker="${c.ticker}" style="${tintVars(c.tint||'46,117,182').map(([k,v])=>`${k}:${v}`).join(';')}">
     ${c.logo.src?`<span class="glass"><img src="${c.logo.src}" alt="${c.name}"></span>`:logoHTML(c,'lg')}
     <div class="nm">${c.name}</div>
-  </button>`).join('') : `<div class="co-empty">No companies in ${GROUPS.find(g=>g.id===curGrp).name} yet.</div>`;
+  </button>`).join('') : `<div class="co-empty">No companies in ${g0.name} yet.</div>`;
 }
-const closeGrpMenus = except => document.querySelectorAll('.grp-dd.open').forEach(d=>{ if(d!==except){ d.classList.remove('open'); d.querySelector('.grp-tab').setAttribute('aria-expanded','false'); } });
+const closeGrpMenus = () => document.querySelectorAll('.grp-dd.open').forEach(d=>{ d.classList.remove('open'); d.querySelector('.grp-tab').setAttribute('aria-expanded','false'); });
 document.getElementById('grpTabs').addEventListener('click', e=>{
-  const it=e.target.closest('.grp-item'); if(it){ closeGrpMenus(); return showCompany(it.dataset.ticker); }
+  const it=e.target.closest('.grp-item');
+  if(it){ curGrp=it.dataset.grp; try{ localStorage.setItem('pvg-grp',curGrp); }catch(_){} renderGroups(); return; }
   const t=e.target.closest('.grp-tab'); if(!t) return;
-  const dd=t.parentElement, open=dd.classList.contains('open');
-  if(t.dataset.grp!==curGrp){
-    curGrp=t.dataset.grp; try{ localStorage.setItem('pvg-grp',curGrp); }catch(_){}
-    renderGroups(); const nd=document.querySelector(`.grp-dd[data-grp="${curGrp}"]`);
-    nd.classList.add('open'); nd.querySelector('.grp-tab').setAttribute('aria-expanded','true'); return;
-  }
-  closeGrpMenus(dd); dd.classList.toggle('open',!open); t.setAttribute('aria-expanded',String(!open));
+  const dd=t.parentElement, open=!dd.classList.contains('open');
+  dd.classList.toggle('open',open); t.setAttribute('aria-expanded',String(open));
 });
 document.addEventListener('click', e=>{ if(!e.target.closest('.grp-dd')) closeGrpMenus(); });
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeGrpMenus(); });
