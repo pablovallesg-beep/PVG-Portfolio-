@@ -1,0 +1,1355 @@
+{
+ "ticker": "UBER",
+ "topics": [
+  "Guidance & outlook",
+  "Mobility",
+  "Delivery",
+  "Grocery & retail",
+  "Freight",
+  "Autonomous vehicles",
+  "Uber One & platform",
+  "Profitability & margins",
+  "Capital allocation & M&A",
+  "Insurance & U.S. affordability",
+  "AI & agents"
+ ],
+ "earnings": {
+  "quarters": {
+   "Q2'25": {
+    "date": "2025-08-06",
+    "headline": "Gross Bookings rose 17% (18% ex-FX) to $46.8B, in the upper half of the $45.75-47.25B guide, and Adjusted EBITDA rose 35% to $2.1B, at the top of the $2.02-2.12B range, on record audience (180M MAPCs) and frequency. Uber announced a new $20B buyback and guided Q3 to $48.25-49.75B of Gross Bookings and $2.19-2.29B of Adjusted EBITDA.",
+    "numbers": [
+     "Gross Bookings $46.8B (+17%; +18% ex-FX); trips 3.27B (+18%)",
+     "Revenue $12.65B (+18%)",
+     "Mobility GB $23.8B (+16%; +18% ex-FX); Delivery GB $21.7B (+20%); Freight GB $1.26B (-1%)",
+     "Adjusted EBITDA $2.12B (+35%), 4.5% of GB (vs 3.9%)",
+     "Segment Adj. EBITDA: Mobility $1.91B (+22%), Delivery $873M (+48%), Freight -$6M",
+     "GAAP income from operations $1.45B (+82%); net income $1.36B; GAAP diluted EPS $0.63",
+     "Non-GAAP EPS $0.60 (as later recast by Uber)",
+     "Operating cash flow $2.56B; free cash flow $2.48B (+44%); TTM FCF $8.5B",
+     "MAPCs 180M (+15%); Uber One 36M+ members (~+60%)"
+    ],
+    "points": [
+     {
+      "topic": "Uber One & platform",
+      "text": "Khosrowshahi's prepared remarks said cross-platform consumers retain over 35% better and generate over 3x the Gross Bookings and profits of single-business users, yet fewer than 1 in 5 eligible consumers use both businesses. About $10B (12% of annualized Delivery GB) already comes via the Eats view in the Uber app."
+     },
+     {
+      "topic": "Uber One & platform",
+      "text": "Uber One passed 36M members in June, up ~60% YoY, and members generate over 40% of combined Mobility and Delivery Gross Bookings. Member Days added nearly 500,000 incremental members in a week."
+     },
+     {
+      "topic": "Delivery",
+      "text": "Delivery GB grew 20% with the ninth straight quarter of accelerating Delivery MAPC growth; Delivery Adjusted EBITDA margin reached 4.0% of GB and segment EBITDA rose 48% to $873M. Grocery & retail selection growth was the fastest in nearly three years."
+     },
+     {
+      "topic": "Autonomous vehicles",
+      "text": "Khosrowshahi said Uber now has 20 autonomous partners. On the call he described the Nuro-Lucid deal (20,000-vehicle commitment) as part of investing in both software and hardware players, and CFO Mahendra-Rajah said Uber will recycle proceeds from minority stakes to fund AV investments."
+     },
+     {
+      "topic": "Capital allocation & M&A",
+      "text": "The board authorized an additional $20B buyback. Mahendra-Rajah said over 60% of the prior authorization had been executed, so roughly $23B remained to execute, about 12% of market cap."
+     },
+     {
+      "topic": "Guidance & outlook",
+      "text": "The Q3 Gross Bookings guide of 17-21% ex-FX includes the Trendyol Go acquisition; excluding it the guide was 16-20%, consistent with the prior quarter. Uber also kept 2025 SBC at $1.7-1.9B and D&A at $600-700M."
+     }
+    ],
+    "guidance": [
+     "Q3'25 Gross Bookings $48.25-49.75B (+17% to +21% YoY ex-FX); neutral to modestly positive FX; 16-20% excluding Trendyol Go",
+     "Q3'25 Adjusted EBITDA $2.19-2.29B (+30% to +36% YoY)",
+     "FY2025 stock-based compensation $1.7-1.9B (unchanged)",
+     "FY2025 depreciation & amortization $600-700M (unchanged)"
+    ],
+    "qa": [
+     "Eric Sheridan (Goldman Sachs) asked how Uber cross-promotes services; Khosrowshahi said cross-promotion must be targeted because a pixel promoting Delivery can degrade the Mobility app experience.",
+     "Justin Post (BofA) asked about OEM partnerships and Tesla; Khosrowshahi said AV software is accelerating thanks to larger AI models and the harder part of commercialization will be hardware platforms.",
+     "Doug Anmuth (JPMorgan) asked about pricing and the buyback; Khosrowshahi said lower prices also lift return visits days or weeks later, and Mahendra-Rajah said the new $20B plus ~$3B remaining is about 12% of market cap.",
+     "Ross Sandler (Barclays) asked about vehicle commitments and Waymo; Khosrowshahi said Uber wants more Waymos in Austin, Atlanta and other cities, and Mahendra-Rajah said buying vehicles via Nuro-Lucid should yield better, not worse, economics.",
+     "Benjamin Black (Deutsche Bank) asked about the U.S. barbell strategy; Khosrowshahi said premium is easier to execute and has higher near-term profit potential, with U4B growing over 30% YoY."
+    ]
+   },
+   "Q3'25": {
+    "date": "2025-11-04",
+    "headline": "Trips accelerated to +22% and Gross Bookings rose 21% to $49.7B, at the top of the $48.25-49.75B guide, while Adjusted EBITDA grew 33% to a record $2.26B (inside the $2.19-2.29B range). Uber guided Q4 to $52.25-53.75B in Gross Bookings and $2.41-2.51B in Adjusted EBITDA, and said it would replace Adjusted EBITDA guidance with Non-GAAP EPS from Q1'26.",
+    "numbers": [
+     "Gross Bookings $49.7B (+21%; +21% ex-FX); trips 3.51B (+22%)",
+     "Revenue $13.47B (+20%; +19% ex-FX)",
+     "Mobility GB $25.1B (+20%); Delivery GB $23.3B (+25%); Freight GB $1.31B (flat)",
+     "Adjusted EBITDA $2.26B (+33%), 4.5% of GB (vs 4.1%)",
+     "Segment Adj. EBITDA: Mobility $2.04B (+21%), Delivery $921M (+47%), Freight -$20M",
+     "GAAP income from operations $1.11B (+5%); net income $6.63B incl. $4.9B tax valuation release; GAAP EPS $3.11",
+     "Non-GAAP EPS $0.65 (as later recast by Uber)",
+     "Free cash flow $2.23B (+6%); TTM FCF $8.7B",
+     "MAPCs 189M (+17%); monthly trips per MAPC +4%"
+    ],
+    "points": [
+     {
+      "topic": "Mobility",
+      "text": "Mobility trips grew 21%, well ahead of expectations, and overall trip growth of 22% was the fastest since 2023 while average price was roughly flat (-1%). Khosrowshahi called it the largest trip-volume increase in Uber's history outside the post-Covid rebound."
+     },
+     {
+      "topic": "Delivery",
+      "text": "Delivery GB grew 25% (24% ex-FX), the fastest in four years per CFO Mahendra-Rajah, and Delivery segment EBITDA rose 47% to $921M. Grocery & retail was approaching a $12B GB run rate, growing much faster than food delivery."
+     },
+     {
+      "topic": "Uber One & platform",
+      "text": "Khosrowshahi laid out six strategic focus areas (lifetime experience, hybrid human/AV network, local commerce, multiple gigs, merchant growth engine, and technology). Only 20% of MAPCs in markets with both businesses use both, and cross-platform users spend 3x as much."
+     },
+     {
+      "topic": "Autonomous vehicles",
+      "text": "Uber expects AV deployments in at least 10 cities by end-2026, building on Abu Dhabi, Atlanta, Austin and Riyadh, and announced an NVIDIA partnership. Khosrowshahi said Phoenix, Austin and Atlanta grew more than twice as fast as the rest of the U.S., while noting AV is not profitable today."
+     },
+     {
+      "topic": "Profitability & margins",
+      "text": "Uber said it would move from Adjusted EBITDA to an operating-income-based measure and introduce Non-GAAP EPS guidance from Q1'26, including SBC, depreciation and non-M&A amortization. Mahendra-Rajah said this does not change the 2024 three-year outlook."
+     },
+     {
+      "topic": "Insurance & U.S. affordability",
+      "text": "Mahendra-Rajah said 2025 legislative wins (Georgia, Nevada, California) and the rest of the insurance strategy set up benefits for 2026."
+     }
+    ],
+    "guidance": [
+     "Q4'25 Gross Bookings $52.25-53.75B (+17% to +21% YoY ex-FX); ~1 pt FX tailwind",
+     "Q4'25 Adjusted EBITDA $2.41-2.51B (+31% to +36% YoY)",
+     "FY2025 SBC $1.7-1.9B (unchanged); FY2025 D&A raised to $650-750M from $600-700M (acquired intangibles)",
+     "AV deployments in at least 10 cities by end-2026",
+     "Three-year outlook (mid-to-high teens GB CAGR, high-30s to 40% Adj. EBITDA CAGR) reiterated"
+    ],
+    "qa": [
+     "Doug Anmuth (JPMorgan) asked about cross-platform usage and the NVIDIA deal; Khosrowshahi said only 20% of consumers use both businesses, 30% of riders have never tried Eats and 75% have never tried grocery & retail.",
+     "Eric Sheridan (Goldman Sachs) asked what Delivery breadth and AVs do to demand; Mahendra-Rajah cited the fastest Delivery growth in four years and Khosrowshahi said Phoenix, Austin and Atlanta grew more than twice the rest of the U.S.",
+     "Brian Nowak (Morgan Stanley) asked about U.S. sparse markets and European Delivery competition; Mahendra-Rajah said sparse geographies grow ~1.5x faster, and Khosrowshahi said Uber is No. 1 in the UK and France.",
+     "Justin Post (BofA) asked about profitability and AV economics; Mahendra-Rajah said Uber is tracking the three-year framework and Khosrowshahi said AV is not profitable today, as with every new product at launch.",
+     "John Colantuoni (Jefferies) asked about Toast and the non-GAAP change; Mahendra-Rajah said moving to adjusted EPS improves comparability and reflects real costs like SBC and depreciation."
+    ]
+   },
+   "Q4'25": {
+    "date": "2026-02-04",
+    "headline": "Gross Bookings rose 22% to $54.1B, above the $52.25-53.75B guide, and Adjusted EBITDA rose 35% to $2.49B (top half of $2.41-2.51B); FY2025 closed with $193B GB, $8.7B Adjusted EBITDA and $9.8B FCF. Uber switched to Non-GAAP EPS guidance, guiding Q1'26 to $52.0-53.5B GB and $0.65-0.72 EPS, and announced CFO Prashanth Mahendra-Rajah would hand over to Balaji Krishnamurthy.",
+    "numbers": [
+     "Gross Bookings $54.1B (+22%; +22% ex-FX); trips 3.75B (+22%)",
+     "Revenue $14.37B (+20%; +19% ex-FX)",
+     "Mobility GB $27.4B (+20%); Delivery GB $25.4B (+26%); Freight GB $1.27B (-1%)",
+     "Adjusted EBITDA $2.49B (+35%), 4.6% of GB; Non-GAAP operating income $1.92B (+46%), 3.5% of GB",
+     "Segment Adj. EBITDA: Mobility $2.20B (+25%), Delivery $1.02B (+40%), Freight breakeven",
+     "Non-GAAP EPS $0.71 (+27%); GAAP EPS $0.14 after a $1.6B equity revaluation loss",
+     "Free cash flow $2.81B (+65%); FY2025 FCF $9.76B (+42%)",
+     "FY2025: GB $193.5B (+19%), revenue $52.0B (+18%), Adj. EBITDA $8.73B (+35%), Non-GAAP EPS $2.45 (+35%)",
+     "MAPCs 202M (+18%); Uber One 46M+ (+55%)"
+    ],
+    "points": [
+     {
+      "topic": "Mobility",
+      "text": "Mobility GB grew 19% ex-FX with U.S. growth accelerating for a second quarter and EMEA up ~30%. Airports are 15% of Mobility GB, non-UberX products ~35% of trips, and Moto and Black trips each grew ~40% in 2025."
+     },
+     {
+      "topic": "Insurance & U.S. affordability",
+      "text": "Krishnamurthy said insurance reform and product savings worth hundreds of millions of dollars turn insurance from a deleveraging cost into leverage, letting Uber hold prices flat; Uber expects U.S. trip and GB growth to accelerate further in 2026."
+     },
+     {
+      "topic": "Delivery",
+      "text": "Delivery GB accelerated to 26% and passed a $100B annual run rate. Krishnamurthy said delivery ad penetration has exceeded the old 2% target and enterprise ad growth now outpaces SMB."
+     },
+     {
+      "topic": "Autonomous vehicles",
+      "text": "Uber expects AV trips in as many as 15 cities by end-2026 (roughly half U.S., half international) and intends to be the largest facilitator of AV trips by 2029. Krishnamurthy said 70% of the U.S. business and nearly 75% of U.S. profits come from outside the top-20 cities, which AVs are unlikely to reach for a long time."
+     },
+     {
+      "topic": "Capital allocation & M&A",
+      "text": "Uber repurchased a record $1.9B in Q4, exhausting the inaugural $7B program, and keeps buying under the $20B authorization. Krishnamurthy set priorities: reinvestment, AV (software partners, OEM offtake, infrastructure), selective bolt-on M&A, buybacks and an investment-grade rating."
+     },
+     {
+      "topic": "Guidance & outlook",
+      "text": "From 2026 the UK moved to an agency model outside London, cutting Mobility revenue margin by ~350 bp with no profit impact. Krishnamurthy said Uber firmly expects to meet all three items of the 2024 three-year outlook in its final year."
+     }
+    ],
+    "guidance": [
+     "Q1'26 Gross Bookings $52.0-53.5B (+17% to +21% YoY ex-FX); ~4 pt FX tailwind",
+     "Q1'26 Non-GAAP EPS $0.65-0.72 (+37% YoY at midpoint)",
+     "Q1'26 Adjusted EBITDA equivalent $2.37-2.47B",
+     "FY2026 Non-GAAP effective tax rate 22-25%; cash tax rate 10-15% over the next few years",
+     "FY2026 Mobility revenue margin ~350 bp lower from the UK model change (no profit impact)",
+     "AV trips in as many as 15 cities by end-2026"
+    ],
+    "qa": [
+     "Justin Post (BofA) asked how Tesla/Waymo ramps in big cities affect share and profit; Khosrowshahi said AVs are expanding the market where present, and Krishnamurthy said nearly 75% of U.S. profits come from outside the top-20 cities.",
+     "Brian Nowak (Morgan Stanley) asked whether AV becomes winner-take-most and about returning 50% of FCF; Khosrowshahi said hardware is local and fragmented, and Krishnamurthy said Uber can fund growth, AV and buybacks in parallel.",
+     "Mark Mahaney (Evercore) asked why the U.S. will accelerate; Krishnamurthy cited insurance savings allowing stable prices plus the barbell product strategy, and Khosrowshahi described equity stakes (e.g., Waabi, with its first 25,000 passenger vehicles exclusive to Uber).",
+     "Michael Morton (MoffettNathanson) asked how AV scaling plays out; Krishnamurthy said the first stage is base-load AV supply for trough demand, then lower vehicle costs to expand the TAM.",
+     "John Colantuoni (Jefferies) asked about ads and Delivery acceleration; Krishnamurthy said ad penetration already exceeds 2% with enterprise catching up, and Khosrowshahi listed selection, sparse markets and membership as drivers."
+    ]
+   },
+   "Q1'26": {
+    "date": "2026-05-06",
+    "headline": "Gross Bookings rose 21% ex-FX (25% reported) to $53.7B, above the $52.0-53.5B guide, and Non-GAAP EPS of $0.72 (+44%) hit the top of the $0.65-0.72 range despite ~70 bp of headwind from the Middle East and U.S. weather. Uber guided Q2 to $56.25-57.75B GB and $0.78-0.82 EPS and passed 50M Uber One members.",
+    "numbers": [
+     "Gross Bookings $53.7B (+25%; +21% ex-FX); trips 3.64B (+20%)",
+     "Revenue $13.2B (+14%; +10% ex-FX), ~8 pt headwind from the UK business model change",
+     "Mobility GB $26.4B (+20% ex-FX); Delivery GB $26.0B (+23% ex-FX); Freight GB $1.33B (+6%)",
+     "Non-GAAP operating income $1.88B (+42%), 3.5% of GB; Adjusted EBITDA $2.48B (+33%)",
+     "Segment OI: Mobility $2.03B (+28%, record 7.7% margin), Delivery $961M (+43%), Freight -$30M",
+     "Non-GAAP EPS $0.72 (+44%); GAAP EPS $0.13 after $1.5B equity revaluation loss",
+     "Free cash flow $2.29B (+2%); TTM FCF $9.8B",
+     "Record $3.0B buyback; diluted shares -2% YoY",
+     "MAPCs 199M (+17%); Uber One 50M+ members"
+    ],
+    "points": [
+     {
+      "topic": "Insurance & U.S. affordability",
+      "text": "Krishnamurthy said 2026 will be the first year since COVID with leverage on the U.S. Mobility insurance cost line, with savings of hundreds of millions of dollars reinvested in pricing. LA trip growth is well ahead of California and the rest of the country."
+     },
+     {
+      "topic": "Uber One & platform",
+      "text": "Uber One passed 50M members, growing 50% YoY, and members generate half of Mobility and Delivery GB. At GO-GET Uber launched hotel booking with Expedia (700,000 hotels, 10% Uber One credits back), and Krishnamurthy said ~$15B of Delivery run-rate GB already comes from the Mobility app."
+     },
+     {
+      "topic": "Freight",
+      "text": "Freight GB grew 6%, its first growth in nearly two years, per Khosrowshahi."
+     },
+     {
+      "topic": "Autonomous vehicles",
+      "text": "AV mobility trips grew more than 10x YoY and Uber was live in 8 cities with plans for up to 15 by year-end; it launched Uber Autonomous Solutions and announced a fleet financing arrangement with Santander. Khosrowshahi said Uber's category position in San Francisco and LA is higher than six months earlier."
+     },
+     {
+      "topic": "AI & agents",
+      "text": "Khosrowshahi said about 10% of committed code is now written by autonomous agents, and Krishnamurthy said Uber underestimated AI's impact when setting the 2026 budget and has raised AI spending, offset by slower headcount growth."
+     },
+     {
+      "topic": "Delivery",
+      "text": "Krishnamurthy said Uber is holding its own in Europe against DoorDash and Prosus, launched in Finland and announced seven new markets, and re-accelerated Australia to ~30% growth via sparse markets."
+     }
+    ],
+    "guidance": [
+     "Q2'26 Gross Bookings $56.25-57.75B (+18% to +22% YoY ex-FX); ~2 pt FX tailwind; includes 60 bp Middle East headwind",
+     "Q2'26 Non-GAAP EPS $0.78-0.82 (+31% to +38% YoY)",
+     "Q2'26 Adjusted EBITDA equivalent $2.70-2.80B",
+     "FY2026 SBC $1.95-2.15B; Non-GAAP D&A $450-550M",
+     "FY2026 Non-GAAP ETR 22-24% (lowered from 22-25%); FY2026 cash tax rate mid-to-high single digits",
+     "U4B: serve up to 1M organizations and exceed $10B GB by 2028"
+    ],
+    "qa": [
+     "Doug Anmuth (JPMorgan) asked about insurance savings in LA/SF and hotels; Krishnamurthy said insurance will give U.S. Mobility cost leverage for the first time since COVID, and Khosrowshahi said hotels build on Reserve's shift to planned trips.",
+     "Eric Sheridan (Goldman Sachs) asked about personalization and agents; Khosrowshahi said AI lets each user choose the interface and that ~3/4 of rides use a predicted destination.",
+     "Justin Post (BofA) asked about Waymo's new cities; Khosrowshahi said U.S. Mobility accelerated more than the total and Uber sees no effect from Waymo launches so far.",
+     "Nikhil Devnani (Bernstein) asked about ROI on investments and the Santander deal; Krishnamurthy said low-cost products drive 75% higher frequency and premium 3.5x higher profit growth, and Khosrowshahi said predictable AV utilization supports financing.",
+     "John Colantuoni (Jefferies) asked about AI spending and competition; Khosrowshahi said ~10% of code is agent-written, and Krishnamurthy said Uber is on the offensive in Europe."
+    ]
+   },
+   "Q2'26": {
+    "date": "2026-08-05",
+    "headline": "Gross Bookings rose 22% ex-FX to $58.0B, above the $56.25-57.75B guide, and Non-GAAP EPS grew 35% to $0.81 (inside $0.78-0.82), with TTM FCF above $10B for the first time; trip growth slowed to 18% on Brazil supply. Uber guided Q3 to $58.25-60.25B GB and $0.84-0.88 EPS and had just announced the Delivery Hero takeover offer.",
+    "numbers": [
+     "Gross Bookings $58.0B (+24%; +22% ex-FX); trips 3.87B (+18%)",
+     "Revenue $14.19B (+12%; +11% ex-FX), ~8 pt UK model headwind",
+     "Mobility GB $29.0B (+20% ex-FX); Delivery GB $27.5B (+25% ex-FX); Freight GB $1.57B (+25%)",
+     "Non-GAAP operating income $2.14B (+40%), 3.7% of GB; Adjusted EBITDA $2.82B (+33%)",
+     "Segment OI: Mobility $2.22B (+28%, 7.6% margin), Delivery $1.06B (+38%), Freight -$24M",
+     "Non-GAAP EPS $0.81 (+35%); GAAP EPS $1.17 incl. $1.6B equity revaluation gain",
+     "Free cash flow $2.79B (+13%); TTM FCF over $10B",
+     "MAPCs 208M (+16%); 10.2M drivers and couriers",
+     "Advertising above $2.5B annualized revenue run rate, ~+50% YoY"
+    ],
+    "points": [
+     {
+      "topic": "Mobility",
+      "text": "Krishnamurthy said the 2-point trip-growth slowdown was entirely Brazil, where Moto supply tightened as delivery platforms competed for two-wheel drivers; Khosrowshahi said Uber held share in Brazil. U.S. trips and GB accelerated, helped by insurance savings, LA/SF and U4B growth of 40%."
+     },
+     {
+      "topic": "Capital allocation & M&A",
+      "text": "Uber agreed a €41.50/share cash offer for Delivery Hero (equity value $14.8B), expected to be accretive to Non-GAAP EPS on close and high-single-digit accretive by year three. Krishnamurthy expects a close in 2H27, planning in 2028 and main tech migrations in 2029."
+     },
+     {
+      "topic": "Autonomous vehicles",
+      "text": "Uber was live in 7 AV cities and on track for 15 by year-end; partners have committed ~120,000 vehicles to the network. Krishnamurthy said the $10B AV commitment is multi-year, split between equity in software partners and balance-sheet support for fleets, real estate and OEM offtake."
+     },
+     {
+      "topic": "Profitability & margins",
+      "text": "Krishnamurthy said the ~500 bp YoY drop in Mobility revenue margin is ~400 bp UK reclassification, with the rest deliberate investment, and the net take rate in the 10-Q is broadly stable. He said engineers have near-100% adoption of AI coding tools and some teams cut headcount 10-20%."
+     },
+     {
+      "topic": "Capital allocation & M&A",
+      "text": "Uber bought back ~$3.5B of stock in 1H26 but deployed ~$4B in Q2 on Delivery Hero shares; Krishnamurthy said buybacks will return to normal in 'months, not quarters', toward about 50% of FCF."
+     },
+     {
+      "topic": "Delivery",
+      "text": "Delivery GB accelerated to 25% ex-FX. Krishnamurthy said organic Delivery growth is accelerating, but lapping Trendyol Go outweighs the Getir and Careem additions, a net headwind to reported growth in Q3."
+     }
+    ],
+    "guidance": [
+     "Q3'26 Gross Bookings $58.25-60.25B (+18% to +22% YoY ex-FX); ~1 pt FX headwind",
+     "Q3'26 Non-GAAP EPS $0.84-0.88 (+28% to +35% YoY)",
+     "Q3'26 Adjusted EBITDA equivalent $2.86-2.96B",
+     "FY2026 SBC narrowed to $1.95-2.10B; Non-GAAP D&A $450-550M; Non-GAAP ETR 22-24%",
+     "Delivery Hero: accretive to Non-GAAP EPS on close, high-single-digit % accretion by year three; gross leverage below 2x"
+    ],
+    "qa": [
+     "Brian Nowak (Morgan Stanley) asked about AV milestones; Khosrowshahi said Uber is live in 7 cities, will be in 15 by year-end, and sees mid-to-high 20s to low 30s trips per vehicle per day on its network.",
+     "Doug Anmuth (JPMorgan) asked about Brazil and Waymo; Khosrowshahi said food-delivery competition (DiDi Food, Meituan) is bidding up two-wheel supply, and that Uber expects to keep operating with Waymo in Austin and Atlanta next year.",
+     "Justin Post (BofA) asked about the $10B AV spend and take rate; Krishnamurthy said P&L impact will be sized as deployments scale and ~400 bp of the ~500 bp Mobility margin drop is the UK accounting change.",
+     "Mark Mahaney (Evercore) asked about AI and buybacks; Khosrowshahi said AI will deliver 'thousands of small hits', and Krishnamurthy said buybacks will rebuild within months.",
+     "Nikhil Devnani (Bernstein) asked about Delivery Hero integration and AV markets; Krishnamurthy outlined a 2H27 close and 2029 migrations, and Khosrowshahi said trips in SF, LA and Phoenix accelerated in Q2."
+    ]
+   },
+   "Q3'26": {
+    "date": "2026-11-04",
+    "headline": "Gross Bookings rose 20% to $59.8B, in the upper half of the $58.25-60.25B guide, and Non-GAAP EPS rose 35% to $0.88, the top of the $0.84-0.88 range, but Mobility came in 1-2 points below plan on international driver supply (fuel prices, India, Brazil, Canada). Uber guided Q4 to $63.25-65.25B GB (+18-22% ex-FX) and $0.95-0.99 EPS (+34-39%), and targets ~700 driverless vehicles on Uber by year-end and 2,000+ by end-2027.",
+    "numbers": [
+     "Gross Bookings $59.8B (+20%; +20% ex-FX); trips 4.06B (+16%)",
+     "Revenue $14.77B (+10%), with an ~8 pt ($1.1B) UK business-model headwind",
+     "Mobility GB $29.5B (+17% ex-FX); Delivery GB $28.5B (+23% ex-FX); Freight GB $1.77B (+35%)",
+     "Non-GAAP operating income $2.30B (+38%), record 3.9% of GB; Adjusted EBITDA $2.96B (+31%), 5.0% of GB",
+     "Segment OI: Mobility $2.36B (+27%, record 8.0% margin), Delivery $1.06B (+30%), Freight -$33M",
+     "Non-GAAP EPS $0.88 (+35%); GAAP EPS $0.25 incl. $476M equity revaluation loss",
+     "Free cash flow $2.54B (+14%); record TTM FCF $10.4B",
+     "MAPCs 215M (+14%); frequency 6.3 trips/month; Uber One ~55M members",
+     "Buyback $750M; diluted shares ~-3% YoY; unrestricted cash and ST investments $10.1B"
+    ],
+    "points": [
+     {
+      "topic": "Mobility",
+      "text": "Mobility GB grew 17% ex-FX, 1-2 points below plan, as fuel prices, tighter labor and immigration limited driver supply in India, Brazil and Canada; the Middle East was a 75 bp headwind. Khosrowshahi said Uber is shifting incentives from riders to drivers, and Krishnamurthy said global supply-hours growth accelerated in October."
+     },
+     {
+      "topic": "Mobility",
+      "text": "Wait & Save passed an $8B annualized GB run rate, doubling YoY, and the premium portfolio grew nearly 35%, with U4B close to 50% growth. Uber has mostly deprioritized UberX Share."
+     },
+     {
+      "topic": "Grocery & retail",
+      "text": "Khosrowshahi said grocery & retail is a $15B run-rate business growing ~40%, boosted by a nationwide Costco expansion that already ranks among top merchants. Uber will use dark stores only selectively (Delivery Hero, Türkiye, Taiwan)."
+     },
+     {
+      "topic": "Delivery",
+      "text": "Delivery GB grew 23% with organic growth accelerating for a second quarter in the U.S. and LatAm. Merchant spending on ads and offers passed a $10B annualized run rate, and members are 70% of Delivery GB."
+     },
+     {
+      "topic": "Autonomous vehicles",
+      "text": "Uber expects ~700 fully driverless vehicles by end-2026 and over 2,000 by end-2027 (roughly half U.S.), with Zoox and Motional in Las Vegas and Nuro/Lucid in the Bay Area in Q1'27. Krishnamurthy said Uber delivers ~30% higher trips per vehicle per day than 1P deployments and wants AV fleets financed by third-party capital."
+     },
+     {
+      "topic": "Capital allocation & M&A",
+      "text": "Uber agreed to buy ezCater (>$2.5B TTM GB) and closed Getir, Blacklane and SpotHero. Apart from AV, it expects minimal to no further M&A through at least 2027. It also issued €4.5B of notes and signed a €4B term loan for Delivery Hero."
+     },
+     {
+      "topic": "AI & agents",
+      "text": "Krishnamurthy said that in Halloween week (~320M trips), AI agents produced about 500 Uber Eats orders and 4 rides. Khosrowshahi said Uber will work with third-party agents but wants to avoid dependence on any one player."
+     }
+    ],
+    "guidance": [
+     "Q4'26 Gross Bookings $63.25-65.25B (+18% to +22% YoY ex-FX); ~1 pt FX headwind; assumes 100 bp Middle East headwind",
+     "Q4'26 Non-GAAP EPS $0.95-0.99 (+34% to +39% YoY)",
+     "Q4'26 Adjusted EBITDA equivalent $3.13-3.23B (last time this translation is given)",
+     "FY2026 SBC narrowed to $2.00-2.10B; Non-GAAP D&A narrowed to $500-550M; Non-GAAP ETR 22-24%",
+     "Q4'26 Freight GB growth broadly consistent with Q3; ~$1.5B UK VAT cash payment in Q4",
+     "~700 fully driverless AVs on Uber by end-2026; over 2,000 by end-2027"
+    ],
+    "qa": [
+     "Eric Sheridan (Goldman Sachs) asked about AV fleet financing; Krishnamurthy said the $1B Santander fleet facility is the template, with announcements coming on infrastructure and vehicle financing, and that long run AVs should be financed with third-party capital.",
+     "Nikhil Devnani (Bernstein) asked about international supply; Krishnamurthy blamed fuel costs in Brazil and India and immigration in Canada, and said targeted driver investments drove better supply growth in October.",
+     "Brian Nowak (Morgan Stanley) asked about grocery and dark stores; Khosrowshahi cited a $15B run rate growing 40% and said dark stores come mainly via Delivery Hero.",
+     "Shweta Khajuria (Wolfe) asked how durable the AV utilization edge is and about ezCater; Krishnamurthy said new 1P markets run low-teens trips per vehicle per day vs high-20s on Uber, and that ezCater implies a few hundred million dollars of profit swing versus building.",
+     "Michael Morton (MoffettNathanson) asked about a DoorDash-Instacart combination; Khosrowshahi said merchants are reaching out to work more with Uber to avoid dependence on one platform.",
+     "Mark Mahaney (Evercore) asked if supply spending hurts Mobility's 8% margin; Krishnamurthy said there is no meaningful change to the margin trajectory, with Q4 supply spend hitting take rate rather than margin."
+    ]
+   }
+  },
+  "next": {
+   "nextReport": {
+    "period": "Q4'26",
+    "expected": "early February 2027 (not announced)"
+   },
+   "targets": [
+    {
+     "metric": "Q4'26 Gross Bookings",
+     "guide": "$63.25-65.25B (+18% to +22% YoY ex-FX; ~1 pt FX headwind)",
+     "src": "Q3'26 release & prepared remarks"
+    },
+    {
+     "metric": "Q4'26 Non-GAAP EPS",
+     "guide": "$0.95-0.99 (+34% to +39% YoY)",
+     "src": "Q3'26 release & prepared remarks"
+    },
+    {
+     "metric": "Q4'26 Adjusted EBITDA (translation)",
+     "guide": "$3.13-3.23B",
+     "src": "Q3'26 release"
+    },
+    {
+     "metric": "FY2026 SBC / Non-GAAP D&A / ETR",
+     "guide": "$2.00-2.10B / $500-550M / 22-24%",
+     "src": "Q3'26 prepared remarks"
+    },
+    {
+     "metric": "2024-2026 three-year outlook",
+     "guide": "Mid-to-high teens GB CAGR ex-FX; high-30s% to 40% Adj. EBITDA CAGR; FCF 90%+ of Adj. EBITDA",
+     "src": "Feb 2024 Investor Update; reaffirmed Q4'25 prepared remarks"
+    },
+    {
+     "metric": "Driverless AVs on Uber",
+     "guide": "~700 by end-2026; over 2,000 by end-2027",
+     "src": "Q3'26 release & prepared remarks"
+    },
+    {
+     "metric": "Delivery Hero accretion",
+     "guide": "Accretive to Non-GAAP EPS on close; high-single-digit % by year three; close expected 2H27",
+     "src": "Jul 16 2026 8-K; Q2'26 call"
+    },
+    {
+     "metric": "U4B",
+     "guide": "Up to 1M organizations and over $10B GB by 2028",
+     "src": "Q1'26 prepared remarks"
+    }
+   ],
+   "watch": [
+    {
+     "topic": "Mobility",
+     "text": "Whether driver-supply investments restore Mobility growth (17% ex-FX in Q3) in Brazil, India and Canada as October trends suggested, and how much take rate is given up to fund driver incentives."
+    },
+    {
+     "topic": "Guidance & outlook",
+     "text": "The FY2026 actuals against the three-year outlook (GB, Adj. EBITDA, FCF conversion) and what new framework, if any, Uber gives for 2027 once it stops publishing the Adjusted EBITDA translation."
+    },
+    {
+     "topic": "Autonomous vehicles",
+     "text": "Progress toward ~700 driverless vehicles (Zoox and Motional in Las Vegas, UAE ~200) and any announced third-party fleet or infrastructure financing structures."
+    },
+    {
+     "topic": "Profitability & margins",
+     "text": "Whether Q4 Non-GAAP EPS reaches the $0.95-0.99 range while Mobility supply spend rises, and whether Mobility segment margin holds near the record 8.0%."
+    },
+    {
+     "topic": "Capital allocation & M&A",
+     "text": "Delivery Hero and ezCater regulatory progress, debt levels against the below-2x gross leverage target, the ~$1.5B UK VAT payment hitting Q4 FCF, and buyback pace (~$15B left on the authorization)."
+    },
+    {
+     "topic": "Grocery & retail",
+     "text": "Whether grocery & retail keeps ~40% growth after the Costco expansion and whether a DoorDash-Instacart combination changes merchant behavior."
+    }
+   ],
+   "openQuestions": [
+    "How much P&L and balance-sheet cost the $10B multi-year AV commitment carries once deployments scale (Krishnamurthy said it will be sized later).",
+    "Whether the Mobility supply shortfall is cyclical (fuel prices, seasonality) or structural (immigration, two-wheeler competition in Brazil).",
+    "Terms and timing of the AV fleet and infrastructure financing vehicles Uber said would be announced in coming months.",
+    "Whether third-party AI agents become a meaningful channel and on what economic terms Uber will work with them.",
+    "Whether Waymo stays on Uber in Austin and Atlanta beyond 2027, since Khosrowshahi only committed to 'next year'."
+   ]
+  }
+ },
+ "thesis": {
+  "summary": "Uber runs the largest global marketplace for on-demand rides (Mobility) and local delivery of restaurant food, groceries and retail goods (Delivery), plus a truck brokerage arm (Freight). It earns a take rate on $193B of 2025 Gross Bookings across 70+ countries. The model compounds through a shared audience (215M monthly consumers in Q3'26), cross-selling between the Uber and Uber Eats apps, and the ~55M-member Uber One program, which accounts for over half of Mobility and Delivery bookings. Bookings have grown about 20% a year while Non-GAAP EPS grows mid-30s%, because costs scale slower than volume, and TTM free cash flow passed $10B, funding buybacks, AV investments and acquisitions such as Delivery Hero. The market's main debate is whether autonomous vehicles (Waymo, Tesla) bypass Uber or plug into it as extra supply, alongside take-rate pressure, driver-supply constraints and the integration risk of a run of large acquisitions.",
+  "pillars": [
+   {
+    "title": "Durable 20% growth at scale",
+    "text": "Gross Bookings have grown about 20% for five straight quarters, driven mainly by audience growth plus frequency, not price. Growth levers include sparse/suburban markets, the barbell product range (Wait & Save to Black/Reserve/U4B) and new geographies.",
+    "evidence": [
+     {
+      "text": "Fifth consecutive quarter of 20%+ GB growth; Q3'26 GB $59.8B (+20%)",
+      "src": "Q3'26 release"
+     },
+     {
+      "text": "FY2025 was the fifth consecutive year of 20%+ annual GB growth; GB $193.5B",
+      "src": "Q4'25 prepared remarks"
+     },
+     {
+      "text": "Fewer than 10% of eligible U.S. sparse-market consumers used Uber in the last 12 months vs over 50% in dense markets",
+      "src": "Q2'26 call"
+     },
+     {
+      "text": "Wait & Save above an $8B annualized GB run rate, doubling YoY; premium portfolio +~35%",
+      "src": "Q3'26 prepared remarks"
+     }
+    ]
+   },
+   {
+    "title": "Operating leverage and cash generation",
+    "text": "Profit grows about twice as fast as bookings: Non-GAAP operating income reached 3.9% of GB and Mobility segment margin a record 8.0% in Q3'26. Free cash flow passed $10B TTM, and management guides Q4'26 EPS growth of 34-39%.",
+    "evidence": [
+     {
+      "text": "Q3'26 Non-GAAP EPS $0.88 (+35%); Non-GAAP OI $2.30B (+38%), 3.9% of GB",
+      "src": "Q3'26 release"
+     },
+     {
+      "text": "Record TTM free cash flow of $10.4B",
+      "src": "Q3'26 prepared remarks"
+     },
+     {
+      "text": "FY2025 Adjusted EBITDA $8.73B (+35%); FCF $9.76B (+42%), 112% conversion of Adj. EBITDA",
+      "src": "Q4'25 release & prepared remarks"
+     }
+    ]
+   },
+   {
+    "title": "Platform flywheel: Uber One and cross-platform",
+    "text": "Cross-platform users retain better and spend about 3x as much, and Uber One makes the platform sticky across rides, delivery, grocery and now hotels. Penetration still has room to grow: only about 20% of consumers in markets with both businesses use both.",
+    "evidence": [
+     {
+      "text": "Uber One ~55M members; members above half of Mobility + Delivery GB",
+      "src": "Q3'26 prepared remarks"
+     },
+     {
+      "text": "Cross-platform consumers generate over 3x the GB and profits of single-business peers",
+      "src": "Q2'25 prepared remarks"
+     },
+     {
+      "text": "~$15B of Delivery run-rate GB comes from the Mobility app; 30% of eligible riders have never used Uber Eats",
+      "src": "Q1'26 call"
+     }
+    ]
+   },
+   {
+    "title": "AV as an aggregator, not a victim",
+    "text": "Uber is positioning itself as the demand and operations layer for many AV developers (Waymo, Zoox, Nuro/Lucid, WeRide, Baidu, Pony, Wayve, NVIDIA, Rivian and others). It argues that its hybrid network yields higher utilization and lower fixed cost per trip than first-party fleets.",
+    "evidence": [
+     {
+      "text": "~30% higher trips per vehicle per day for U.S. AV partners vs 1P deployments nationwide",
+      "src": "Q3'26 prepared remarks"
+     },
+     {
+      "text": "~700 fully driverless vehicles on Uber by end-2026; over 2,000 by end-2027",
+      "src": "Q3'26 release"
+     },
+     {
+      "text": "Partners have committed ~120,000 vehicles to the Uber network over the coming years",
+      "src": "Q2'26 prepared remarks"
+     },
+     {
+      "text": "In mature U.S. AV markets the rideshare category grew 7 pts faster than the rest of the country",
+      "src": "Q3'26 prepared remarks"
+     }
+    ]
+   },
+   {
+    "title": "Capital returns plus consolidation",
+    "text": "Strong cash flow funds buybacks (a $20B authorization, diluted shares down ~3% YoY) and acquisitions that extend the platform: Trendyol Go, Getir, Delivery Hero, ezCater, Blacklane and SpotHero. Management promises a pause on further M&A outside AV through at least 2027.",
+    "evidence": [
+     {
+      "text": "Delivery Hero offer at €41.50/share ($14.8B equity value); EPS-accretive at close, high-single-digit accretion by year three",
+      "src": "Jul 16 2026 8-K"
+     },
+     {
+      "text": "Trendyol Go: bought for ~$700M, annualized GB now above $4B; trip growth from mid-teens to over 25%",
+      "src": "Q3'26 prepared remarks"
+     },
+     {
+      "text": "Record $3B repurchase in Q1'26; ~$15B remaining under authorization after Q3'26",
+      "src": "Q1'26 & Q3'26 prepared remarks"
+     }
+    ]
+   }
+  ],
+  "segments": [
+   {
+    "name": "Mobility",
+    "text": "Ridesharing (UberX, Moto, Wait & Save, Comfort, Black, Reserve, U4B, Uber Health) plus AV trips. Q3'26 GB was $29.5B (+17% ex-FX) with segment OI of $2.36B (8.0% margin). Reported revenue growth is depressed in 2026 by the UK agency-model change (~350-400 bp of Mobility revenue margin, with no profit effect).",
+    "modelKeys": [
+     "mobGB",
+     "mobRev",
+     "mobOI",
+     "mobAE",
+     "trips",
+     "mapc"
+    ],
+    "themes": [
+     {
+      "theme": "Barbell product strategy",
+      "text": "Low-cost products widen the audience while premium and U4B lift profit; management repeats this every quarter.",
+      "quote": "We see our Mobility strategy as a barbell, combining low-cost offerings on the one end, stable UberX pricing in the middle, and higher-margin premium experiences on the other end.",
+      "calls": [
+       "Q4'25",
+       "Q1'26",
+       "Q3'26"
+      ]
+     },
+     {
+      "theme": "Insurance savings fund U.S. acceleration",
+      "text": "Insurance reform (California, Georgia, Nevada) lowers costs that Uber reinvests in price, accelerating U.S. trips.",
+      "quote": "So all in all, it's putting us in a place where this will be the first year since COVID where we expect to see good leverage on our insurance cost line for the U.S. mobility business.",
+      "calls": [
+       "Q3'25",
+       "Q4'25",
+       "Q1'26",
+       "Q2'26"
+      ]
+     },
+     {
+      "theme": "Supply, not demand, is the constraint",
+      "text": "Brazil Moto supply (Q2'26), then fuel prices, India and Canadian immigration (Q3'26) limited growth; Uber is shifting incentives to drivers.",
+      "quote": "Now, this is a good problem where, you know, we are at the scale that we are operating at and we still are running into supply constraints rather than demand constraints.",
+      "calls": [
+       "Q2'26",
+       "Q3'26"
+      ]
+     },
+     {
+      "theme": "Sparse markets",
+      "text": "Suburban and sparser areas grow ~1.5-2x faster than dense cores and carry higher margins.",
+      "quote": "And then finally, sparse markets, which we've been talking about as a long-term opportunity that continues to be a very strong driver for growth as well.",
+      "calls": [
+       "Q3'25",
+       "Q1'26",
+       "Q2'26",
+       "Q3'26"
+      ]
+     }
+    ]
+   },
+   {
+    "name": "Delivery",
+    "text": "Restaurant delivery (Uber Eats), grocery & retail, advertising and Uber Direct, with Trendyol Go and Getir in Türkiye and Delivery Hero pending. Q3'26 GB was $28.5B (+23% ex-FX) with segment OI of $1.06B (+30%). Grocery & retail runs at a ~$15B rate growing ~40%, and merchant ads plus offers exceed a $10B run rate.",
+    "modelKeys": [
+     "delGB",
+     "delRev",
+     "delOI",
+     "delAE"
+    ],
+    "themes": [
+     {
+      "theme": "Selection drives growth",
+      "text": "Merchant selection (Costco, Kroger, Tesco, REWE), sparse markets and membership are the repeated drivers of Delivery acceleration.",
+      "quote": "So selection is number one. And we have plenty of selection to go through.",
+      "calls": [
+       "Q4'25",
+       "Q3'26"
+      ]
+     },
+     {
+      "theme": "Grocery & retail as the next leg",
+      "text": "G&R grew from approaching a $12B run rate in Q3'25 to $15B in Q3'26, against a ~$10 trillion TAM.",
+      "quote": "We're at a run rate now at a $15 billion run rate growing 40% on a year-on-year basis.",
+      "calls": [
+       "Q3'25",
+       "Q3'26"
+      ]
+     },
+     {
+      "theme": "Geographic consolidation via M&A",
+      "text": "Delivery Hero would take the platform to ~99 markets and nearly double markets with both Mobility and Delivery (34 to 58).",
+      "quote": "By bringing our technology and Uber One to millions more people, we believe this deal will create significant long-term shareholder value.",
+      "calls": [
+       "Q2'26",
+       "Q3'26"
+      ]
+     }
+    ]
+   },
+   {
+    "name": "Freight",
+    "text": "Uber Freight, a digital truck brokerage and managed-transportation business. After two years of flat or negative growth through the freight recession, GB returned to growth in Q1'26 (+6%) and accelerated to +35% in Q3'26 ($1.77B), though the segment still posts small operating losses (-$33M in Q3'26).",
+    "modelKeys": [
+     "frGB",
+     "frRev",
+     "frOI"
+    ],
+    "themes": [
+     {
+      "theme": "Return to growth",
+      "text": "Freight turned back to growth in 2026 on enterprise demand and Managed Transportation, with expansion in Europe.",
+      "quote": "Freight Gross Bookings accelerated for the third straight quarter to 35% YoY, supported by stronger execution and sustained enterprise demand.",
+      "calls": [
+       "Q1'26",
+       "Q3'26"
+      ]
+     }
+    ]
+   },
+   {
+    "name": "Autonomous vehicles (strategy)",
+    "text": "Not a reported segment: AV trips run inside Mobility and Delivery. Uber partners with 30+ AV companies, invests equity in software partners (a $10B multi-year commitment), supports OEM offtake and fleet infrastructure, and plans third-party financing for fleets. Targets: ~700 driverless vehicles by end-2026 and 2,000+ by end-2027, with tens of thousands from 2028.",
+    "modelKeys": [
+     "totGB",
+     "trips",
+     "adjE"
+    ],
+    "themes": [
+     {
+      "theme": "Commercialization platform",
+      "text": "Management frames Uber as the commercialization layer of a multi-player AV industry, similar to the foundation-model landscape in AI.",
+      "quote": "Our ambition is straightforward: to become the world's leading commercialization platform for autonomous vehicles.",
+      "calls": [
+       "Q4'25",
+       "Q2'26",
+       "Q3'26"
+      ]
+     },
+     {
+      "theme": "Utilization advantage",
+      "text": "Hybrid demand gives AVs higher trips per vehicle per day than 1P fleets, which should support partner economics and financing.",
+      "quote": "Our goal is for AV trips to deliver margins comparable to human-driven trips over time.",
+      "calls": [
+       "Q4'25",
+       "Q1'26",
+       "Q3'26"
+      ]
+     },
+     {
+      "theme": "AVs expand the market",
+      "text": "Uber says AV markets (SF, LA, Phoenix, Austin, Atlanta) grow faster and its category position there has risen.",
+      "quote": "AVs are not a zero-sum game—an expanding autonomous supply base and a growing Uber can coexist and thrive.",
+      "calls": [
+       "Q3'25",
+       "Q4'25",
+       "Q1'26",
+       "Q3'26"
+      ]
+     }
+    ]
+   },
+   {
+    "name": "Platform: Uber One, ads and AI",
+    "text": "The cross-cutting layer: Uber One membership (~55M), advertising (above $2.5B annualized revenue, ~+50%), hotels via Expedia, and AI features (Cart Assistant, Ask Eats). Management treats direct consumer relationships as the defense against AI-agent disintermediation.",
+    "modelKeys": [
+     "mapc",
+     "totGB",
+     "adjE"
+    ],
+    "themes": [
+     {
+      "theme": "Uber One momentum",
+      "text": "Membership grew from 36M (Q2'25) to ~55M (Q3'26) and drives retention and spend.",
+      "quote": "We've kind of wondered when it's going to slow down. At this point, we don't see it slowing down thanks to the innovation of the team that I'm very, very proud of.",
+      "calls": [
+       "Q2'25",
+       "Q4'25",
+       "Q1'26",
+       "Q3'26"
+      ]
+     },
+     {
+      "theme": "Direct relationship vs AI agents",
+      "text": "Uber will work selectively with third-party agents but prioritizes in-app AI; agent volumes are tiny so far.",
+      "quote": "And listen, I used to work in the travel business where we're dependent on the Googles of the world. I don't want to go back there.",
+      "calls": [
+       "Q1'26",
+       "Q3'26"
+      ]
+     }
+    ]
+   }
+  ],
+  "risks": [
+   {
+    "text": "Driver classification: Uber's business would be adversely affected if drivers were classified as employees, workers or quasi-employees; the UK tax ruling already forced an agency-model change outside London and a ~$1.5B VAT cash payment in Q4'26.",
+    "src": "FY2025 10-K; Q4'25 & Q3'26 prepared remarks"
+   },
+   {
+    "text": "AV disruption: Uber may fail to offer AV technology at competitive scale or before competitors; first-party robotaxi operators (Waymo, Tesla) could capture demand in top cities, and Uber is committing a multi-year $10B of capital to AV partners and fleets.",
+    "src": "FY2025 10-K; Q2'26 call"
+   },
+   {
+    "text": "Driver supply and competition: fuel prices, immigration and rival delivery platforms competing for two-wheel drivers (Brazil) constrained Mobility growth in 2026 and require incentive spending; the industry has low switching costs and well-capitalized rivals.",
+    "src": "Q2'26 & Q3'26 prepared remarks; FY2025 10-K"
+   },
+   {
+    "text": "M&A execution: Delivery Hero (~$14.8B equity value, close expected 2H27 and tech migrations in 2029), ezCater, Getir, Blacklane and SpotHero raise integration and regulatory risk; long-term debt rose from $10.5B at end-2025 to $15.7B at Q3'26.",
+    "src": "Jul 16 2026 8-K; Q2'26 call; Q3'26 release"
+   },
+   {
+    "text": "Regulation and safety: extensive regulation of ridesharing, payments and data, plus local AV rules (school zones, emergency response, power outages) can slow deployments or force business-model changes.",
+    "src": "FY2025 10-K; Q2'26 call"
+   },
+   {
+    "text": "Earnings volatility: GAAP net income swings with marks on ~$11.5B of equity stakes (e.g., a $1.5B loss in Q1'26 and a $1.6B gain in Q2'26).",
+    "src": "Q1'26, Q2'26 & Q3'26 releases"
+   }
+  ],
+  "debates": [
+   {
+    "q": "Do robotaxis bypass Uber or make it the indispensable aggregator?",
+    "bull": "AV supply is fragmenting across many developers. Uber's demand gives ~30% higher utilization than 1P networks, mature AV markets grow faster, and Uber's category position there has risen.",
+    "bear": "Waymo and Tesla are scaling their own apps in top cities, and Uber has only committed to Waymo in Austin and Atlanta for 'next year'. AV fleets may need Uber capital, and margins could fall if partners keep more of the economics."
+   },
+   {
+    "q": "Is the slowdown in reported revenue growth a real take-rate problem?",
+    "bull": "Most of the gap between ~20% GB growth and ~10% revenue growth is the UK agency-model reclassification (~8 pts), which has no profit impact, and management says net take rate is broadly stable.",
+    "bear": "Beyond the UK, Uber is spending more on driver incentives, low-cost products and Moto, and Q4 supply investments hit take rate. Revenue optics may stay weak through 2026."
+   },
+   {
+    "q": "Is the M&A pivot (Delivery Hero, ezCater) good capital allocation?",
+    "bull": "Deals extend the cross-platform model to ~99 markets, are EPS-accretive by Uber's math against buybacks, and Trendyol Go has already doubled GB. Management promises minimal further M&A through 2027.",
+    "bear": "A €14B bridge, higher leverage and a multi-year integration (migrations in 2029) add execution risk and slowed buybacks in 2Q26; a DoorDash-Instacart combination may intensify Delivery competition."
+   },
+   {
+    "q": "Can Uber keep ~20% bookings growth with mid-30s EPS growth?",
+    "bull": "Q4'26 is guided to 18-22% GB growth and 34-39% EPS growth; insurance savings, sparse markets, grocery and Uber One all remain early.",
+    "bear": "Trip growth slowed from 22% (Q4'25) to 16% (Q3'26), and Mobility missed internally in Q3'26; the Middle East, fuel prices and supply shortages could persist."
+   }
+  ]
+ },
+ "guidance": {
+  "labels": {
+   "gross_bookings": [
+    "Gross Bookings",
+    "m",
+    "US$M"
+   ],
+   "ebitda_adjusted": [
+    "Adjusted EBITDA",
+    "m",
+    "US$M"
+   ],
+   "eps_adjusted": [
+    "Non-GAAP EPS",
+    "ps",
+    "US$"
+   ],
+   "sbc": [
+    "Stock-based compensation",
+    "m",
+    "US$M"
+   ],
+   "da": [
+    "Depreciation & amortization",
+    "m",
+    "US$M"
+   ],
+   "tax_rate_adjusted": [
+    "Non-GAAP effective tax rate",
+    "pct",
+    "%"
+   ],
+   "gb_cagr_3y": [
+    "Gross Bookings CAGR 2024-26 (3-yr outlook, ex-FX)",
+    "pct",
+    "%"
+   ],
+   "ebitda_cagr_3y": [
+    "Adj. EBITDA CAGR 2024-26 (3-yr outlook)",
+    "pct",
+    "%"
+   ],
+   "fcf_conversion": [
+    "FCF as % of Adj. EBITDA (3-yr outlook)",
+    "pct",
+    "%"
+   ],
+   "av_cities": [
+    "Cities with AV deployments on Uber (year-end)",
+    "m",
+    "cities"
+   ],
+   "av_driverless_vehicles": [
+    "Fully driverless AVs on Uber (year-end)",
+    "m",
+    "vehicles"
+   ]
+  },
+  "periods": {
+   "Q2'25": {
+    "gross_bookings": {
+     "steps": [
+      {
+       "d": "2025-05-07",
+       "lo": 45750,
+       "hi": 47250,
+       "src": "https://www.sec.gov/Archives/edgar/data/1543151/000154315125000012/uberq125earningspressrelea.htm",
+       "n": "Q2 GB $45.75-47.25B, +16% to +20% YoY ex-FX; ~1.5 pt FX headwind (~3 pts for Mobility). Actual $46,756M."
+      }
+     ],
+     "basis": "reported US$; growth ex-FX"
+    },
+    "ebitda_adjusted": {
+     "steps": [
+      {
+       "d": "2025-05-07",
+       "lo": 2020,
+       "hi": 2120,
+       "src": "https://www.sec.gov/Archives/edgar/data/1543151/000154315125000012/uberq125earningspressrelea.htm",
+       "n": "Q2 Adjusted EBITDA $2.02-2.12B, +29% to +35% YoY. Actual $2,119M."
+      }
+     ],
+     "basis": "non-GAAP"
+    }
+   },
+   "Q3'25": {
+    "gross_bookings": {
+     "steps": [
+      {
+       "d": "2025-08-06",
+       "lo": 48250,
+       "hi": 49750,
+       "src": "https://www.sec.gov/Archives/edgar/data/1543151/000154315125000020/uberq225earningspressrelea.htm",
+       "n": "Q3 GB $48.25-49.75B, +17% to +21% ex-FX (16-20% excluding Trendyol Go); neutral to modestly positive FX. Actual $49,740M."
+      }
+     ],
+     "basis": "reported US$; growth ex-FX"
+    },
+    "ebitda_adjusted": {
+     "steps": [
+      {
+       "d": "2025-08-06",
+       "lo": 2190,
+       "hi": 2290,
+       "src": "https://www.sec.gov/Archives/edgar/data/1543151/000154315125000020/uberq225earningspressrelea.htm",
+       "n": "Q3 Adjusted EBITDA $2.19-2.29B, +30% to +36% YoY. Actual $2,256M."
+      }
+     ],
+     "basis": "non-GAAP"
+    }
+   },
+   "Q4'25": {
+    "gross_bookings": {
+     "steps": [
+      {
+       "d": "2025-11-04",
+       "lo": 52250,
+       "hi": 53750,
+       "src": "https://www.sec.gov/Archives/edgar/data/1543151/000154315125000030/uberq325earningspressrelea.htm",
+       "n": "Q4 GB $52.25-53.75B, +17% to +21% ex-FX; ~1 pt FX tailwind. Actual $54,140M (above range)."
+      }
+     ],
+     "basis": "reported US$; growth ex-FX"
+    },
+    "ebitda_adjusted": {
+     "steps": [
+      {
+       "d": "2025-11-04",
+       "lo": 2410,
+       "hi": 2510,
+       "src": "https://www.sec.gov/Archives/edgar/data/1543151/000154315125000030/uberq325earningspressrelea.htm",
+       "n": "Q4 Adjusted EBITDA $2.41-2.51B, +31% to +36% YoY. Actual $2,487M."
+      }
+     ],
+     "basis": "non-GAAP"
+    }
+   },
+   "Q1'26": {
+    "gross_bookings": {
+     "steps": [
+      {
+       "d": "2026-02-04",
+       "lo": 52000,
+       "hi": 53500,
+       "src": "https://www.sec.gov/Archives/edgar/data/1543151/000154315126000011/uberq425earningspressrelea.htm",
+       "n": "Q1 GB $52.0-53.5B, +17% to +21% ex-FX; ~4 pt FX tailwind. Actual $53,720M (above range)."
+      }
+     ],
+     "basis": "reported US$; growth ex-FX"
+    },
+    "eps_adjusted": {
+     "steps": [
+      {
+       "d": "2026-02-04",
+       "lo": 0.65,
+       "hi": 0.72,
+       "src": "https://www.sec.gov/Archives/edgar/data/1543151/000154315126000011/uberq425earningspressrelea.htm",
+       "n": "First Non-GAAP EPS guide (replaces quarterly Adj. EBITDA guide): $0.65-0.72, +37% YoY at midpoint. Actual $0.72."
+      }
+     ],
+     "basis": "non-GAAP"
+    },
+    "ebitda_adjusted": {
+     "steps": [
+      {
+       "d": "2026-02-04",
+       "lo": 2370,
+       "hi": 2470,
+       "src": "https://www.sec.gov/Archives/edgar/data/1543151/000154315126000011/uberq425earningspressrelea.htm",
+       "n": "'Our outlook translates to Adjusted EBITDA of $2.37-2.47 billion' (transition reconciliation). Actual $2,481M."
+      }
+     ],
+     "basis": "non-GAAP, translation of EPS guide"
+    }
+   },
+   "Q2'26": {
+    "gross_bookings": {
+     "steps": [
+      {
+       "d": "2026-05-06",
+       "lo": 56250,
+       "hi": 57750,
+       "src": "https://www.sec.gov/Archives/edgar/data/1543151/000154315126000019/uberq126earningspressrelea.htm",
+       "n": "Q2 GB $56.25-57.75B, +18% to +22% ex-FX; ~2 pt FX tailwind; includes 60 bp Middle East headwind. Actual $58,022M (above range)."
+      }
+     ],
+     "basis": "reported US$; growth ex-FX"
+    },
+    "eps_adjusted": {
+     "steps": [
+      {
+       "d": "2026-05-06",
+       "lo": 0.78,
+       "hi": 0.82,
+       "src": "https://www.sec.gov/Archives/edgar/data/1543151/000154315126000019/uberq126earningspressrelea.htm",
+       "n": "Q2 Non-GAAP EPS $0.78-0.82, +31% to +38% YoY. Actual $0.81."
+      }
+     ],
+     "basis": "non-GAAP"
+    },
+    "ebitda_adjusted": {
+     "steps": [
+      {
+       "d": "2026-05-06",
+       "lo": 2700,
+       "hi": 2800,
+       "src": "https://www.sec.gov/Archives/edgar/data/1543151/000154315126000019/uberq126earningspressrelea.htm",
+       "n": "Translation of EPS guide: Adjusted EBITDA $2.70-2.80B. Actual $2,819M."
+      }
+     ],
+     "basis": "non-GAAP, translation of EPS guide"
+    }
+   },
+   "Q3'26": {
+    "gross_bookings": {
+     "steps": [
+      {
+       "d": "2026-08-05",
+       "lo": 58250,
+       "hi": 60250,
+       "src": "https://www.sec.gov/Archives/edgar/data/1543151/000154315126000027/uberq226earningspressrelea.htm",
+       "n": "Q3 GB $58.25-60.25B, +18% to +22% ex-FX; ~1 pt FX headwind (reversal from tailwind). Actual $59,819M."
+      }
+     ],
+     "basis": "reported US$; growth ex-FX"
+    },
+    "eps_adjusted": {
+     "steps": [
+      {
+       "d": "2026-08-05",
+       "lo": 0.84,
+       "hi": 0.88,
+       "src": "https://www.sec.gov/Archives/edgar/data/1543151/000154315126000027/uberq226earningspressrelea.htm",
+       "n": "Q3 Non-GAAP EPS $0.84-0.88, +28% to +35% YoY. Actual $0.88."
+      }
+     ],
+     "basis": "non-GAAP"
+    },
+    "ebitda_adjusted": {
+     "steps": [
+      {
+       "d": "2026-08-05",
+       "lo": 2860,
+       "hi": 2960,
+       "src": "https://www.sec.gov/Archives/edgar/data/1543151/000154315126000027/uberq226earningspressrelea.htm",
+       "n": "Translation of EPS guide: Adjusted EBITDA $2.86-2.96B. Actual $2,963M."
+      }
+     ],
+     "basis": "non-GAAP, translation of EPS guide"
+    }
+   },
+   "Q4'26": {
+    "gross_bookings": {
+     "steps": [
+      {
+       "d": "2026-11-04",
+       "lo": 63250,
+       "hi": 65250,
+       "src": "https://www.sec.gov/Archives/edgar/data/1543151/000154315126000039/uberq326earningspressrelea.htm",
+       "n": "Q4 GB $63.25-65.25B, +18% to +22% ex-FX; ~1 pt FX headwind; assumes 100 bp Middle East headwind."
+      }
+     ],
+     "basis": "reported US$; growth ex-FX"
+    },
+    "eps_adjusted": {
+     "steps": [
+      {
+       "d": "2026-11-04",
+       "lo": 0.95,
+       "hi": 0.99,
+       "src": "https://www.sec.gov/Archives/edgar/data/1543151/000154315126000039/uberq326earningspressrelea.htm",
+       "n": "Q4 Non-GAAP EPS $0.95-0.99, +34% to +39% YoY (37% at midpoint per CFO)."
+      }
+     ],
+     "basis": "non-GAAP"
+    },
+    "ebitda_adjusted": {
+     "steps": [
+      {
+       "d": "2026-11-04",
+       "lo": 3130,
+       "hi": 3230,
+       "src": "https://www.sec.gov/Archives/edgar/data/1543151/000154315126000039/uberq326earningspressrelea.htm",
+       "n": "Translation of EPS guide: Adjusted EBITDA $3.13-3.23B; Uber will stop giving this translation from Q4'26 earnings."
+      }
+     ],
+     "basis": "non-GAAP, translation of EPS guide"
+    }
+   },
+   "FY2025": {
+    "sbc": {
+     "steps": [
+      {
+       "d": "2025-02-05",
+       "lo": 1700,
+       "hi": 1900,
+       "src": "https://s23.q4cdn.com/407969754/files/doc_earnings/2024/q4/transcript/Uber-Q4-24-Prepared-Remarks.pdf",
+       "n": "'2025 stock-based compensation of $1.7-1.9 billion'"
+      },
+      {
+       "d": "2025-05-07",
+       "lo": 1700,
+       "hi": 1900,
+       "src": "https://s23.q4cdn.com/407969754/files/doc_earnings/2025/q1/transcript/Uber-Q1-25-Prepared-Remarks.pdf",
+       "n": "Reiterated $1.7-1.9B"
+      },
+      {
+       "d": "2025-08-06",
+       "lo": 1700,
+       "hi": 1900,
+       "src": "https://s23.q4cdn.com/407969754/files/doc_earnings/2025/q2/transcript/Uber-Q2-25-Prepared-Remarks.pdf",
+       "n": "Reiterated $1.7-1.9B"
+      },
+      {
+       "d": "2025-11-04",
+       "lo": 1700,
+       "hi": 1900,
+       "src": "https://s23.q4cdn.com/407969754/files/doc_earnings/2025/q3/transcript/Uber-Q3-25-Prepared-Remarks.pdf",
+       "n": "'$1.7-1.9 billion, unchanged from our prior outlook'"
+      }
+     ],
+     "basis": "GAAP"
+    },
+    "da": {
+     "steps": [
+      {
+       "d": "2025-02-05",
+       "lo": 600,
+       "hi": 700,
+       "src": "https://s23.q4cdn.com/407969754/files/doc_earnings/2024/q4/transcript/Uber-Q4-24-Prepared-Remarks.pdf",
+       "n": "'2025 depreciation and amortization expense of $600-700 million'"
+      },
+      {
+       "d": "2025-05-07",
+       "lo": 600,
+       "hi": 700,
+       "src": "https://s23.q4cdn.com/407969754/files/doc_earnings/2025/q1/transcript/Uber-Q1-25-Prepared-Remarks.pdf",
+       "n": "Reiterated $600-700M"
+      },
+      {
+       "d": "2025-08-06",
+       "lo": 600,
+       "hi": 700,
+       "src": "https://s23.q4cdn.com/407969754/files/doc_earnings/2025/q2/transcript/Uber-Q2-25-Prepared-Remarks.pdf",
+       "n": "Reiterated $600-700M"
+      },
+      {
+       "d": "2025-11-04",
+       "lo": 650,
+       "hi": 750,
+       "src": "https://s23.q4cdn.com/407969754/files/doc_earnings/2025/q3/transcript/Uber-Q3-25-Prepared-Remarks.pdf",
+       "n": "Raised to $650-750M from $600-700M 'due to acquired intangible assets'"
+      }
+     ],
+     "basis": "GAAP"
+    }
+   },
+   "FY2026": {
+    "sbc": {
+     "steps": [
+      {
+       "d": "2026-05-06",
+       "lo": 1950,
+       "hi": 2150,
+       "src": "https://s23.q4cdn.com/407969754/files/doc_earnings/2026/q1/transcript/Uber-Q1-26-Prepared-Remarks.pdf",
+       "n": "'We expect 2026 stock-based compensation of $1.95-2.15 billion'"
+      },
+      {
+       "d": "2026-08-05",
+       "lo": 1950,
+       "hi": 2100,
+       "src": "https://s23.q4cdn.com/407969754/files/doc_earnings/2026/q2/transcript/Uber-Q2-26-Prepared-Remarks.pdf",
+       "n": "Narrowed to $1.95-2.10B from $1.95-2.15B"
+      },
+      {
+       "d": "2026-11-04",
+       "lo": 2000,
+       "hi": 2100,
+       "src": "https://s23.q4cdn.com/407969754/files/doc_earnings/2026/q3/transcript/Uber-Q3-26-Prepared-Remarks.pdf",
+       "n": "Narrowed to $2.00-2.10B from $1.95-2.10B"
+      }
+     ],
+     "basis": "GAAP"
+    },
+    "da": {
+     "steps": [
+      {
+       "d": "2026-05-06",
+       "lo": 450,
+       "hi": 550,
+       "src": "https://s23.q4cdn.com/407969754/files/doc_earnings/2026/q1/transcript/Uber-Q1-26-Prepared-Remarks.pdf",
+       "n": "2026 Non-GAAP D&A $450-550M"
+      },
+      {
+       "d": "2026-08-05",
+       "lo": 450,
+       "hi": 550,
+       "src": "https://s23.q4cdn.com/407969754/files/doc_earnings/2026/q2/transcript/Uber-Q2-26-Prepared-Remarks.pdf",
+       "n": "Reiterated $450-550M"
+      },
+      {
+       "d": "2026-11-04",
+       "lo": 500,
+       "hi": 550,
+       "src": "https://s23.q4cdn.com/407969754/files/doc_earnings/2026/q3/transcript/Uber-Q3-26-Prepared-Remarks.pdf",
+       "n": "Narrowed to $500-550M from $450-550M"
+      }
+     ],
+     "basis": "non-GAAP D&A"
+    },
+    "tax_rate_adjusted": {
+     "steps": [
+      {
+       "d": "2026-02-04",
+       "lo": 0.22,
+       "hi": 0.25,
+       "src": "https://s23.q4cdn.com/407969754/files/doc_earnings/2025/q4/transcript/Uber-Q4-25-Prepared-Remarks.pdf",
+       "n": "'we expect our full-year 2026 Non-GAAP ETR to be 22-25%'; cash tax rate 10-15% over the next few years"
+      },
+      {
+       "d": "2026-05-06",
+       "lo": 0.22,
+       "hi": 0.24,
+       "src": "https://s23.q4cdn.com/407969754/files/doc_earnings/2026/q1/transcript/Uber-Q1-26-Prepared-Remarks.pdf",
+       "n": "Lowered to 22-24% from 22-25%; 2026 cash tax rate mid-to-high single digits"
+      },
+      {
+       "d": "2026-08-05",
+       "lo": 0.22,
+       "hi": 0.24,
+       "src": "https://s23.q4cdn.com/407969754/files/doc_earnings/2026/q2/transcript/Uber-Q2-26-Prepared-Remarks.pdf",
+       "n": "Reiterated 22-24%"
+      },
+      {
+       "d": "2026-11-04",
+       "lo": 0.22,
+       "hi": 0.24,
+       "src": "https://s23.q4cdn.com/407969754/files/doc_earnings/2026/q3/transcript/Uber-Q3-26-Prepared-Remarks.pdf",
+       "n": "Reiterated 22-24%"
+      }
+     ],
+     "basis": "non-GAAP"
+    },
+    "gb_cagr_3y": {
+     "steps": [
+      {
+       "d": "2024-02-14",
+       "lo": null,
+       "hi": null,
+       "src": "https://www.sec.gov/Archives/edgar/data/1543151/000155278124000039/e24041_ex99-2.htm",
+       "n": "2024 Investor Update 3-year outlook (2024-2026): Gross Bookings growth 'Mid to high teens CAGR' (constant currency). Non-numeric range, so lo/hi are left blank."
+      },
+      {
+       "d": "2025-11-04",
+       "lo": null,
+       "hi": null,
+       "src": "Q3'25 call",
+       "n": "CFO Mahendra-Rajah: tracking the three-year framework of 'mid to high teens, gross bookings growth'"
+      },
+      {
+       "d": "2026-02-04",
+       "lo": null,
+       "hi": null,
+       "src": "https://s23.q4cdn.com/407969754/files/doc_earnings/2025/q4/transcript/Uber-Q4-25-Prepared-Remarks.pdf",
+       "n": "'we firmly expect to once again meet our commitments in the final year of our outlook'"
+      }
+     ],
+     "basis": "constant currency, 3-year CAGR from 2023 base"
+    },
+    "ebitda_cagr_3y": {
+     "steps": [
+      {
+       "d": "2024-02-14",
+       "lo": null,
+       "hi": 0.4,
+       "src": "https://www.sec.gov/Archives/edgar/data/1543151/000155278124000039/e24041_ex99-2.htm",
+       "n": "2024 Investor Update: Adjusted EBITDA growth 'High 30s% to 40% CAGR' over 2024-2026; lo left blank because 'high 30s' is not a precise figure."
+      },
+      {
+       "d": "2025-11-04",
+       "lo": null,
+       "hi": 0.4,
+       "src": "Q3'25 call & prepared remarks",
+       "n": "Reiterated 'a high 30% to 40% EBITDA CAGR'; the switch to EPS guidance 'does not impact our 3-year outlook'"
+      },
+      {
+       "d": "2026-02-04",
+       "lo": null,
+       "hi": 0.4,
+       "src": "https://s23.q4cdn.com/407969754/files/doc_earnings/2025/q4/transcript/Uber-Q4-25-Prepared-Remarks.pdf",
+       "n": "Two years in, 'continue to deliver against our commitments on all three items'"
+      }
+     ],
+     "basis": "non-GAAP"
+    },
+    "fcf_conversion": {
+     "steps": [
+      {
+       "d": "2024-02-14",
+       "lo": 0.9,
+       "hi": null,
+       "floor": 1,
+       "src": "https://www.sec.gov/Archives/edgar/data/1543151/000155278124000039/e24041_ex99-2.htm",
+       "n": "2024 Investor Update: Free Cash Flow as % of Adjusted EBITDA (annual basis) '90%+'"
+      },
+      {
+       "d": "2026-02-04",
+       "lo": 0.9,
+       "hi": null,
+       "src": "https://s23.q4cdn.com/407969754/files/doc_earnings/2025/q4/transcript/Uber-Q4-25-Prepared-Remarks.pdf",
+       "n": "Reaffirmed; FY2025 FCF was 112% of Adj. EBITDA",
+       "floor": 1
+      }
+     ],
+     "basis": "annual"
+    },
+    "av_cities": {
+     "steps": [
+      {
+       "d": "2025-11-04",
+       "lo": 10,
+       "hi": null,
+       "src": "https://s23.q4cdn.com/407969754/files/doc_earnings/2025/q3/transcript/Uber-Q3-25-Prepared-Remarks.pdf",
+       "n": "'live with autonomous vehicle deployments on the Uber network in at least 10 cities by the end of 2026'",
+       "floor": 1
+      },
+      {
+       "d": "2026-02-04",
+       "lo": null,
+       "hi": 15,
+       "src": "https://s23.q4cdn.com/407969754/files/doc_earnings/2025/q4/transcript/Uber-Q4-25-Prepared-Remarks.pdf",
+       "n": "'facilitating AV trips in as many as 15 cities globally', roughly even U.S./international split"
+      },
+      {
+       "d": "2026-05-06",
+       "lo": null,
+       "hi": 15,
+       "src": "https://s23.q4cdn.com/407969754/files/doc_earnings/2026/q1/transcript/Uber-Q1-26-Prepared-Remarks.pdf",
+       "n": "Live in 8 cities, 'plans to expand to up to 15 by year-end'"
+      },
+      {
+       "d": "2026-08-05",
+       "lo": 15,
+       "hi": 15,
+       "src": "Q2'26 call",
+       "n": "CEO on call: live in 7 cities, 'on track to be live in 15 cities by year end'"
+      }
+     ]
+    },
+    "av_driverless_vehicles": {
+     "steps": [
+      {
+       "d": "2026-11-04",
+       "lo": 700,
+       "hi": 700,
+       "src": "https://www.sec.gov/Archives/edgar/data/1543151/000154315126000039/uberq326earningspressrelea.htm",
+       "n": "'approximately 700 fully driverless vehicles expected on Uber by year-end'"
+      }
+     ]
+    }
+   },
+   "FY2027": {
+    "av_driverless_vehicles": {
+     "steps": [
+      {
+       "d": "2026-11-04",
+       "lo": 2000,
+       "hi": null,
+       "src": "https://s23.q4cdn.com/407969754/files/doc_earnings/2026/q3/transcript/Uber-Q3-26-Prepared-Remarks.pdf",
+       "n": "'over 2,000 by the end of 2027, roughly half in the U.S. and half internationally'",
+       "floor": 1
+      }
+     ]
+    }
+   }
+  }
+ }
+}

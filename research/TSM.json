@@ -1,0 +1,1501 @@
+{
+ "ticker": "TSM",
+ "topics": [
+  "Guidance & outlook",
+  "AI & HPC demand",
+  "Margins & FX",
+  "Capex & capacity",
+  "Leading-edge nodes (N2/N3/A14)",
+  "Advanced packaging",
+  "Overseas fabs",
+  "Smartphone & consumer",
+  "Competition & pricing",
+  "Mature & specialty nodes",
+  "Shareholder returns"
+ ],
+ "earnings": {
+  "quarters": {
+   "Q3'26": {
+    "date": "2026-10-15",
+    "headline": "Revenue of US$46.7B (+16.2% QoQ, +41% YoY in US$) beat the top of the US$44.6-45.8B guide; in NT dollars it rose 17.6% QoQ and 50.9% YoY to NT$1,494.2B. Gross margin fell 1.3pp QoQ to 66.4%, inside the 65-67% guide, as the N2 ramp diluted margins. EPS was NT$29.43 (+68.7% YoY). TSMC guided Q4'26 revenue to US$52.3-54.3B (+58% YoY at the midpoint), raised FY2026 US$ growth to around 44% and reiterated 2026 capex of US$60-64B.",
+    "numbers": [
+     "Revenue NT$1,494.2B, +50.9% YoY, +17.6% QoQ; US$46.7B, +16.2% QoQ (+41% YoY vs US$33.1B)",
+     "Gross margin 66.4% (-1.3pp QoQ, +6.9pp YoY vs 59.5%)",
+     "Operating margin 58.7% (vs 50.6% in Q3'25); opex 7.8% of revenue",
+     "EPS NT$29.43, +68.7% YoY; ROE 45.5%",
+     "Net income NT$763.1B, +68.7% YoY",
+     "Wafer revenue by node: N2 8%, N3 33%, N5 28%, N7 10%; 7nm and below 79%",
+     "HPC +22% QoQ to 68% of revenue; smartphone +10% QoQ to 21%; automotive +23% QoQ to 4%",
+     "Operating cash flow ~NT$920B; capex NT$443B (US$13.8B); FCF ~NT$477B",
+     "Cash and marketable securities NT$4T (US$126B); inventory days 82 (-5)"
+    ],
+    "points": [
+     {
+      "topic": "Margins & FX",
+      "text": "CFO Wendell Huang said the 130bp sequential gross-margin drop to 66.4% was mainly due to dilution from the initial N2 ramp. He now expects overseas-fab dilution to be closer to 2% for full-year 2026, widening to 3-4% over the next few years as more US fabs ramp."
+     },
+     {
+      "topic": "AI & HPC demand",
+      "text": "CEO C.C. Wei said agentic AI and open-source models are fueling AI demand, which adds demand for agentic AI CPUs and networking chips on top of accelerators. Asked about the mid-to-high-50s AI accelerator CAGR (2024-2029), he said it 'probably will be higher' and that TSMC sees no sign of slowdown."
+     },
+     {
+      "topic": "Capex & capacity",
+      "text": "Huang reiterated 2026 capex of US$60-64B and said 2026-2028 capex will be 'even more significantly higher' than the prior three years. Wei said TSMC has nearly 20 fabs in progress: 13 leading-edge and advanced packaging fabs in Taiwan and 5-6 overseas."
+     },
+     {
+      "topic": "Leading-edge nodes (N2/N3/A14)",
+      "text": "Wei expects N2-family annual capacity to more than double in 2027. A14 risk production is on track for 2027 and volume production for 2028, with more customer activity than N2 had at this stage. TSMC added a fourth N3 fab (another Tainan fab, volume production 1H28) and pulled Arizona fab 2 (N3) volume production into 3Q27."
+     },
+     {
+      "topic": "Overseas fabs",
+      "text": "Wei said TSMC is looking beyond Arizona, including Texas, for more US capacity, and that any new fab 'got to be run by TSMC'. He also said TSMC sends its own teams to check US data-center build-out and power supply, and the feedback is 'so far so good'."
+     },
+     {
+      "topic": "Smartphone & consumer",
+      "text": "Wei said rising component prices and macro uncertainty are hurting consumer and price-sensitive end markets, so TSMC is 'being prudent' in planning for 2027. Leading-edge demand, he said, remains 'extremely robust'."
+     }
+    ],
+    "guidance": [
+     "Q4'26 revenue US$52.3-54.3B (+14% QoQ, +58% YoY at midpoint)",
+     "Q4'26 gross margin 65-67%; operating margin 56.5-58.5%; assumes US$1 = NT$31.8",
+     "FY2026 revenue growth around 44% YoY in US$ (raised from slightly above 40%)",
+     "FY2026 capex US$60-64B reiterated; 2026-2028 capex significantly higher than the prior three years",
+     "FY2026 overseas-fab gross-margin dilution closer to 2%, widening to 3-4% in the next few years"
+    ],
+    "qa": [
+     "Laura (analyst; firm not identified in the transcript) asked whether the mid-to-high-50s AI accelerator CAGR still holds given power and funding concerns; C.C. Wei said demand is 'extremely robust' with no sign of slowdown and the CAGR 'probably will be higher'. On margins, he said there is 'no ceiling' but no dramatic increase overnight.",
+     "Gokul Hariharan (JPMorgan) asked about 2027 supply tightness and US expansion (Texas, a customer's fab project); Wei said US sites beyond Arizona are under study and any fab must be run by TSMC. Huang said it is too early to give capacity growth rates.",
+     "Krish Sankar (TD Cowen) asked about customers reselling wafer allocations and the 2030 High-NA EUV timing; Wei said TSMC does not allow customers to sublet or auction capacity. TSMC will adopt High-NA around 2030, once the tool is mature and cost-effective.",
+     "Charlie Chan (Morgan Stanley) asked about an IDM customer insourcing and about packaging competition; Wei said A14 customer engagement exceeds N2's so far and TSMC is the only company producing 5x-reticle packages today.",
+     "Sunny Lin (UBS) asked about 2027 capex and tool inflation; Huang said tool, material and labor inflation is real but revenue growth should still outpace capex growth. He added that the 3-4% overseas dilution applies to the later part of the five-year period.",
+     "Arthur Lai (Macquarie) asked whether CPUs are in the AI accelerator definition; Wei said no, because TSMC cannot tell which CPUs go into AI servers."
+    ]
+   },
+   "Q2'26": {
+    "date": "2026-07-16",
+    "headline": "Revenue of US$40.2B came in at the top of the US$39.0-40.2B guide (NT$1,270.4B, +36.0% YoY). Gross margin of 67.7% beat the 65.5-67.5% range on cost improvements and higher utilization, and EPS rose 77.4% YoY to NT$27.25. TSMC raised 2026 capex to US$60-64B, lifted FY2026 US$ growth to slightly above 40% and announced another US$100B for Arizona. It guided Q3'26 to US$44.6-45.8B with a margin dip from the N2 ramp.",
+    "numbers": [
+     "Revenue NT$1,270.4B, +36.0% YoY; US$40.2B (top of guide)",
+     "Gross margin 67.7% (+1.5pp QoQ); operating margin 60.3%",
+     "EPS NT$27.25, +77.4% YoY; net income NT$706.6B",
+     "Wafer revenue by node: N2 3%, N3 30%, N5 33%, N7 11%; 7nm and below 77%",
+     "HPC +20% QoQ to 66% of revenue; smartphone -4% QoQ to 22%",
+     "Operating cash flow ~NT$783B; capex NT$496B (US$15.7B); FCF ~NT$287B",
+     "Cash and marketable securities NT$3.5T (US$110B); inventory days 87 (+7) on the N2 ramp",
+     "Dividend: shareholders receive NT$24 per share in 2026 (+33% YoY)"
+    ],
+    "points": [
+     {
+      "topic": "Capex & capacity",
+      "text": "CFO Wendell Huang raised the 2026 capital budget to US$60-64B, from 'towards the high end' of US$52-56B, citing strong structural demand that includes agentic AI. In Q&A, C.C. Wei gave two reasons: rising customer demand and tool price inflation."
+     },
+     {
+      "topic": "Overseas fabs",
+      "text": "Wei announced an additional US$100B investment in Arizona for several more fabs for 2nm and below plus advanced packaging, taking the US total to US$265B. He said this means 'probably additional 4 or more fabs'."
+     },
+     {
+      "topic": "Margins & FX",
+      "text": "Huang guided Q3'26 gross margin down 1.7pp to 66% at the midpoint, mainly because the steep N2 ramp should dilute gross margin by about 3-4pp in 2H26. Overseas dilution is still forecast at 2-3% in the early stages, widening to 3-4% later."
+     },
+     {
+      "topic": "AI & HPC demand",
+      "text": "Wei said agentic AI is 'leading to a resurgence in the role of CPUs in AI data centers', and that x86, Arm and RISC-V CPU designers are almost all TSMC customers. Asked about the AI CAGR, he said demand is 'stronger than what we said before' but gave no new number."
+     },
+     {
+      "topic": "Leading-edge nodes (N2/N3/A14)",
+      "text": "Wei introduced A13, an optical shrink of A14 with backward-compatible design rules, and A12, which adds Super Power Rail to the A14 platform; both target volume production in 2029. A14 itself is scheduled for volume production in 2028, and customer tape-out activity is ahead of schedule."
+     },
+     {
+      "topic": "Mature & specialty nodes",
+      "text": "Wei said mature-node demand outside power management ICs and CMOS image sensors 'is not that strong'. The AI-linked shortage is in PMICs and sensors, and TSMC keeps adding specialty capacity at JASM (Japan) and ESMC (Germany)."
+     }
+    ],
+    "guidance": [
+     "Q3'26 revenue US$44.6-45.8B (+12% QoQ, +37% YoY at midpoint)",
+     "Q3'26 gross margin 65-67%; operating margin 56-58%; assumes US$1 = NT$32",
+     "FY2026 revenue growth slightly above 40% YoY in US$ (raised from above 30%)",
+     "FY2026 capex raised to US$60-64B: 70-80% advanced process, ~10% specialty, 10-20% packaging/test/masks/other",
+     "2H26 N2 gross-margin dilution about 3-4pp; overseas dilution 2-3% early, 3-4% later",
+     "Cash dividend of NT$24/share paid in 2026; a further increase expected in 2027"
+    ],
+    "qa": [
+     "Sunny Lin (UBS) asked for a 2026-2028 capex guide and the Arizona timeline; Huang gave no number but said TSMC is 'stepping up' capex. Wei said the extra US$100B means probably 4 or more additional fabs, with timing tied to the market.",
+     "Charlie Chan (Morgan Stanley) asked about Samsung, Intel and the AI CAGR; Wei said there are no shortcuts in foundry and AI demand is getting 'stronger and stronger', but gave no new number.",
+     "Arthur Lai (Macquarie) and Haas Liu (Bank of America) asked about Intel's EMIB-T packaging; Wei said TSMC's packaging capacity is so tight that he welcomes alternatives, because they help TSMC's front-end wafer business.",
+     "Gokul Hariharan asked how TSMC vets customer forecasts; Wei said 'All the truth together is not a truth'. He believes demand stays very strong through 2029-2030, possibly with a dip in between.",
+     "Jim Fontanelli (Arete) asked about customer concentration and vendor financing; Wei said concentration is not a concern and TSMC does not make financial arrangements with customers.",
+     "Felix Pan (KGI) asked what drove the capex raise from US$52-56B to US$60-64B; Wei cited rising customer demand first and tool price inflation second."
+    ]
+   },
+   "Q1'26": {
+    "date": "2026-04-16",
+    "headline": "Revenue of US$35.9B (NT$1,134.1B, +35.1% YoY) came in slightly above the US$34.6-35.8B guide. Gross margin of 66.2% beat the top of the 63-65% range by 120bp, helped by higher utilization, cost improvements and a weaker NT dollar. EPS was NT$22.08 (+58.4% YoY). TSMC raised FY2026 US$ growth to above 30%, moved 2026 capex to the high end of US$52-56B and announced three new N3 fabs.",
+    "numbers": [
+     "Revenue NT$1,134.1B, +35.1% YoY, +8.4% QoQ; US$35.9B, +6.4% QoQ",
+     "Gross margin 66.2% (+3.9pp QoQ); operating margin 58.1% (+4.1pp QoQ)",
+     "EPS NT$22.08, +58.4% YoY; ROE 40.5%",
+     "Wafer revenue by node: N3 25%, N5 36%, N7 13%; 7nm and below 74%",
+     "HPC +20% QoQ to 61% of revenue; smartphone -11% QoQ to 26%",
+     "Operating cash flow ~NT$699B; capex NT$351B (US$11.1B); FCF ~NT$348B",
+     "Cash and marketable securities NT$3.4T (US$106B); inventory days 80 (+6)"
+    ],
+    "points": [
+     {
+      "topic": "Guidance & outlook",
+      "text": "C.C. Wei raised FY2026 revenue growth to above 30% in US$ (from close to 30%), citing 'extremely robust' AI demand as agentic AI drives another step-up in token consumption. He flagged rising component prices and the Middle East situation as risks for consumer segments."
+     },
+     {
+      "topic": "Capex & capacity",
+      "text": "Wei announced a global plan for three new N3 fabs: a new fab in Tainan (volume production 1H27), Arizona fab 2 (2H27) and Japan fab 2 (2028), plus continued conversion of N5 tools to N3. Wendell Huang said 2026 capex will be towards the high end of US$52-56B."
+     },
+     {
+      "topic": "Margins & FX",
+      "text": "Huang guided Q2'26 gross margin to 66.5% at the midpoint and repeated that N2 will dilute full-year margin by 2-3%, starting in 2H26. N3 should cross the corporate average margin in 2H26. Middle East-driven chemical and gas price increases may affect profitability, but it is too early to quantify the impact."
+     },
+     {
+      "topic": "Mature & specialty nodes",
+      "text": "Wei said TSMC plans to wind down Fab 2 (6-inch) and Fab 5 (8-inch), exit gallium nitride, and reuse the space to support leading-edge applications. Existing customers will still be fully supported."
+     },
+     {
+      "topic": "Competition & pricing",
+      "text": "Asked about the Intel/Tesla 'terafab' plan, Wei said both are TSMC customers and 'we view Intel as a formidable competitor and do not underestimate them', but 'there are no shortcuts' in the foundry business."
+     }
+    ],
+    "guidance": [
+     "Q2'26 revenue US$39.0-40.2B (+10% QoQ, +32% YoY at midpoint)",
+     "Q2'26 gross margin 65.5-67.5%; operating margin 56.5-58.5%; assumes US$1 = NT$31.7",
+     "Q2'26 tax rate ~20% (tax on undistributed earnings); FY2026 tax rate 17-18%",
+     "FY2026 revenue growth above 30% YoY in US$",
+     "FY2026 capex towards the high end of US$52-56B",
+     "FY2026 N2 gross-margin dilution 2-3%; N3 margin crosses corporate average in 2H26"
+    ],
+    "qa": [
+     "Haas Liu (Bank of America) asked about N3 demand and margins; Wei said the driver is still HPC/AI. Huang said N3 gross margin should cross the corporate level in 2H26 and be very high once the node is fully depreciated.",
+     "Gokul Hariharan (JPMorgan) asked when supply will meet demand; Wei said a new fab takes 2-3 years, so supply stays very tight, which is why TSMC announced three new N3 fabs.",
+     "Charlie Chan (Morgan Stanley) asked about capex beyond 2026; Huang noted that capex over the past three years totaled US$101B and 2026 alone (~US$56B) is already more than half of that.",
+     "Sunny Lin (UBS) asked about capital intensity; Huang said revenue growth should keep outpacing capex growth, so he does not expect a sudden surge in capital intensity.",
+     "Jim Fontanelli (Arete) asked about long-term margins; Huang restated the targets of 56%+ gross margin and high-20s ROE through the cycle.",
+     "Bruce Lu (Goldman Sachs) asked about the AI accelerator CAGR; Wei said it is trending 'toward a higher 50s' CAGR."
+    ]
+   },
+   "Q4'25": {
+    "date": "2026-01-15",
+    "headline": "Revenue of US$33.7B (NT$1,046.1B, +20.5% YoY) came in slightly above the US$32.2-33.4B guide. Gross margin of 62.3% beat the top of the 59-61% range by 130bp on cost improvements and a more favorable FX rate, and EPS was NT$19.50 (+35% YoY). For 2026, TSMC guided revenue growth of close to 30% in US$ and capex of US$52-56B (vs US$40.9B in 2025). It also raised its long-term gross-margin floor to 56%, lifted the AI accelerator CAGR to mid-to-high 50s and set an overall revenue CAGR of approaching 25% (2024-2029).",
+    "numbers": [
+     "Revenue NT$1,046.1B, +20.5% YoY, +5.7% QoQ; US$33.7B, +1.9% QoQ",
+     "Gross margin 62.3% (+2.8pp QoQ); operating margin 54.0% (+3.4pp QoQ)",
+     "EPS NT$19.50, +35% YoY; ROE 38.8%",
+     "Wafer revenue by node: N3 28%, N5 35%, N7 14%; 7nm and below 77%",
+     "HPC +4% QoQ to 55% of revenue; smartphone +11% QoQ to 32%",
+     "FY2025: revenue US$122B (+35.9% in US$; NT$3.8T, +31.6%), gross margin 59.9%, operating margin 50.8%, EPS NT$66.25 (+46.4%)",
+     "FY2025 capex US$40.9B (NT$1.3T); FCF NT$1T (+15.2%); AI accelerators were high-teens % of 2025 revenue",
+     "Q4 operating cash flow ~NT$726B; capex NT$357B (US$11.5B)",
+     "Dividends: NT$18/share paid in 2025 (vs NT$14 in 2024); at least NT$23/share in 2026"
+    ],
+    "points": [
+     {
+      "topic": "Guidance & outlook",
+      "text": "C.C. Wei forecast 2026 revenue growth of close to 30% in US$, versus 14% growth for the 'Foundry 2.0' industry. He also raised the long-term outlook: AI accelerator revenue to approach a mid-to-high-50s CAGR and total revenue to approach a 25% CAGR in US$ over 2024-2029."
+     },
+     {
+      "topic": "Capex & capacity",
+      "text": "Wendell Huang set 2026 capex at US$52-56B (vs US$40.9B in 2025), 70-80% for advanced process. Depreciation should rise by a high-teens percentage in 2026. He said capex over the past three years totaled US$101B and is 'expected to be significantly higher in the next three years'."
+     },
+     {
+      "topic": "Margins & FX",
+      "text": "Huang raised the long-term gross-margin target to '56% and higher through the cycle' (from 53% and higher) and set an ROE target of high-20s through the cycle. He said N2 will dilute 2026 gross margin by 2-3%, starting in 2H26."
+     },
+     {
+      "topic": "Competition & pricing",
+      "text": "Huang said 'Our pricing will remain strategic, not opportunistic, to earn our value', citing much higher capex per k-wafers for N2 than for N3, and even higher for A14."
+     },
+     {
+      "topic": "Overseas fabs",
+      "text": "Wei said Arizona fab 2 (N3) volume production was pulled into 2H27, construction of fab 3 has started, and TSMC bought a second large land parcel. He said Arizona yield and defect density are almost equal to Taiwan's."
+     },
+     {
+      "topic": "Advanced packaging",
+      "text": "Huang said advanced packaging was slightly over 10% of 2025 revenue (about 8% in 2024) and should reach low-teens percent in 2026, growing faster than the corporate average."
+     }
+    ],
+    "guidance": [
+     "Q1'26 revenue US$34.6-35.8B (+4% QoQ, +38% YoY at midpoint)",
+     "Q1'26 gross margin 63-65%; operating margin 54-56%; assumes US$1 = NT$31.6",
+     "FY2026 revenue growth close to 30% in US$; Foundry 2.0 industry +14%",
+     "FY2026 capex US$52-56B; depreciation up high-teens % YoY",
+     "FY2026 tax rate 17-18%; N2 gross-margin dilution 2-3%; overseas dilution 2-3% early, 3-4% later",
+     "Long-term: gross margin 56%+ and ROE high-20s through the cycle; revenue CAGR approaching 25% and AI accelerator CAGR mid-to-high 50s (2024-2029)",
+     "Cash dividend of at least NT$23/share in 2026"
+    ],
+    "qa": [
+     "Gokul Hariharan (JPMorgan) asked whether AI demand is real; C.C. Wei said he is 'also very nervous about it', because a US$52-56B capex plan done carelessly would be 'a big disaster', so he spent months checking with customers and cloud providers.",
+     "Laura Chen (Citi) asked about power constraints and advanced packaging; Wei said he worries about electricity in Taiwan first. Huang said advanced packaging will reach low-teens percent of revenue in 2026.",
+     "Charlie Chan (Morgan Stanley) asked whether outside investment in Intel threatens TSMC; Wei said no, because money alone does not win in a technology this complex.",
+     "Brett Simpson (Arete) asked when supply will catch up with AI demand; Wei said new fabs take 2-3 years, so 2026 capex adds almost nothing this year and a little in 2027, and TSMC hopes the gap narrows in 2028-2029.",
+     "Arthur Lai (Macquarie) asked about memory price inflation hurting consumer demand; Wei said there is no impact for TSMC because its customers focus on high-end smartphones and PCs.",
+     "Sunny Lin (UBS) asked about N2's revenue contribution; Huang said N2 will be a bigger node than N3 from the start in dollars, but percentage comparisons are less meaningful now."
+    ]
+   },
+   "Q3'25": {
+    "date": "2025-10-16",
+    "headline": "Revenue of US$33.1B (NT$989.9B, +30.3% YoY) came in slightly above the US$31.8-33.0B guide. Gross margin of 59.5% beat the top of the 55.5-57.5% range by 200bp, thanks to a weaker NT dollar than assumed (29.91 vs 29) and cost improvements. EPS was NT$17.44 (+39% YoY). TSMC raised FY2025 US$ growth to close to mid-30s percent, narrowed 2025 capex to US$40-42B and guided Q4'25 to US$32.2-33.4B.",
+    "numbers": [
+     "Revenue NT$989.9B, +30.3% YoY, +6.0% QoQ; US$33.1B, +10.1% QoQ",
+     "Gross margin 59.5% (+0.9pp QoQ); operating margin 50.6% (+1.0pp QoQ)",
+     "EPS NT$17.44, +39% YoY; ROE 37.8%",
+     "Wafer revenue by node: N3 23%, N5 37%, N7 14%; 7nm and below 74%",
+     "HPC flat QoQ at 57% of revenue; smartphone +19% QoQ to 30%",
+     "Operating cash flow ~NT$427B; capex NT$287B (US$9.7B); FCF ~NT$139B",
+     "Cash and marketable securities NT$2.8T (US$90B)"
+    ],
+    "points": [
+     {
+      "topic": "Guidance & outlook",
+      "text": "C.C. Wei raised FY2025 revenue growth to close to mid-30s percent in US$ (from around 30%). He said AI demand was robust throughout 2025 while non-AI segments 'have bottomed out and are seeing a mild recovery'."
+     },
+     {
+      "topic": "Margins & FX",
+      "text": "Wendell Huang cut the expected 2025 overseas-fab gross-margin dilution to 1-2% (from 2-3%), helped by TSMC's larger overall scale. He kept the multi-year view of 2-3% early, widening to 3-4% later."
+     },
+     {
+      "topic": "Capex & capacity",
+      "text": "Huang narrowed 2025 capex to US$40-42B from US$38-42B. In Q&A he said revenue growth should outpace capex growth if TSMC does its job right."
+     },
+     {
+      "topic": "AI & HPC demand",
+      "text": "Wei said TSMC now receives 'very strong signals' directly from its customers' customers requesting capacity. He said the AI accelerator CAGR, then mid-40s, is 'a little bit better than that', with an update promised for January."
+     },
+     {
+      "topic": "Leading-edge nodes (N2/N3/A14)",
+      "text": "Wei said N2 was on track for volume production later in the quarter with good yield and a faster ramp in 2026. N2P and A16 are both scheduled for volume production in 2H26."
+     },
+     {
+      "topic": "Overseas fabs",
+      "text": "Wei said TSMC is speeding up Arizona, upgrading it faster to N2 and beyond, and is close to securing a second large land parcel. An OSAT partner is building packaging capacity in Arizona ahead of TSMC's own two packaging fabs."
+     }
+    ],
+    "guidance": [
+     "Q4'25 revenue US$32.2-33.4B (-1% QoQ, +22% YoY at midpoint)",
+     "Q4'25 gross margin 59-61%; operating margin 49-51%; assumes US$1 = NT$30.6",
+     "FY2025 revenue growth close to mid-30s percent in US$ (raised from around 30%)",
+     "FY2025 capex narrowed to US$40-42B (from US$38-42B)",
+     "FY2025 overseas-fab dilution 1-2% (from 2-3%); about 2% in 2H25"
+    ],
+    "qa": [
+     "Gokul Hariharan (JPMorgan) asked about AI demand and CoWoS capacity; C.C. Wei said AI demand is stronger than three months earlier, the mid-40s CAGR is 'a little bit better', and front-end and back-end capacity are both very tight.",
+     "Charlie Chan (Morgan Stanley) asked about China AI restrictions; Wei said that even without the China market, he is confident AI growth will be dramatic for TSMC's GPU and ASIC customers.",
+     "Sunny Lin (UBS) asked about 2026 margins; Huang said N2 will dilute margins in 2026 while N3 dilution fades, with N3 reaching the corporate average sometime in 2026.",
+     "Bruce Lu (Goldman Sachs) asked why token growth far outpaces TSMC's AI CAGR; Wei said customers move to newer nodes and better designs, which handle many more tokens per wafer.",
+     "Arthur Lai (Macquarie) asked about Foundry 2.0 strategy; Wei said advanced packaging revenue is slightly over 10% of revenue. Asked about prebuilds, he said inventory is at healthy seasonal levels, 'so no prebuild'.",
+     "Krish Sankar (TD Cowen) asked about TSMC content per gigawatt of AI capacity; Wei said TSMC is not ready to share it yet."
+    ]
+   },
+   "Q2'25": {
+    "date": "2025-07-17",
+    "headline": "Revenue of US$30.1B (+17.8% QoQ in US$; NT$933.8B, +38.6% YoY) beat the US$28.4-29.2B guide. Gross margin was 58.6%, within the 57-59% guide despite about 220bp of FX headwind from a stronger NT dollar, and EPS was NT$15.36 (+60.7% YoY). TSMC raised FY2025 US$ growth to around 30%, kept capex at US$38-42B and guided Q3'25 to US$31.8-33.0B with a lower 55.5-57.5% gross margin on FX and overseas dilution.",
+    "numbers": [
+     "Revenue NT$933.8B, +38.6% YoY, +11.3% QoQ; US$30.1B, +17.8% QoQ",
+     "Gross margin 58.6% (-0.2pp QoQ); operating margin 49.6% (+1.1pp QoQ)",
+     "EPS NT$15.36, +60.7% YoY; ROE 34.8%",
+     "Wafer revenue by node: N3 24%, N5 36%, N7 14%; 7nm and below 74%",
+     "HPC +14% QoQ to 60% of revenue; smartphone +7% QoQ to 27%",
+     "Operating cash flow ~NT$497B; capex NT$297B (US$9.6B); FCF ~NT$200B",
+     "Cash and marketable securities NT$2.6T (US$90B)"
+    ],
+    "points": [
+     {
+      "topic": "Margins & FX",
+      "text": "Wendell Huang said every 1% NT dollar appreciation cuts reported NT revenue by about 1% and gross margin by about 40bp. The Q2 rate (NT$31.05 vs NT$32.88 in Q1) cost about 220bp of margin, and Arizona dilution added slightly over 100bp. He still saw a long-term gross margin of 53% and higher as 'well achievable'."
+     },
+     {
+      "topic": "Guidance & outlook",
+      "text": "C.C. Wei raised FY2025 revenue growth to around 30% in US$ (from close to mid-20s percent), citing strong AI demand including sovereign AI. He remained mindful of tariff risks to consumer and price-sensitive segments."
+     },
+     {
+      "topic": "Overseas fabs",
+      "text": "Wei detailed the US$165B US plan: six wafer fabs, two advanced packaging fabs and an R&D center in Arizona, with about 30% of 2nm-and-more-advanced capacity eventually in Arizona. Arizona fab 2 (N3) construction is complete and its schedule is being pulled in by several quarters."
+     },
+     {
+      "topic": "Leading-edge nodes (N2/N3/A14)",
+      "text": "Wei said N3 and N5 capacity will stay 'very tight' for a couple of years as AI products migrate from 4nm to 3nm. Huang said N2's structural profitability is better than N3's."
+     },
+     {
+      "topic": "Capex & capacity",
+      "text": "Huang kept 2025 capex at US$38-42B despite the higher revenue outlook, citing macro uncertainty. He said TSMC will not hesitate to invest as long as business opportunities exist."
+     }
+    ],
+    "guidance": [
+     "Q3'25 revenue US$31.8-33.0B (+8% QoQ, +38% YoY at midpoint)",
+     "Q3'25 gross margin 55.5-57.5%; operating margin 45.5-47.5%; assumes US$1 = NT$29",
+     "FY2025 revenue growth around 30% in US$ (raised from close to mid-20s percent)",
+     "FY2025 capex maintained at US$38-42B",
+     "Overseas-fab dilution 2-3% per year in early stages, widening to 3-4% later; long-term gross margin 53% and higher"
+    ],
+    "qa": [
+     "Gokul Hariharan (JPMorgan) asked about AI/CoWoS demand and the implied Q4; C.C. Wei said AI demand is 'getting stronger and stronger' and TSMC is still working to narrow the CoWoS supply gap.",
+     "Charlie Chan (Morgan Stanley) asked whether pricing can offset FX; Wei said 'we are working on it' and stressed the 'and higher' in the 53%-and-higher target. On H20 shipments to China, he said it is too early to estimate the impact.",
+     "Bruce Lu (Goldman Sachs) asked about the N2 ramp and N3/N5 supply; Wei said N2's ramp profile is similar to N3's, but limited by how fast TSMC can build fabs, and that N3 will stay very tight for a couple of years.",
+     "Brett Simpson (Arete) asked whether pricing can offset structural FX and overseas headwinds; Huang pointed to the six profitability factors, which TSMC has leaned on in past unfavorable FX periods.",
+     "Sunny Lin (UBS) asked why capex was unchanged despite the higher outlook; Huang cited macro uncertainty but said TSMC will not hesitate to invest behind opportunities.",
+     "Laura Chen (Citi) asked about mature-node overcapacity; Wei said TSMC focuses on specialty technologies (RF, CMOS image sensors, high voltage) developed at customers' request."
+    ]
+   }
+  },
+  "next": {
+   "nextReport": {
+    "period": "Q4'26",
+    "expected": "mid-January 2027 (not announced)"
+   },
+   "targets": [
+    {
+     "metric": "Q4'26 revenue",
+     "guide": "US$52.3-54.3B (+14% QoQ, +58% YoY at midpoint)",
+     "src": "Q3'26 call"
+    },
+    {
+     "metric": "Q4'26 gross margin",
+     "guide": "65-67% (66% midpoint, -40bp QoQ) at US$1 = NT$31.8",
+     "src": "Q3'26 call"
+    },
+    {
+     "metric": "Q4'26 operating margin",
+     "guide": "56.5-58.5%",
+     "src": "Q3'26 call"
+    },
+    {
+     "metric": "FY2026 revenue growth (US$)",
+     "guide": "around 44% YoY",
+     "src": "Q3'26 call"
+    },
+    {
+     "metric": "FY2026 capex",
+     "guide": "US$60-64B",
+     "src": "Q2'26 call, reiterated Q3'26"
+    },
+    {
+     "metric": "FY2026 overseas-fab GM dilution",
+     "guide": "closer to 2%",
+     "src": "Q3'26 call"
+    },
+    {
+     "metric": "Long-term gross margin",
+     "guide": "56% and higher through the cycle; ROE high-20s",
+     "src": "Q4'25 call"
+    }
+   ],
+   "watch": [
+    {
+     "topic": "Capex & capacity",
+     "text": "The 2027 capex budget, due in January. Management has said 2026-2028 capex will be 'even more significantly higher' than the US$101B spent in 2023-2025, with tool inflation adding to it; check whether revenue growth still outpaces capex."
+    },
+    {
+     "topic": "Guidance & outlook",
+     "text": "The FY2027 US$ revenue growth guide and any update to the AI accelerator CAGR (mid-to-high 50s, 2024-2029), which Wei said 'probably will be higher'."
+    },
+    {
+     "topic": "Margins & FX",
+     "text": "Gross margin as N2 ramps steeply and overseas dilution widens toward 3-4%, offset by N3 turning accretive and cost efforts; FX sensitivity is about 40bp of gross margin per 1% NT dollar move."
+    },
+    {
+     "topic": "Leading-edge nodes (N2/N3/A14)",
+     "text": "The N2 share of wafer revenue (3% in Q2'26, 8% in Q3'26), the plan to more than double N2 capacity in 2027, and A14 risk production in 2027."
+    },
+    {
+     "topic": "Overseas fabs",
+     "text": "Any formal decision on US sites beyond Arizona (Texas) and the timing of Arizona fab 2 volume production in 3Q27."
+    },
+    {
+     "topic": "Smartphone & consumer",
+     "text": "Whether rising memory and component prices hit smartphone/PC wafer demand in 2027; smartphone fell to 21% of revenue in Q3'26."
+    }
+   ],
+   "openQuestions": [
+    "How much higher than the mid-to-high-50s CAGR is AI accelerator growth, and when will TSMC formally update it? (Q3'26, Laura; Arthur Lai, Macquarie)",
+    "What is the 2026-2028 capex total, and how much of the increase is tool price inflation versus capacity? (Sunny Lin, UBS)",
+    "Will 2027 wafer supply tightness exceed 2026's, and what is annual capacity growth? (Gokul Hariharan, JPMorgan)",
+    "Will TSMC partner on, or build, a US fab cluster outside Arizona? (Gokul Hariharan, JPMorgan)",
+    "Do reported price increases apply to existing contracts or only to incremental capacity? (Sahej Singh, Stifel)"
+   ]
+  }
+ },
+ "thesis": {
+  "summary": "TSMC is the world's dominant contract chipmaker: it manufactures logic wafers, and increasingly packages them, for GPU, custom-ASIC, CPU and smartphone chip designers (more than 500 customers), earning almost all revenue in US dollars while reporting in NT dollars. Technology leadership at each new node (N3 now, N2 ramping since 4Q25, A14 in 2028) lets it charge premium wafer prices and run very high utilization, which drove gross margin from 58.6% in Q2'25 to 66-68% in 2026. AI accelerators were a high-teens share of 2025 revenue, and management sees them growing at a mid-to-high-50s CAGR (2024-2029) and total revenue at approaching 25% a year, so HPC has risen to 68% of revenue. The market debates whether the step-up in capex (US$60-64B in 2026, 'significantly higher' in 2026-2028) is matched by durable AI demand, how far overseas fabs and new-node ramps dilute margins, NT dollar swings, and Taiwan-concentrated geopolitical risk.",
+  "pillars": [
+   {
+    "title": "Sole-source leading edge for AI",
+    "text": "Nearly every AI accelerator, custom ASIC and now agentic-AI CPU is built on TSMC's N5/N3/N2 and packaged with its CoWoS. Management describes demand as exceeding supply through at least 2027, and the shortage is front-end and back-end at once.",
+    "evidence": [
+     {
+      "text": "HPC rose to 68% of revenue in Q3'26 (+22% QoQ), from 60% in Q2'25",
+      "src": "Q3'26 call; Q2'25 call"
+     },
+     {
+      "text": "AI accelerator revenue CAGR raised to mid-to-high 50s for 2024-2029 (from mid-40s); Wei said in Oct 2026 it 'probably will be higher'",
+      "src": "Q4'25 call; Q3'26 call"
+     },
+     {
+      "text": "FY2026 US$ revenue growth guide raised four times: close to 30% -> above 30% -> slightly above 40% -> around 44%",
+      "src": "Q4'25-Q3'26 calls"
+     }
+    ]
+   },
+   {
+    "title": "Structurally higher profitability",
+    "text": "Gross margin moved from 58.6% (Q2'25) to 67.7% (Q2'26) through high utilization, cost improvements, N3 maturing and 'strategic, not opportunistic' pricing. In January 2026 the long-term floor was raised to 56%+ through the cycle.",
+    "evidence": [
+     {
+      "text": "Long-term gross margin target raised to 56% and higher from 53% and higher; ROE high-20s through the cycle",
+      "src": "Q4'25 call"
+     },
+     {
+      "text": "Q1'26 gross margin of 66.2% beat the high end of guidance by 120bp; Q4'25 by 130bp; Q3'25 by 200bp",
+      "src": "Q1'26, Q4'25, Q3'25 calls"
+     },
+     {
+      "text": "Operating margin 60.3% in Q2'26 vs 49.6% in Q2'25",
+      "src": "Q2'26 release; Q2'25 call"
+     }
+    ]
+   },
+   {
+    "title": "Node cadence keeps the moat widening",
+    "text": "N2 entered volume production in 4Q25 and is ramping faster than N3, with capacity set to more than double in 2027. A14 (2028), A13/A12 (2029) and High-NA around 2030 extend the roadmap, and A14 is drawing more customer engagement than N2 at the same stage.",
+    "evidence": [
+     {
+      "text": "N2 went from 3% of wafer revenue in Q2'26 to 8% in Q3'26",
+      "src": "Q2'26, Q3'26 calls"
+     },
+     {
+      "text": "N2-family annual capacity expected to more than double in 2027; A14 risk production 2027, volume 2028",
+      "src": "Q3'26 call"
+     }
+    ]
+   },
+   {
+    "title": "Capex funded from cash flow, with dividends rising",
+    "text": "Even with capex stepping up to US$60-64B, operating cash flow covers capex with room for a growing dividend. Management's rule is that revenue growth should outpace capex growth.",
+    "evidence": [
+     {
+      "text": "Q3'26 operating cash flow ~NT$920B vs capex NT$443B",
+      "src": "Q3'26 call"
+     },
+     {
+      "text": "Dividend per share NT$14 (2024) -> NT$18 (2025) -> NT$24 (2026), with a further increase expected in 2027",
+      "src": "Q4'25, Q2'26 calls"
+     },
+     {
+      "text": "FY2025 FCF NT$1T (+15.2%) on capex of US$40.9B",
+      "src": "Q4'25 call"
+     }
+    ]
+   }
+  ],
+  "segments": [
+   {
+    "name": "HPC (AI accelerators, CPUs, networking)",
+    "text": "The largest and fastest-growing platform, covering GPUs, custom AI ASICs, server and now agentic-AI CPUs, and networking chips. HPC grew 48% in 2025 to 58% of revenue and reached 68% in Q3'26. Management keeps the AI accelerator definition narrow (GPU, ASIC, HBM controller) and excludes CPUs.",
+    "segIds": [
+     "5383_KPIS_77384",
+     "5383_KPIS_71571"
+    ],
+    "themes": [
+     {
+      "theme": "AI demand keeps beating forecasts",
+      "text": "Each quarter management said AI demand was stronger than three months before and raised the CAGR.",
+      "quote": "All I can say right now is the demand is very extremely robust.",
+      "calls": [
+       "Q3'26"
+      ]
+     },
+     {
+      "theme": "AI accelerators already a large slice",
+      "text": "First disclosure of the AI share of revenue came with the Q4'25 results.",
+      "quote": "Revenue from AI accelerators accounted for high-teens percent of our total revenue in 2025.",
+      "calls": [
+       "Q4'25"
+      ]
+     },
+     {
+      "theme": "Agentic AI revives CPU demand",
+      "text": "Agentic workloads add CPU and networking demand on top of accelerators; almost all CPU designers are TSMC customers.",
+      "quote": "The emergence of agentic AI is leading to a resurgence in the role of CPUs in AI data centers, which drive more silicon demand in addition to AI accelerators.",
+      "calls": [
+       "Q2'26",
+       "Q3'26"
+      ]
+     },
+     {
+      "theme": "Demand checked at customers' customers",
+      "text": "TSMC now vets forecasts directly with cloud providers and even sends teams to check data-center and power build-outs.",
+      "quote": "we directly receive very strong signals from our customers' customers, requesting the capacity to support their business.",
+      "calls": [
+       "Q3'25",
+       "Q4'25",
+       "Q3'26"
+      ]
+     }
+    ]
+   },
+   {
+    "name": "Smartphone",
+    "text": "Historically TSMC's largest platform and still the lead customer base for each new node (N2 ramps on both smartphone and HPC). Smartphone grew 11% in 2025 to 29% of revenue, but its share fell to 21% in Q3'26 as HPC surged. Rising memory and component prices are the main 2026-2027 risk.",
+    "segIds": [
+     "5383_KPIS_57876",
+     "5383_KPIS_65592"
+    ],
+    "themes": [
+     {
+      "theme": "Component inflation hits price-sensitive devices",
+      "text": "Management has flagged memory and component price increases for three straight quarters.",
+      "quote": "Memory price hike definitely has some impact to, uh, price-sensitive end market, especially in PC and smartphone market.",
+      "calls": [
+       "Q1'26",
+       "Q2'26",
+       "Q3'26"
+      ]
+     },
+     {
+      "theme": "High-end mix cushions TSMC",
+      "text": "TSMC's customers skew to premium phones and PCs, which are less sensitive to component costs.",
+      "quote": "most of my customers now focus on high-end smartphone or PCs, so those kind of demand has less sensitive to the component price.",
+      "calls": [
+       "Q4'25",
+       "Q1'26"
+      ]
+     }
+    ]
+   },
+   {
+    "name": "IoT, automotive and DCE",
+    "text": "Smaller platforms (about 5%, 4-5% and 1% of revenue) built mostly on mature and specialty nodes. Automotive grew 34% and IoT 15% in 2025. Edge-AI devices add silicon content through larger die sizes rather than unit growth.",
+    "segIds": [
+     "5383_KPIS_48030",
+     "5383_KPIS_36943",
+     "5383_KPIS_66519",
+     "5383_KPIS_37624",
+     "5383_KPIS_41197"
+    ],
+    "themes": [
+     {
+      "theme": "Edge AI raises die size, not units",
+      "text": "On-device AI adoption shows up as larger dies.",
+      "quote": "the increase on the edge device, the number of the units is actually mild, but the die size increased.",
+      "calls": [
+       "Q2'25"
+      ]
+     }
+    ]
+   },
+   {
+    "name": "Leading-edge nodes (N2, N3, A14)",
+    "text": "7nm and below rose from 74% of wafer revenue in 2025 to 79% in Q3'26. N3 is so tight that TSMC broke its rule of not adding capacity to a mature node, adding four N3 fabs (Tainan x2, Arizona, Japan). N2 is ramping steeply, diluting gross margin by 3-4pp in 2H26, and A14 is set to be an even bigger node.",
+    "segIds": [
+     "5383_KPIS_51247",
+     "5383_KPIS_55759",
+     "5383_KPIS_94168",
+     "5383_KPIS_80178",
+     "5383_KPIS_76885"
+    ],
+    "themes": [
+     {
+      "theme": "N3 capacity added beyond plan",
+      "text": "AI demand migrating from 4nm to 3nm led TSMC to build new N3 fabs.",
+      "quote": "Historically, we do not add additional capacity to one node once it reaches its target capacity.",
+      "calls": [
+       "Q2'25",
+       "Q1'26",
+       "Q2'26",
+       "Q3'26"
+      ]
+     },
+     {
+      "theme": "N2 bigger and faster than N3",
+      "text": "N2 ramps on both smartphone and HPC from the start.",
+      "quote": "We expect our N2 family technologies annual capacity to more than double in 2027, supported by strong demand from both smartphone and HPC AI applications.",
+      "calls": [
+       "Q4'25",
+       "Q3'26"
+      ]
+     },
+     {
+      "theme": "A14 already drawing more interest than N2",
+      "text": "A14 (volume 2028) plus the A13/A12 derivatives (2029) extend the roadmap.",
+      "quote": "Actually, in our A14, we have seen more and more customers actually higher than the 2 nanometer activities so far.",
+      "calls": [
+       "Q2'26",
+       "Q3'26"
+      ]
+     }
+    ]
+   },
+   {
+    "name": "Advanced packaging (CoWoS, SoIC)",
+    "text": "Advanced packaging rose from about 8% of revenue in 2024 to slightly over 10% in 2025 and is guided to low-teens percent in 2026, growing faster than the company. Capacity is short, so TSMC works with OSATs (including an Arizona OSAT and GlobalFoundries for interposers) and tolerates rivals' packaging such as Intel's EMIB-T.",
+    "segIds": [],
+    "themes": [
+     {
+      "theme": "Packaging is the bottleneck",
+      "text": "Back-end capacity is as tight as front-end, so TSMC relies on partners.",
+      "quote": "let me say that our advanced packaging capacity is very tight also.",
+      "calls": [
+       "Q2'25",
+       "Q1'26",
+       "Q2'26",
+       "Q3'26"
+      ]
+     },
+     {
+      "theme": "Packaging growing faster than the company",
+      "text": "Wendell Huang gave the first revenue share and outlook.",
+      "quote": "We expect it to grow faster than the corporate average, and account for low-teens % in 2026.",
+      "calls": [
+       "Q3'25",
+       "Q4'25"
+      ]
+     }
+    ]
+   },
+   {
+    "name": "Mature and specialty nodes",
+    "text": "16nm and older nodes are a shrinking share of revenue. TSMC is pruning commodity capacity (winding down 6-inch Fab 2 and 8-inch Fab 5, exiting GaN) while adding specialty capacity at JASM (image sensors) and ESMC (automotive/industrial). The AI-linked tightness is in power management ICs and sensors.",
+    "segIds": [
+     "5383_KPIS_33674",
+     "5383_KPIS_81092"
+    ],
+    "themes": [
+     {
+      "theme": "Specialty over commodity",
+      "text": "The strategy is to avoid China-driven mature-node overcapacity by focusing on differentiated processes.",
+      "quote": "Our focus is to build high-yield capacity for specialized technologies rather than just normal capacity.",
+      "calls": [
+       "Q2'25",
+       "Q1'26",
+       "Q2'26"
+      ]
+     },
+     {
+      "theme": "Only AI-linked mature demand is tight",
+      "text": "PMICs and sensors for AI data centers are short; other areas are weak.",
+      "quote": "In today's market, outside of specific areas such as power management IC and CMOS image sensor, The mature node demand in other commodity areas is not that strong.",
+      "calls": [
+       "Q2'26"
+      ]
+     }
+    ]
+   },
+   {
+    "name": "Overseas fabs (Arizona, Japan, Germany)",
+    "text": "Total US commitment reached US$265B after an extra US$100B in July 2026, enough for 4 or more more Arizona fabs, and TSMC is studying sites beyond Arizona. Overseas fabs dilute gross margin, by about 2% in 2026 and widening to 3-4% in later years, but US customers want the capacity.",
+    "segIds": [
+     "5383_KPIS_43560"
+    ],
+    "themes": [
+     {
+      "theme": "Arizona scaling up",
+      "text": "Fab 2 (N3) volume production was pulled into 3Q27, with N2/A16 fabs to follow.",
+      "quote": "we would like to announce an additional $100 billion investment in Arizona.",
+      "calls": [
+       "Q2'25",
+       "Q4'25",
+       "Q2'26",
+       "Q3'26"
+      ]
+     },
+     {
+      "theme": "Dilution widening",
+      "text": "The margin cost of overseas fabs grows as more US fabs ramp.",
+      "quote": "we expect the dilution from our overseas fabs to widen to 3-4% in the next few years.",
+      "calls": [
+       "Q2'25",
+       "Q3'25",
+       "Q1'26",
+       "Q3'26"
+      ]
+     }
+    ]
+   }
+  ],
+  "risks": [
+   {
+    "text": "Currency: nearly all revenue is in US$ while about 75% of COGS is in NT$; each 1% NT$ appreciation cuts NT revenue about 1% and gross margin about 40bp (Q2'25 lost about 220bp of margin to FX).",
+    "src": "Q2'25 call"
+   },
+   {
+    "text": "Capex overbuild if AI demand stalls: 2026 capex is US$60-64B and 2026-2028 will be 'significantly higher' than the US$101B spent in 2023-2025. Wei said a careless plan 'will be a big disaster to TSMC'.",
+    "src": "Q4'25, Q3'26 calls"
+   },
+   {
+    "text": "Margin dilution from the N2 ramp (3-4pp in 2H26) and overseas fabs (widening to 3-4% in later years), plus tool, material and labor inflation.",
+    "src": "Q2'26, Q3'26 calls"
+   },
+   {
+    "text": "Supply chain and energy: the Middle East situation raised chemical and gas prices, and Taiwan's LNG supply was secured only through May 2026 at the time of the Q1'26 call. Wei said he worries about electricity in Taiwan first.",
+    "src": "Q1'26, Q4'25 calls"
+   },
+   {
+    "text": "Competition: Intel (with US government and customer backing, plus the Intel/Tesla 'terafab' plan), Samsung and alternative packaging (EMIB-T) could take share while TSMC's capacity is constrained.",
+    "src": "Q1'26, Q2'26 calls"
+   },
+   {
+    "text": "Consumer weakness: rising memory and component prices are 'challenging' smartphone, PC and other price-sensitive segments heading into 2027.",
+    "src": "Q2'26, Q3'26 calls"
+   }
+  ],
+  "debates": [
+   {
+    "q": "Is the AI capex cycle durable enough to justify TSMC's capex step-up?",
+    "bull": "TSMC checks demand with its customers' customers and data-center build-outs, raised the AI CAGR to mid-to-high 50s, says it will 'probably be higher', and sees supply short until new fabs arrive in 2028-2029.",
+    "bear": "Customer forecasts are aggressive ('All the truth together is not a truth'), Wei admits a possible dip before 2029-2030, and capex is locked in years ahead."
+   },
+   {
+    "q": "Can gross margin stay well above the 56% long-term floor?",
+    "bull": "Margins of 66-68% in 2026 came despite N2 and overseas dilution; N3 is turning accretive, pricing is 'strategic', and Wei says 'there's no ceiling for TSMC's profitability'.",
+    "bear": "N2 and A14 cost far more per k-wafers, overseas dilution widens to 3-4%, tools are inflating, and the NT dollar can swing margins by several points."
+   },
+   {
+    "q": "Does Intel or Samsung foundry become a real second source?",
+    "bull": "Wei says 'there are no shortcuts': technology, manufacturing excellence and trust take years, and A14 engagement exceeds N2's.",
+    "bear": "Intel has government and customer backing, a big customer is planning its own fab capacity, and TSMC's tight capacity pushes customers to qualify alternatives."
+   },
+   {
+    "q": "Is the US expansion value-accretive or a political cost?",
+    "bull": "US customers request the capacity and value geographic flexibility; Arizona yields match Taiwan's and pricing can differ by location.",
+    "bear": "US$265B committed with 2-4% gross-margin dilution, with further sites (Texas) under study."
+   }
+  ]
+ },
+ "guidance": {
+  "labels": {
+   "revenue_usd": [
+    "Revenue (US$)",
+    "m",
+    "US$M"
+   ],
+   "gross_margin": [
+    "Gross margin",
+    "pct",
+    "%"
+   ],
+   "operating_margin": [
+    "Operating margin",
+    "pct",
+    "%"
+   ],
+   "revenue_growth_usd": [
+    "Revenue growth YoY (US$)",
+    "pct",
+    "%"
+   ],
+   "capex_usd": [
+    "Capital budget",
+    "m",
+    "US$M"
+   ],
+   "tax_rate": [
+    "Effective tax rate",
+    "pct",
+    "%"
+   ],
+   "overseas_gm_dilution": [
+    "Overseas-fab gross-margin dilution",
+    "pct",
+    "pp of GM"
+   ],
+   "n2_gm_dilution": [
+    "N2 ramp gross-margin dilution",
+    "pct",
+    "pp of GM"
+   ],
+   "depreciation_growth": [
+    "Depreciation growth YoY",
+    "pct",
+    "%"
+   ],
+   "dividend_ps": [
+    "Cash dividend per share (paid in year)",
+    "ps",
+    "NT$"
+   ],
+   "gross_margin_lt": [
+    "Long-term gross margin (through the cycle)",
+    "pct",
+    "%"
+   ],
+   "revenue_cagr_usd": [
+    "Revenue CAGR 2024-2029 (US$)",
+    "pct",
+    "%"
+   ],
+   "ai_accel_cagr": [
+    "AI accelerator revenue CAGR 2024-2029",
+    "pct",
+    "%"
+   ]
+  },
+  "periods": {
+   "Q2'25": {
+    "revenue_usd": {
+     "steps": [
+      {
+       "d": "2025-04-17",
+       "lo": 28400,
+       "hi": 29200,
+       "src": "https://www.sec.gov/Archives/edgar/data/1046179/000104617925000035/a1q25e_withguidancexfinal.htm",
+       "n": "Revenue US$28.4-29.2B; 13% sequential increase at midpoint. Actual: US$30.1B."
+      }
+     ],
+     "basis": "US$, consolidated"
+    },
+    "gross_margin": {
+     "steps": [
+      {
+       "d": "2025-04-17",
+       "lo": 0.57,
+       "hi": 0.59,
+       "src": "https://www.sec.gov/Archives/edgar/data/1046179/000104617925000035/a1q25e_withguidancexfinal.htm",
+       "n": "Gross margin 57%-59% based on US$1 = NT$32.5. Actual: 58.6%."
+      }
+     ],
+     "basis": "IFRS (TIFRS)"
+    },
+    "operating_margin": {
+     "steps": [
+      {
+       "d": "2025-04-17",
+       "lo": 0.47,
+       "hi": 0.49,
+       "src": "https://www.sec.gov/Archives/edgar/data/1046179/000104617925000035/a1q25e_withguidancexfinal.htm",
+       "n": "Operating margin 47%-49% based on US$1 = NT$32.5. Actual: 49.6%."
+      }
+     ],
+     "basis": "IFRS (TIFRS)"
+    }
+   },
+   "Q3'25": {
+    "revenue_usd": {
+     "steps": [
+      {
+       "d": "2025-07-17",
+       "lo": 31800,
+       "hi": 33000,
+       "src": "https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2025-07/1f4f86c935f1de837672a6973154e64b26bdae57/TSMC+2Q25+Transcript.pdf",
+       "n": "Revenue US$31.8-33.0B; 8% sequential, 38% YoY increase at midpoint. Actual: US$33.1B."
+      }
+     ],
+     "basis": "US$, consolidated"
+    },
+    "gross_margin": {
+     "steps": [
+      {
+       "d": "2025-07-17",
+       "lo": 0.555,
+       "hi": 0.575,
+       "src": "https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2025-07/1f4f86c935f1de837672a6973154e64b26bdae57/TSMC+2Q25+Transcript.pdf",
+       "n": "Gross margin 55.5%-57.5% based on US$1 = NT$29. Actual: 59.5% (200bp above high end; actual FX NT$29.91)."
+      }
+     ],
+     "basis": "IFRS (TIFRS)"
+    },
+    "operating_margin": {
+     "steps": [
+      {
+       "d": "2025-07-17",
+       "lo": 0.455,
+       "hi": 0.475,
+       "src": "https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2025-07/1f4f86c935f1de837672a6973154e64b26bdae57/TSMC+2Q25+Transcript.pdf",
+       "n": "Operating margin 45.5%-47.5% based on US$1 = NT$29. Actual: 50.6%."
+      }
+     ],
+     "basis": "IFRS (TIFRS)"
+    }
+   },
+   "Q4'25": {
+    "revenue_usd": {
+     "steps": [
+      {
+       "d": "2025-10-16",
+       "lo": 32200,
+       "hi": 33400,
+       "src": "https://investor.tsmc.com/schinese/encrypt/files/encrypt_file/reports/2025-10/6860312f04fd291d0f26b46c1234f84e6332717e/TSMC%203Q25%20Transcript.pdf",
+       "n": "Revenue US$32.2-33.4B; 1% sequential decrease, 22% YoY increase at midpoint. Actual: US$33.7B."
+      }
+     ],
+     "basis": "US$, consolidated"
+    },
+    "gross_margin": {
+     "steps": [
+      {
+       "d": "2025-10-16",
+       "lo": 0.59,
+       "hi": 0.61,
+       "src": "https://investor.tsmc.com/schinese/encrypt/files/encrypt_file/reports/2025-10/6860312f04fd291d0f26b46c1234f84e6332717e/TSMC%203Q25%20Transcript.pdf",
+       "n": "Gross margin 59%-61% based on US$1 = NT$30.6. Actual: 62.3% (130bp above high end; actual FX NT$31.01)."
+      }
+     ],
+     "basis": "IFRS (TIFRS)"
+    },
+    "operating_margin": {
+     "steps": [
+      {
+       "d": "2025-10-16",
+       "lo": 0.49,
+       "hi": 0.51,
+       "src": "https://investor.tsmc.com/schinese/encrypt/files/encrypt_file/reports/2025-10/6860312f04fd291d0f26b46c1234f84e6332717e/TSMC%203Q25%20Transcript.pdf",
+       "n": "Operating margin 49%-51% based on US$1 = NT$30.6. Actual: 54.0%."
+      }
+     ],
+     "basis": "IFRS (TIFRS)"
+    }
+   },
+   "Q1'26": {
+    "revenue_usd": {
+     "steps": [
+      {
+       "d": "2026-01-15",
+       "lo": 34600,
+       "hi": 35800,
+       "src": "https://investor.tsmc.com/japanese/encrypt/files/encrypt_file/reports/2026-01/51d09df96cd89ac19d65af39032b038dc2896a24/TSMC%204Q25%20Transcript.pdf",
+       "n": "Revenue US$34.6-35.8B; 4% sequential, 38% YoY increase at midpoint. Actual: US$35.9B."
+      }
+     ],
+     "basis": "US$, consolidated"
+    },
+    "gross_margin": {
+     "steps": [
+      {
+       "d": "2026-01-15",
+       "lo": 0.63,
+       "hi": 0.65,
+       "src": "https://investor.tsmc.com/japanese/encrypt/files/encrypt_file/reports/2026-01/51d09df96cd89ac19d65af39032b038dc2896a24/TSMC%204Q25%20Transcript.pdf",
+       "n": "Gross margin 63%-65% based on US$1 = NT$31.6. Actual: 66.2% (120bp above high end)."
+      }
+     ],
+     "basis": "IFRS (TIFRS)"
+    },
+    "operating_margin": {
+     "steps": [
+      {
+       "d": "2026-01-15",
+       "lo": 0.54,
+       "hi": 0.56,
+       "src": "https://investor.tsmc.com/japanese/encrypt/files/encrypt_file/reports/2026-01/51d09df96cd89ac19d65af39032b038dc2896a24/TSMC%204Q25%20Transcript.pdf",
+       "n": "Operating margin 54%-56% based on US$1 = NT$31.6. Actual: 58.1%."
+      }
+     ],
+     "basis": "IFRS (TIFRS)"
+    }
+   },
+   "Q2'26": {
+    "revenue_usd": {
+     "steps": [
+      {
+       "d": "2026-04-16",
+       "lo": 39000,
+       "hi": 40200,
+       "src": "https://api.fiscal.ai/v1/company/ir-events/transcript/q1-2026?companyKey=NYSE_TSM",
+       "n": "Revenue US$39.0-40.2B; 10% sequential, 32% YoY increase at midpoint. Actual: US$40.2B."
+      }
+     ],
+     "basis": "US$, consolidated"
+    },
+    "gross_margin": {
+     "steps": [
+      {
+       "d": "2026-04-16",
+       "lo": 0.655,
+       "hi": 0.675,
+       "src": "https://api.fiscal.ai/v1/company/ir-events/transcript/q1-2026?companyKey=NYSE_TSM",
+       "n": "Gross margin 65.5%-67.5% based on US$1 = NT$31.7. Actual: 67.7%."
+      }
+     ],
+     "basis": "IFRS (TIFRS)"
+    },
+    "operating_margin": {
+     "steps": [
+      {
+       "d": "2026-04-16",
+       "lo": 0.565,
+       "hi": 0.585,
+       "src": "https://api.fiscal.ai/v1/company/ir-events/transcript/q1-2026?companyKey=NYSE_TSM",
+       "n": "Operating margin 56.5%-58.5% based on US$1 = NT$31.7. Actual: 60.3%."
+      }
+     ],
+     "basis": "IFRS (TIFRS)"
+    },
+    "tax_rate": {
+     "steps": [
+      {
+       "d": "2026-04-16",
+       "lo": 0.2,
+       "hi": 0.2,
+       "src": "https://api.fiscal.ai/v1/company/ir-events/transcript/q1-2026?companyKey=NYSE_TSM",
+       "n": "Q2'26 tax rate around 20% due to accrual of tax on undistributed retained earnings."
+      }
+     ]
+    }
+   },
+   "Q3'26": {
+    "revenue_usd": {
+     "steps": [
+      {
+       "d": "2026-07-16",
+       "lo": 44600,
+       "hi": 45800,
+       "src": "https://api.fiscal.ai/v1/company/ir-events/transcript/q2-2026?companyKey=NYSE_TSM",
+       "n": "Revenue US$44.6-45.8B; 12% sequential, 37% YoY increase at midpoint. Actual: US$46.7B (above high end)."
+      }
+     ],
+     "basis": "US$, consolidated"
+    },
+    "gross_margin": {
+     "steps": [
+      {
+       "d": "2026-07-16",
+       "lo": 0.65,
+       "hi": 0.67,
+       "src": "https://api.fiscal.ai/v1/company/ir-events/transcript/q2-2026?companyKey=NYSE_TSM",
+       "n": "Gross margin 65%-67% based on US$1 = NT$32. Actual: 66.4%."
+      }
+     ],
+     "basis": "IFRS (TIFRS)"
+    },
+    "operating_margin": {
+     "steps": [
+      {
+       "d": "2026-07-16",
+       "lo": 0.56,
+       "hi": 0.58,
+       "src": "https://api.fiscal.ai/v1/company/ir-events/transcript/q2-2026?companyKey=NYSE_TSM",
+       "n": "Operating margin 56%-58% based on US$1 = NT$32. Actual: 58.7%."
+      }
+     ],
+     "basis": "IFRS (TIFRS)"
+    }
+   },
+   "Q4'26": {
+    "revenue_usd": {
+     "steps": [
+      {
+       "d": "2026-10-15",
+       "lo": 52300,
+       "hi": 54300,
+       "src": "https://api.fiscal.ai/v1/company/ir-events/transcript/q3-2026?companyKey=NYSE_TSM",
+       "n": "Revenue US$52.3-54.3B; 14% sequential, 58% YoY increase at midpoint. Actual: pending."
+      }
+     ],
+     "basis": "US$, consolidated"
+    },
+    "gross_margin": {
+     "steps": [
+      {
+       "d": "2026-10-15",
+       "lo": 0.65,
+       "hi": 0.67,
+       "src": "https://api.fiscal.ai/v1/company/ir-events/transcript/q3-2026?companyKey=NYSE_TSM",
+       "n": "Gross margin 65%-67% based on US$1 = NT$31.8. Actual: pending."
+      }
+     ],
+     "basis": "IFRS (TIFRS)"
+    },
+    "operating_margin": {
+     "steps": [
+      {
+       "d": "2026-10-15",
+       "lo": 0.565,
+       "hi": 0.585,
+       "src": "https://api.fiscal.ai/v1/company/ir-events/transcript/q3-2026?companyKey=NYSE_TSM",
+       "n": "Operating margin 56.5%-58.5% based on US$1 = NT$31.8. Actual: pending."
+      }
+     ],
+     "basis": "IFRS (TIFRS)"
+    }
+   },
+   "FY2025": {
+    "revenue_growth_usd": {
+     "basis": "US$ revenue, YoY",
+     "steps": [
+      {
+       "d": "2025-01-16",
+       "lo": 0.25,
+       "hi": 0.25,
+       "src": "https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2025-01/84aeb15bbe33894365d33f52e027c5268ba95dcf/TSMC%204Q24%20Transcript.pdf",
+       "n": "'forecast our full-year revenue to increase by close to mid-20s% in US dollar term' (C.C. Wei). Stored as 25%."
+      },
+      {
+       "d": "2025-04-17",
+       "lo": 0.25,
+       "hi": 0.25,
+       "src": "https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2025-04/7630274eecc1197a4e3ea6a415f44a47204fe10a/TSMC%201Q25%20Transcript.pdf",
+       "n": "'we continue to expect our full year 2025 revenue to increase by close to mid-20s percent in US dollar terms' (reiterated amid tariff uncertainty)."
+      },
+      {
+       "d": "2025-07-17",
+       "lo": 0.3,
+       "hi": 0.3,
+       "src": "https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2025-07/1f4f86c935f1de837672a6973154e64b26bdae57/TSMC+2Q25+Transcript.pdf",
+       "n": "'we now expect our full-year 2025 revenue to increase by around 30% in US dollar term'."
+      },
+      {
+       "d": "2025-10-16",
+       "lo": 0.35,
+       "hi": 0.35,
+       "src": "https://investor.tsmc.com/schinese/encrypt/files/encrypt_file/reports/2025-10/6860312f04fd291d0f26b46c1234f84e6332717e/TSMC%203Q25%20Transcript.pdf",
+       "n": "'we now expect our full year 2025 revenue to increase by close to mid-30s percent year-over-year in US dollar term'. Stored as 35%. Actual: +35.9% (US$122B)."
+      }
+     ]
+    },
+    "capex_usd": {
+     "basis": "US$",
+     "steps": [
+      {
+       "d": "2025-01-16",
+       "lo": 38000,
+       "hi": 42000,
+       "src": "https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2025-01/84aeb15bbe33894365d33f52e027c5268ba95dcf/TSMC%204Q24%20Transcript.pdf",
+       "n": "'In 2025, we expect our capital budget to be between USD38 billion and USD42 billion'; ~70% advanced process, 10-20% specialty, 10-20% packaging/masks/other."
+      },
+      {
+       "d": "2025-04-17",
+       "lo": 38000,
+       "hi": 42000,
+       "src": "https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2025-04/7630274eecc1197a4e3ea6a415f44a47204fe10a/TSMC%201Q25%20Transcript.pdf",
+       "n": "'We reiterate our 2025 capital budget is expected to be between USD38 billion and USD42 billion'."
+      },
+      {
+       "d": "2025-07-17",
+       "lo": 38000,
+       "hi": 42000,
+       "src": "https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2025-07/1f4f86c935f1de837672a6973154e64b26bdae57/TSMC+2Q25+Transcript.pdf",
+       "n": "'we maintain our 2025 capital budget to be between USD38 billion and USD42 billion'."
+      },
+      {
+       "d": "2025-10-16",
+       "lo": 40000,
+       "hi": 42000,
+       "src": "https://investor.tsmc.com/schinese/encrypt/files/encrypt_file/reports/2025-10/6860312f04fd291d0f26b46c1234f84e6332717e/TSMC%203Q25%20Transcript.pdf",
+       "n": "'narrowing the range of our 2025 CapEx to be between USD40 billion and USD42 billion'. Actual: US$40.9B."
+      }
+     ]
+    },
+    "tax_rate": {
+     "steps": [
+      {
+       "d": "2025-04-17",
+       "lo": 0.16,
+       "hi": 0.17,
+       "src": "https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2025-04/7630274eecc1197a4e3ea6a415f44a47204fe10a/TSMC%201Q25%20Transcript.pdf",
+       "n": "'the full year tax rate will be between 16% and 17%'. Actual 2025 effective tax rate: 16%."
+      }
+     ]
+    },
+    "overseas_gm_dilution": {
+     "steps": [
+      {
+       "d": "2025-01-16",
+       "lo": 0.02,
+       "hi": 0.03,
+       "src": "https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2025-01/84aeb15bbe33894365d33f52e027c5268ba95dcf/TSMC%204Q24%20Transcript.pdf",
+       "n": "'2% to 3% dilution from our overseas fabs every year in the next 5 years' (Q&A)."
+      },
+      {
+       "d": "2025-04-17",
+       "lo": 0.02,
+       "hi": 0.03,
+       "src": "https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2025-04/7630274eecc1197a4e3ea6a415f44a47204fe10a/TSMC%201Q25%20Transcript.pdf",
+       "n": "'forecast 2% to 3% margin dilution impact for the full year 2025'."
+      },
+      {
+       "d": "2025-07-17",
+       "lo": 0.02,
+       "hi": 0.03,
+       "src": "https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2025-07/1f4f86c935f1de837672a6973154e64b26bdae57/TSMC+2Q25+Transcript.pdf",
+       "n": "Dilution forecast 'between 2% to 3% every year in the early stages and widen to 3% to 4% in the latter stages' (five years starting 2025)."
+      },
+      {
+       "d": "2025-10-16",
+       "lo": 0.01,
+       "hi": 0.02,
+       "src": "https://investor.tsmc.com/schinese/encrypt/files/encrypt_file/reports/2025-10/6860312f04fd291d0f26b46c1234f84e6332717e/TSMC%203Q25%20Transcript.pdf",
+       "n": "'For the full year 2025, we now expect it to be between 1% to 2% as compared to 2% to 3% previously'; closer to 2% in 2H25."
+      }
+     ]
+    }
+   },
+   "FY2026": {
+    "revenue_growth_usd": {
+     "basis": "US$ revenue, YoY",
+     "steps": [
+      {
+       "d": "2026-01-15",
+       "lo": 0.3,
+       "hi": 0.3,
+       "src": "https://investor.tsmc.com/japanese/encrypt/files/encrypt_file/reports/2026-01/51d09df96cd89ac19d65af39032b038dc2896a24/TSMC%204Q25%20Transcript.pdf",
+       "n": "'forecast our full year revenue to increase by close to 30%, in US dollar terms'; Foundry 2.0 industry +14%."
+      },
+      {
+       "d": "2026-04-16",
+       "lo": 0.3,
+       "hi": null,
+       "src": "https://api.fiscal.ai/v1/company/ir-events/transcript/q1-2026?companyKey=NYSE_TSM",
+       "n": "'we maintain strong confidence our full year 2026 revenue to now grow by above 30% in US dollar terms'.",
+       "floor": 1
+      },
+      {
+       "d": "2026-07-16",
+       "lo": 0.4,
+       "hi": null,
+       "src": "https://api.fiscal.ai/v1/company/ir-events/transcript/q2-2026?companyKey=NYSE_TSM",
+       "n": "'we now expect our full-year 2026 revenue growth to be slightly above 40% year-over-year in US dollar terms'.",
+       "floor": 1
+      },
+      {
+       "d": "2026-10-15",
+       "lo": 0.44,
+       "hi": 0.44,
+       "src": "https://api.fiscal.ai/v1/company/ir-events/transcript/q3-2026?companyKey=NYSE_TSM",
+       "n": "'We now expect our full-year 2026 revenue growth to be around 44% year-over-year in US dollar terms'."
+      }
+     ]
+    },
+    "capex_usd": {
+     "basis": "US$",
+     "steps": [
+      {
+       "d": "2026-01-15",
+       "lo": 52000,
+       "hi": 56000,
+       "src": "https://investor.tsmc.com/japanese/encrypt/files/encrypt_file/reports/2026-01/51d09df96cd89ac19d65af39032b038dc2896a24/TSMC%204Q25%20Transcript.pdf",
+       "n": "'we expect our capital budget to be between USD52 billion and USD56 billion'; 70-80% advanced process, ~10% specialty, 10-20% packaging/test/masks/other."
+      },
+      {
+       "d": "2026-04-16",
+       "lo": 56000,
+       "hi": 56000,
+       "src": "https://api.fiscal.ai/v1/company/ir-events/transcript/q1-2026?companyKey=NYSE_TSM",
+       "n": "'towards the high end of our range of between $52 and $56 billion US dollars'. Stored as the US$56B high end."
+      },
+      {
+       "d": "2026-07-16",
+       "lo": 60000,
+       "hi": 64000,
+       "src": "https://api.fiscal.ai/v1/company/ir-events/transcript/q2-2026?companyKey=NYSE_TSM",
+       "n": "'We have decided to raise our full-year 2026 capital budget to be between $60 and $64 billion USD'."
+      },
+      {
+       "d": "2026-10-15",
+       "lo": 60000,
+       "hi": 64000,
+       "src": "https://api.fiscal.ai/v1/company/ir-events/transcript/q3-2026?companyKey=NYSE_TSM",
+       "n": "'We reiterate our full-year 2026 capital budget to be between $60 and $64 billion'; 2026-2028 capex 'even more significantly higher than the past 3 years'."
+      }
+     ]
+    },
+    "tax_rate": {
+     "steps": [
+      {
+       "d": "2026-01-15",
+       "lo": 0.17,
+       "hi": 0.18,
+       "src": "https://investor.tsmc.com/japanese/encrypt/files/encrypt_file/reports/2026-01/51d09df96cd89ac19d65af39032b038dc2896a24/TSMC%204Q25%20Transcript.pdf",
+       "n": "'For 2026, we expect our effective tax rate to be between 17% and 18%'."
+      },
+      {
+       "d": "2026-04-16",
+       "lo": 0.17,
+       "hi": 0.18,
+       "src": "https://api.fiscal.ai/v1/company/ir-events/transcript/q1-2026?companyKey=NYSE_TSM",
+       "n": "'We continue to expect the full year tax rate to be between 17% and 18%' (Q2'26 ~20%)."
+      }
+     ]
+    },
+    "n2_gm_dilution": {
+     "steps": [
+      {
+       "d": "2026-01-15",
+       "lo": 0.02,
+       "hi": 0.03,
+       "src": "https://investor.tsmc.com/japanese/encrypt/files/encrypt_file/reports/2026-01/51d09df96cd89ac19d65af39032b038dc2896a24/TSMC%204Q25%20Transcript.pdf",
+       "n": "'the initial ramp-up of our two-nanometer technology will start to dilute our gross margin in the second half of the year, and we expect between 2% to 3% dilution for the full year of 2026'."
+      },
+      {
+       "d": "2026-04-16",
+       "lo": 0.02,
+       "hi": 0.03,
+       "src": "https://api.fiscal.ai/v1/company/ir-events/transcript/q1-2026?companyKey=NYSE_TSM",
+       "n": "Reiterated 2-3% full-year 2026 N2 dilution, starting in 2H26; N3 gross margin to cross the corporate average in 2H26."
+      },
+      {
+       "d": "2026-07-16",
+       "lo": 0.03,
+       "hi": 0.04,
+       "src": "https://api.fiscal.ai/v1/company/ir-events/transcript/q2-2026?companyKey=NYSE_TSM",
+       "n": "'we expect the steep ramp-up of our 2nm to dilute our gross margin by about 3 to 4 percentage points in the second half of the year' (2H26 basis, not full year)."
+      }
+     ]
+    },
+    "overseas_gm_dilution": {
+     "steps": [
+      {
+       "d": "2026-01-15",
+       "lo": 0.02,
+       "hi": 0.03,
+       "src": "https://investor.tsmc.com/japanese/encrypt/files/encrypt_file/reports/2026-01/51d09df96cd89ac19d65af39032b038dc2896a24/TSMC%204Q25%20Transcript.pdf",
+       "n": "'between 2% to 3% in the early stages and widen to 3% to 4% in the latter stages' (next several years)."
+      },
+      {
+       "d": "2026-04-16",
+       "lo": 0.02,
+       "hi": 0.03,
+       "src": "https://api.fiscal.ai/v1/company/ir-events/transcript/q1-2026?companyKey=NYSE_TSM",
+       "n": "Reiterated 2-3% in the early stages, widening to 3-4% in the latter stages."
+      },
+      {
+       "d": "2026-07-16",
+       "lo": 0.02,
+       "hi": 0.03,
+       "src": "https://api.fiscal.ai/v1/company/ir-events/transcript/q2-2026?companyKey=NYSE_TSM",
+       "n": "Reiterated 2-3% in the early stages, widening to 3-4% in the latter stages."
+      },
+      {
+       "d": "2026-10-15",
+       "lo": 0.02,
+       "hi": 0.02,
+       "src": "https://api.fiscal.ai/v1/company/ir-events/transcript/q3-2026?companyKey=NYSE_TSM",
+       "n": "'we now expect the gross margin dilution from the ramp-up of our overseas fabs to be closer to 2% for the full year 2026'; widening to 3-4% in the next few years."
+      }
+     ]
+    },
+    "depreciation_growth": {
+     "steps": [
+      {
+       "d": "2026-01-15",
+       "lo": 0.17,
+       "hi": 0.19,
+       "src": "https://investor.tsmc.com/japanese/encrypt/files/encrypt_file/reports/2026-01/51d09df96cd89ac19d65af39032b038dc2896a24/TSMC%204Q25%20Transcript.pdf",
+       "n": "'Our deprecation expense is expected to increase by a high-teens percentage year-over-year in 2026, mainly as we ramp up our two-nanometer technologies'. Stored as 17-19% for 'high-teens'."
+      }
+     ]
+    },
+    "dividend_ps": {
+     "basis": "NT$ per common share paid during 2026",
+     "steps": [
+      {
+       "d": "2026-01-15",
+       "lo": 23,
+       "hi": null,
+       "src": "https://investor.tsmc.com/japanese/encrypt/files/encrypt_file/reports/2026-01/51d09df96cd89ac19d65af39032b038dc2896a24/TSMC%204Q25%20Transcript.pdf",
+       "n": "'they will receive at least TWD23 per share in 2026' (vs TWD18 in 2025).",
+       "floor": 1
+      },
+      {
+       "d": "2026-07-16",
+       "lo": 24,
+       "hi": 24,
+       "src": "https://api.fiscal.ai/v1/company/ir-events/transcript/q2-2026?companyKey=NYSE_TSM",
+       "n": "'In 2026, they will receive NT$24 per share, up another 33% year-over-year, and we expect a continued and increasing cash dividend per share in 2027'."
+      }
+     ]
+    }
+   },
+   "FY2029": {
+    "gross_margin_lt": {
+     "basis": "Long-term, through the cycle",
+     "steps": [
+      {
+       "d": "2025-01-16",
+       "lo": 0.53,
+       "hi": null,
+       "src": "https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2025-01/84aeb15bbe33894365d33f52e027c5268ba95dcf/TSMC%204Q24%20Transcript.pdf",
+       "n": "Long-term gross margin target '53% and higher' (unchanged since 2022), restated in Q&A.",
+       "floor": 1
+      },
+      {
+       "d": "2025-07-17",
+       "lo": 0.53,
+       "hi": null,
+       "src": "https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2025-07/1f4f86c935f1de837672a6973154e64b26bdae57/TSMC+2Q25+Transcript.pdf",
+       "n": "'we believe a long-term gross margin of 53% and higher remains well achievable' despite unfavorable FX.",
+       "floor": 1
+      },
+      {
+       "d": "2026-01-15",
+       "lo": 0.56,
+       "hi": null,
+       "src": "https://investor.tsmc.com/japanese/encrypt/files/encrypt_file/reports/2026-01/51d09df96cd89ac19d65af39032b038dc2896a24/TSMC%204Q25%20Transcript.pdf",
+       "n": "'we believe a long-term gross margin of 56% and higher through the cycle is achievable, and we can earn an ROE of high-twenties percent through the cycle'.",
+       "floor": 1
+      },
+      {
+       "d": "2026-04-16",
+       "lo": 0.56,
+       "hi": null,
+       "src": "https://api.fiscal.ai/v1/company/ir-events/transcript/q1-2026?companyKey=NYSE_TSM",
+       "n": "Reiterated: 'gross margins will be 56% and higher through the cycle' and ROE of high 20% (2024-2029 targets).",
+       "floor": 1
+      }
+     ]
+    },
+    "revenue_cagr_usd": {
+     "basis": "US$, five years starting 2024",
+     "steps": [
+      {
+       "d": "2025-01-16",
+       "lo": 0.2,
+       "hi": 0.2,
+       "src": "https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2025-01/84aeb15bbe33894365d33f52e027c5268ba95dcf/TSMC%204Q24%20Transcript.pdf",
+       "n": "'we expect our long-term revenue growth to approach a 20% CAGR in US dollar term' for the five years starting 2024."
+      },
+      {
+       "d": "2026-01-15",
+       "lo": 0.25,
+       "hi": 0.25,
+       "src": "https://investor.tsmc.com/japanese/encrypt/files/encrypt_file/reports/2026-01/51d09df96cd89ac19d65af39032b038dc2896a24/TSMC%204Q25%20Transcript.pdf",
+       "n": "'we now expect our overall long-term revenue growth to approach a 25% CAGR, in US dollar terms, for the five-year period starting from 2024'."
+      }
+     ]
+    },
+    "ai_accel_cagr": {
+     "basis": "Revenue from AI accelerators (GPU, AI ASIC, HBM controller), 2024-2029",
+     "steps": [
+      {
+       "d": "2025-01-16",
+       "lo": 0.45,
+       "hi": 0.45,
+       "src": "https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2025-01/84aeb15bbe33894365d33f52e027c5268ba95dcf/TSMC%204Q24%20Transcript.pdf",
+       "n": "'forecast the revenue growth from AI accelerators to approach a mid-40% CAGR for the five-year period' starting from 2024. Stored as 45%."
+      },
+      {
+       "d": "2025-04-17",
+       "lo": 0.45,
+       "hi": 0.45,
+       "src": "https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2025-04/7630274eecc1197a4e3ea6a415f44a47204fe10a/TSMC%201Q25%20Transcript.pdf",
+       "n": "Reiterated: 'approach a mid-40s-percentage CAGR for the next five years period starting from 2024'."
+      },
+      {
+       "d": "2026-01-15",
+       "lo": 0.55,
+       "hi": 0.59,
+       "src": "https://investor.tsmc.com/japanese/encrypt/files/encrypt_file/reports/2026-01/51d09df96cd89ac19d65af39032b038dc2896a24/TSMC%204Q25%20Transcript.pdf",
+       "n": "'raise our forecast for the revenue growth from AI Accelerators to approach a mid-to-high-fifties % CAGR' for 2024-2029. Stored as 55-59%."
+      },
+      {
+       "d": "2026-04-16",
+       "lo": 0.57,
+       "hi": 0.59,
+       "src": "https://api.fiscal.ai/v1/company/ir-events/transcript/q1-2026?companyKey=NYSE_TSM",
+       "n": "C.C. Wei in Q&A: 'it's toward a higher 50s of a CAGR that we observe'. Stored as 57-59%."
+      },
+      {
+       "d": "2026-10-15",
+       "lo": 0.57,
+       "hi": null,
+       "src": "https://api.fiscal.ai/v1/company/ir-events/transcript/q3-2026?companyKey=NYSE_TSM",
+       "n": "Wei on the high-50s CAGR: 'Whether it's a high 50 CAGR, it doesn't matter. It probably will be higher.' No new number.",
+       "floor": 1
+      }
+     ]
+    }
+   }
+  }
+ }
+}
