@@ -100,9 +100,11 @@ html.mobile .nav-item .ic-desk{display:block}
 .glass::after{content:"";position:absolute;left:14%;right:14%;top:5%;height:42%;border-radius:50% 50% 45% 45%/60% 60% 40% 40%;
   background:linear-gradient(180deg,rgba(255,255,255,.75),rgba(255,255,255,0));pointer-events:none}
 .glass img{position:relative;width:50%;height:50%;object-fit:contain;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.12))}
-/* Amazon mark: the dark "a" turns light on dark backgrounds (invert + hue-rotate keeps the orange smile) */
+/* Amazon and Uber marks: the dark marks turn light on dark backgrounds (invert + hue-rotate keeps the orange smile) */
+:root[data-theme="dark"] .glass img[src$="Uber/logo-mark.svg"]{filter:invert(1) drop-shadow(0 1px 1.5px rgba(0,0,0,.12))}
 :root[data-theme="dark"] .glass img[src$="Amzn/logo-mark.svg"]{filter:invert(1) hue-rotate(180deg) drop-shadow(0 1px 1.5px rgba(0,0,0,.12))}
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .glass img[src$="Amzn/logo-mark.svg"]{filter:invert(1) hue-rotate(180deg) drop-shadow(0 1px 1.5px rgba(0,0,0,.12))} }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .glass img[src$="Uber/logo-mark.svg"]{filter:invert(1) drop-shadow(0 1px 1.5px rgba(0,0,0,.12))}
+  :root:not([data-theme="light"]) .glass img[src$="Amzn/logo-mark.svg"]{filter:invert(1) hue-rotate(180deg) drop-shadow(0 1px 1.5px rgba(0,0,0,.12))} }
 :root[data-theme="dark"] .glass{background:
     radial-gradient(120% 90% at 30% 0%,rgba(255,255,255,.22),rgba(255,255,255,.06) 55%,rgba(255,255,255,.03)),
     linear-gradient(160deg,var(--tint-b,rgba(46,117,182,.3)),rgba(255,255,255,0) 70%);
@@ -904,6 +906,7 @@ html.mobile .xl-wrap{max-height:calc(100vh - 190px)}
     <div class="mview" id="ub-valuation" data-main="valuation">
     <nav class="subtabs" role="tablist">
       <button class="tab ubvtab active" data-ubvtab="model">Model</button>
+      <button class="tab ubvtab" data-ubvtab="dcf">DCF</button>
     </nav>
       <section class="view active" id="ubv-model">
         <div class="card">
@@ -925,6 +928,16 @@ html.mobile .xl-wrap{max-height:calc(100vh - 190px)}
           <div class="xl-wrap" id="ubModelTable"></div>
         </div>
         <div class="src">Source: Fiscal.ai (as-reported statements, segments and KPIs from Uber's 10-Q / 10-K filings, Q1'18–Q3'26, restated where Uber restated; Q3'26 from the 10-Q filed Nov 4, 2026). Q4 = full year − nine months for 2018–2023. Gross bookings, trips and MAPCs from the segment and KPI data; segment operating income is reported from Q1'25 and segment Adjusted EBITDA through Q4'25 (Q3'26 total Adjusted EBITDA from the Q3'26 release). Q4'26E is set on the Q3'26 release outlook: gross bookings $63.25–65.25B. Projections: gross bookings grow at the YoY rate entered, revenue = gross bookings × take rate (Freight: revenue growth), operating income = segment revenue × segment margin less corporate and unallocated costs; the expense lines split total costs with the mix of the same period a year earlier. Edited assumptions are saved in this browser.</div>
+      </section>
+      <section class="view" id="ubv-dcf">
+        <div class="card"><div class="card-h"><span class="card-t">Trading multiples by year</span><span class="card-sub">at the current price · figures from the Model</span></div><div class="tbl-wrap" id="ubDcfMult"></div></div>
+        <div class="dcf-top">
+          <div class="card"><div class="card-h"><span class="card-t">Market value</span><span class="card-sub" id="ubDcfPx"></span></div><div class="tbl-wrap" id="ubDcfMkt"></div></div>
+          <div class="card"><div class="card-h"><span class="card-t">Assumptions</span><span class="card-sub">yellow cells are editable</span></div><div class="dcf-in" id="ubDcfIn"></div></div>
+        </div>
+        <div class="card"><div class="card-h"><span class="card-t">FCFF · exit EV/EBITDA</span><span class="card-sub">discounted at WACC</span></div><div class="tbl-wrap" id="ubDcfFF"></div></div>
+        <div class="card"><div class="card-h"><span class="card-t">FCFE · exit P/E</span><span class="card-sub">discounted at cost of equity</span></div><div class="tbl-wrap" id="ubDcfFE"></div></div>
+        <div class="src" id="ubDcfSrc"></div>
       </section>
     </div>
     </div>
@@ -4595,8 +4608,19 @@ const UBER_MODEL = (() => {
     o.fcf = sum(o.CFO,o.netCapex);
     o.cfDebt = isN(o.CFF) ? n0(o.cfDebtP)+n0(o.cfDebtR) : null;
     o.cfCheck = isN(o.cfEnd)&&isN(o.cfBeg)&&isN(o.cfNet) ? (Math.round((o.cfBeg+o.cfNet+n0(o.cfReclass)-o.cfEnd)*1000)/1000 || 0) : null;
+    // Normalized net income: operating income plus net interest, taxed at a normal rate, less non-controlling interests.
+    // Leaves out other income (expense) — mostly revaluations of equity stakes — equity-method results and the tax
+    // valuation allowance releases (Q4'24, Q3'25). Projections use the Model's tax rate.
+    if(isN(o.ni) && isN(o.opInc)){
+      o.normPre = o.opInc + n0(o.intInc) + n0(o.intExp);
+      o.normTaxR = o.proj && o.ebt ? -o.tax/o.ebt : NORM_TAX;
+      o.normTax = -o.normPre*o.normTaxR;
+      o.normNI = o.normPre + o.normTax - n0(o.nci);
+      o.normEps = o.shD ? o.normNI/o.shD : null;
+    }
     return o;
   }
+  const NORM_TAX = 0.25;   // the Model's default tax rate for projected periods
   const COST = ['cogs','ops','mkt','rd','ga'];
   // Gross bookings → revenue → net income for projected periods (quarterly or annual). Y = same period a year earlier.
   function buildPL(o, L, Y, a, factor){
@@ -4687,7 +4711,10 @@ const UBER_MODEL = (() => {
     const avg=k=>qs.every(q=>q[k])?qs.reduce((s,q)=>s+q[k],0)/4:null;
     o.shD=avg('shD'); o.shB=avg('shB');
     o.epsD=o.shD?o.ni/o.shD:null; o.epsB=o.shB?o.ni/o.shB:null;
-    return derive(o);
+    derive(o);
+    ['normPre','normTax','normNI'].forEach(k=>o[k]=sum(...qs.map(q=>q[k])));
+    o.normTaxR = o.normPre ? -o.normTax/o.normPre : null; o.normEps = o.shD ? o.normNI/o.shD : null;
+    return o;
   }
   const Q126 = QLAB.indexOf("Q1'26");
   function project(){
@@ -4880,6 +4907,18 @@ const UBER_MODEL = (() => {
     QOQ('shD', {inp:1, ak:'gSh'}),
     YOY('shD', {inpY:1, ak:'gSh'}),
     {l:'Basic weighted avg. shares', f:val('shB'), fmt:'m', u:'M'},
+    {spacer:1},
+    {l:'Normalized net income', f:val('normNI'), fmt:'m', u:'US$M', tot:1, key:1, grpHead:1, note:'Operating income plus net interest, taxed at 25% (projections: the Model’s tax rate), less non-controlling interests; leaves out other income (expense), equity-method results and tax valuation allowance releases'},
+    YOY('normNI'),
+    {l:'Normalized net margin', f:ratio('normNI','sales'), fmt:'p', u:'%', sub:1},
+    {l:'Income (loss) from operations', f:val('opInc'), fmt:'m', u:'US$M', ind:1},
+    {l:'(+) Interest income − interest expense', f:o=>sum(n0(o.intInc),o.intExp), fmt:'m', u:'US$M', ind:1, note:'Before Q3’24 interest income sits in other income (expense), so it is left out of these quarters'},
+    {l:'(−) Tax at a normal rate', f:val('normTax'), fmt:'m', u:'US$M', ind:1},
+    {l:'Tax rate applied', f:val('normTaxR'), fmt:'p', u:'%', sub:1},
+    {l:'(−) Non-controlling interests', f:o=>neg(o.nci), fmt:'m', u:'US$M', ind:1},
+    {l:'Normalized diluted EPS', f:val('normEps'), fmt:'ps', u:'US$', b:1, grpEnd:1, note:'Not Uber’s non-GAAP EPS, which also adds back stock-based compensation, legal and regulatory reserves, restructuring and other items'},
+    YOY('normEps'),
+    {l:'Normalized EPS / diluted EPS', f:o=>isN(o.normEps)&&o.epsD ? o.normEps/o.epsD : null, fmt:'x2', u:'x', sub:1},
 
     SEC('EBITDA'),
     {l:'Income (loss) from operations', f:val('opInc'), fmt:'m', u:'US$M', b:1},
@@ -5112,6 +5151,145 @@ document.getElementById('ubSubmit').addEventListener('click',()=>{ const ch=[...
 document.getElementById('ubDiscard').addEventListener('click',()=>{ ubPending.clear(); UBER_MODEL.render(); ubEditUI(); });
 document.getElementById('ubReset').addEventListener('click',()=>{ if(!confirm('Reset every assumption to its default value?')) return; ubPending.clear(); UBER_MODEL.reset(); ubEditUI(); });
 
+// ---- Uber DCF: linked to the Uber Model (edited assumptions flow through on the next render) ----
+// Same layout as the Amazon DCF. Uber holds large equity stakes and has minority interests, so the bridge from market
+// capitalization to enterprise value also takes out the investments and adds the non-controlling interests.
+const UB_DCF = (() => {
+  const DEF = {price:MKT_UBER.price, shares:MKT_UBER.shares, rf:4.25, beta:1.30, erp:5.50, kd:null, tax:null, exitEV:null, exitPE:null, exitY:null, epsB:'norm', inv:'out'};
+  let st = {...DEF};
+  const epsOf = y => st.epsB==='gaap' ? y.epsD : y.normEps;
+  try{ const sv=JSON.parse(localStorage.getItem('pvg-uber-dcf')||'{}'); if(sv.px!==MKT_UBER.asOf+MKT_UBER.time) delete sv.price; Object.assign(st, sv); }catch(e){}
+  const save = () => { try{ localStorage.setItem('pvg-uber-dcf', JSON.stringify({...st, px:MKT_UBER.asOf+MKT_UBER.time})); }catch(e){} };
+  const VAL_DATE = new Date('2026-11-06');
+  const yrs = l => (new Date('20'+l.slice(-2)+'-12-31') - VAL_DATE)/(365*864e5);
+  const m = v => F.m(v), x = v => isN(v)&&v>0 ? v.toFixed(1)+'x' : NM, pc = v => isN(v) ? (v*100).toFixed(1)+'%' : NA;
+  const intAT = (o,t) => -(o.intExp||0)*(1-t);   // interest expense is negative in the Model
+  function calc(){
+    const Q=UBER_MODEL.Q, Y=UBER_MODEL.Y;
+    const last = [...Q].reverse().find(q=>!q.proj && isN(q.totA));
+    const stub = Q.find(q=>q.proj);
+    const years = Y.filter(y=>y.lab>='FY2023');
+    const allFut = Y.filter(y=>y.proj && !y.lab.includes('2026'));
+    if(!allFut.some(y=>y.lab===st.exitY)) st.exitY = allFut[0].lab;
+    const xi = allFut.findIndex(y=>y.lab===st.exitY);
+    const fut = allFut.slice(0, xi);
+    const debt = last.debt||0, cash = last.liq;
+    const invest = st.inv==='out' ? (last.invest||0)+(last.eqInv||0) : 0;    // equity stakes and equity-method investments
+    const nci = (last.mezz||0)+(last.nciEq||0);                               // redeemable and non-redeemable minority interests
+    const netDebt = debt-cash-invest+nci;                                     // net debt and other claims
+    const mcap = st.price*st.shares, ev = mcap+netDebt;
+    const fy24 = Y.find(y=>y.lab==='FY2024'), fy25 = Y.find(y=>y.lab==='FY2025');
+    const kdDef = -fy25.intExp/((fy24.debt+fy25.debt)/2)*100;
+    const kd = isN(st.kd) ? st.kd : +kdDef.toFixed(2);
+    const y27 = Y.find(y=>y.lab==='FY2027E'), taxDef = +(-y27.tax/y27.ebt*100).toFixed(1);
+    const tax = isN(st.tax) ? st.tax : taxDef, t = tax/100, ke = (st.rf + st.beta*st.erp)/100, kdAT = kd/100*(1-t);
+    const wE = mcap/(mcap+debt), wD = debt/(mcap+debt), wacc = wE*ke + wD*kdAT;
+    const exitEV = isN(st.exitEV) ? st.exitEV : +(ev/y27.ebitda).toFixed(1);
+    const exitPE = isN(st.exitPE) ? st.exitPE : +(st.price/epsOf(y27)).toFixed(1);
+    const stubFrac = Math.max(0, Math.min(1, (new Date('20'+stub.lab.slice(-3,-1)+'-12-31')-VAL_DATE)/864e5/stub.days));
+    const flows = [{lab:stub.lab+' (stub)', o:stub, f:stubFrac, t:yrs(stub.lab.slice(0,-1))}, ...fut.map(y=>({lab:y.lab, o:y, f:1, t:yrs(y.lab.slice(0,-1))}))];
+    flows.forEach(c=>{ const o=c.o; c.fcfe=o.fcf*c.f; c.fcff=(o.fcf+intAT(o,t))*c.f; c.dfW=1/Math.pow(1+wacc,c.t); c.dfE=1/Math.pow(1+ke,c.t); });
+    const lastY = allFut[xi];
+    const tvYear = 'FY'+(+lastY.lab.slice(2,6)-1), tT = yrs(tvYear);
+    const tvFF = exitEV*lastY.ebitda, tvFE = exitPE*epsOf(lastY)*st.shares;
+    const ff = {pv: flows.reduce((s,c)=>s+c.fcff*c.dfW,0), cum: flows.reduce((s,c)=>s+c.fcff,0), tv:tvFF, pvTV: tvFF/Math.pow(1+wacc,tT)};
+    ff.ev = ff.pv+ff.pvTV; ff.eq = ff.ev-netDebt; ff.ps = ff.eq/st.shares;
+    const fe = {pv: flows.reduce((s,c)=>s+c.fcfe*c.dfE,0), cum: flows.reduce((s,c)=>s+c.fcfe,0), tv:tvFE, pvTV: tvFE/Math.pow(1+ke,tT)};
+    fe.eq = fe.pv+fe.pvTV+(st.inv==='out'?invest:0); fe.ps = fe.eq/st.shares; fe.ev = fe.eq+netDebt;
+    return {tvYear, tT, tax, allFut, last, years, flows, lastY, debt, cash, invest, nci, netDebt, mcap, ev, kd, kdDef, ke, kdAT, wE, wD, wacc, exitEV, exitPE, ff, fe, t};
+  }
+  function render(){
+    const r = calc();
+    document.getElementById('ubDcfPx').textContent = `${MKT_UBER.src} · ${MKT_UBER.asOf}`;
+    document.getElementById('ubDcfMkt').innerHTML = `<table class="metrics-table dcf-t"><tbody>
+      <tr><td>Share price</td><td>$${st.price.toFixed(2)}</td></tr>
+      <tr><td>× Shares outstanding (M)</td><td>${F.m(st.shares)}</td></tr>
+      <tr class="tot"><td>Market capitalization</td><td>${m(r.mcap)}</td></tr>
+      <tr><td>+ Total debt · ${r.last.lab}</td><td>${m(r.debt)}</td></tr>
+      <tr><td>− Cash, equivalents and short-term investments · ${r.last.lab}</td><td>(${F.m(r.cash)})</td></tr>
+      <tr><td>− Investments (equity stakes) and equity method investments · ${r.last.lab}</td><td>${r.invest?`(${F.m(r.invest)})`:NA}</td></tr>
+      <tr><td>+ Non-controlling interests (redeemable and non-redeemable) · ${r.last.lab}</td><td>${m(r.nci)}</td></tr>
+      <tr><td>= Net debt (cash) and other claims</td><td>${m(r.netDebt)}</td></tr>
+      <tr class="dk"><td>Enterprise value</td><td>${m(r.ev)}</td></tr></tbody></table>`;
+    const inp = (k,l,v,step) => `<label>${l}<input type="number" step="${step}" data-k="${k}" value="${v}"></label>`;
+    const out = (l,v) => `<label class="calc">${l}<span class="v">${v}</span></label>`;
+    document.getElementById('ubDcfIn').innerHTML =
+      inp('price','Share price (US$)',st.price,0.01) + inp('shares','Shares outstanding (M)',st.shares,1) +
+      inp('rf','Risk-free rate (%)',st.rf,0.05) + inp('beta','Beta',st.beta,0.05) + inp('erp','Equity risk premium (%)',st.erp,0.1) +
+      out('Cost of equity (CAPM)', pc(r.ke)) +
+      inp('kd','Pre-tax cost of debt (%)',r.kd,0.05) + inp('tax','Tax rate (%)',r.tax,0.5) + out('After-tax cost of debt', pc(r.kdAT)) +
+      out('Weights equity / debt', `${(r.wE*100).toFixed(0)}% / ${(r.wD*100).toFixed(0)}%`) + out('WACC', pc(r.wacc)) +
+      `<label>EPS basis<select data-k="epsB" class="dcf-sel"><option value="norm" ${st.epsB!=='gaap'?'selected':''}>Normalized (Model)</option><option value="gaap" ${st.epsB==='gaap'?'selected':''}>GAAP</option></select></label>` +
+      `<label>Equity stakes<select data-k="inv" class="dcf-sel"><option value="out" ${st.inv==='out'?'selected':''}>Added to equity</option><option value="in" ${st.inv!=='out'?'selected':''}>Ignored</option></select></label>` +
+      `<label>Exit year (terminal value)<select data-k="exitY" class="dcf-sel">${r.allFut.map(y=>`<option ${y.lab===st.exitY?'selected':''}>${y.lab}</option>`).join('')}</select></label>` +
+      inp('exitEV','Exit EV/EBITDA (x)',r.exitEV,0.5) + inp('exitPE','Exit P/E (x)',r.exitPE,0.5);
+    // Multiples by year
+    const ys = r.years, hd = ys.map(y=>`<th class="${y.proj?'p':''}">${y.lab}</th>`).join('');
+    const row = (l,f,cls='') => `<tr class="${cls}"><td>${l}</td>${ys.map(y=>`<td class="${y.proj?'p':''}">${f(y)}</td>`).join('')}</tr>`;
+    const prev = y => UBER_MODEL.Y[UBER_MODEL.Y.indexOf(y)-1];
+    const g = (a,b) => isN(a)&&isN(b)&&b>0 ? F.g(a/b-1) : NM;
+    document.getElementById('ubDcfMult').innerHTML = `<table class="metrics-table dcf-t"><thead><tr><th>US$M</th>${hd}</tr></thead><tbody>
+      ${row('Gross bookings', y=>m(y.totGB), 'tot')}${row('YoY growth', y=>g(y.totGB, prev(y)?.totGB), 'sub')}
+      ${row('Revenue', y=>m(y.sales), 'tot')}${row('YoY growth', y=>g(y.sales, prev(y)?.sales), 'sub')}
+      ${row('EBITDA (operating income + D&A)', y=>m(y.ebitda), 'tot')}${row('Margin', y=>pc(y.ebitda/y.sales), 'sub')}
+      ${row('Adjusted EBITDA (as reported by Uber)', y=>m(y.adjE))}
+      ${row('Income from operations', y=>m(y.opInc), 'tot')}${row('Margin', y=>pc(y.opInc/y.sales), 'sub')}
+      ${row('Diluted EPS, GAAP', y=>F.ps(y.epsD), st.epsB==='gaap'?'tot':'')}${row('Normalized diluted EPS (Model row)', y=>F.ps(y.normEps), st.epsB!=='gaap'?'tot':'')}${row('YoY growth', y=>g(epsOf(y), prev(y)&&epsOf(prev(y))), 'sub')}
+      ${row('Free cash flow (CFO − capex)', y=>m(y.fcf), 'tot')}
+      ${row('EV / gross bookings', y=>x(r.ev/y.totGB), 'dk')}
+      ${row('EV / revenue', y=>x(r.ev/y.sales), 'dk')}
+      ${row('EV / EBITDA', y=>x(r.ev/y.ebitda), 'dk')}
+      ${row('EV / Adjusted EBITDA', y=>isN(y.adjE)&&y.adjE>0 ? x(r.ev/y.adjE) : NA, 'dk')}
+      ${row('EV / operating income', y=>x(r.ev/y.opInc), 'dk')}
+      ${row(st.epsB==='gaap'?'P / E (GAAP EPS)':'P / E (normalized EPS)', y=>x(st.price/epsOf(y)), 'dk')}
+      ${row('FCF yield (FCF / market cap)', y=>pc(y.fcf/r.mcap), 'dk')}
+    </tbody></table>`;
+    // FCFF / FCFE tables
+    const tbl = (id, kind) => {
+      const fl = r.flows, R_ = kind==='ff' ? r.ff : r.fe, rate = kind==='ff' ? r.wacc : r.ke;
+      const hd = fl.map(c=>`<th class="p">${c.lab}</th>`).join('') + `<th class="tv">Terminal at Dec-${r.tvYear.slice(4)} · ${r.lastY.lab} metric</th>`;
+      const line = (l, f, tv='', cls='') => `<tr class="${cls}"><td>${l}</td>${fl.map(c=>`<td class="p">${f(c)}</td>`).join('')}<td class="tv">${tv}</td></tr>`;
+      const ffRows = kind==='ff'
+        ? line('Free cash flow (CFO − capex)', c=>m(c.o.fcf*c.f)) + line('+ After-tax interest expense', c=>m(intAT(c.o,r.t)*c.f)) + line('Free cash flow to the firm (FCFF)', c=>m(c.fcff), '', 'tot')
+        : line(st.epsB==='gaap'?'Diluted EPS, GAAP (US$)':'Normalized diluted EPS (US$)', c=>c.f<1?`<span class="card-sub">${F.ps(epsOf(c.o))} for the quarter</span>`:F.ps(epsOf(c.o))) + line('Free cash flow to equity (FCFE)', c=>m(c.fcfe), '', 'tot');
+      const tvRow = kind==='ff'
+        ? line('Terminal value = exit EV/EBITDA × EBITDA', ()=>'', `${r.exitEV.toFixed(1)}x × ${F.m(r.lastY.ebitda)} = ${m(R_.tv)}`)
+        : line('Terminal value = exit P/E × EPS × shares', ()=>'', `${r.exitPE.toFixed(1)}x × ${F.ps(epsOf(r.lastY))} = $${(r.exitPE*epsOf(r.lastY)).toFixed(2)}/share × ${F.m(st.shares)}M sh. = ${m(R_.tv)}`);
+      const df = kind==='ff' ? 'dfW' : 'dfE';
+      const tT = Math.pow(1+rate, -r.tT);
+      const v = (l,val,cls='') => `<tr class="${cls}"><td>${l}</td><td colspan="${fl.length+1}" style="text-align:left">${val}</td></tr>`;
+      const up = R_.ps/st.price-1;
+      document.getElementById(id).innerHTML = `<table class="metrics-table dcf-t"><thead><tr><th>US$M</th>${hd}</tr></thead><tbody>
+        ${ffRows}${tvRow}
+        ${line('Years from valuation date', c=>c.t.toFixed(2), r.tT.toFixed(2), 'sub')}
+        ${line(`Discount factor @ ${pc(rate)}`, c=>c[df].toFixed(3), tT.toFixed(3), 'sub')}
+        ${line('Present value', c=>m((kind==='ff'?c.fcff:c.fcfe)*c[df]), m(R_.pvTV), 'tot')}
+        ${v('Cash generated to Dec-'+r.tvYear.slice(4)+' (undiscounted) + terminal value', `${m(R_.cum)} + ${m(R_.tv)} = <b>${m(R_.cum+R_.tv)}</b>`)}
+        ${v('PV of cash flows + PV of terminal value', `${m(R_.pv)} + ${m(R_.pvTV)} = <b>${m(R_.pv+R_.pvTV)}</b> &nbsp;<span class="card-sub">(terminal value ${pc(R_.pvTV/(R_.pv+R_.pvTV))} of the total)</span>`)}
+        ${kind==='ff' ? v('Enterprise value − net debt and other claims = equity value', `${m(R_.ev)} − ${m(r.netDebt)} = <b>${m(R_.eq)}</b>`)
+          : (r.invest ? v('+ Investments (equity stakes) = equity value', `${m(R_.pv+R_.pvTV)} + ${m(r.invest)} = <b>${m(R_.eq)}</b>`) : '')}
+        ${v('Value per share', `<b>$${R_.ps.toFixed(2)}</b> vs $${st.price.toFixed(2)} &nbsp;<span class="g ${up>=0?'pos':'neg'}">${up>=0?'+':'−'}${Math.abs(up*100).toFixed(1)}% ${up>=0?'upside':'downside'}</span>`, 'dk')}
+      </tbody></table>`;
+    };
+    tbl('ubDcfFF','ff'); tbl('ubDcfFE','fe');
+    document.getElementById('ubDcfSrc').textContent = `Price: ${MKT_UBER.src}, ${MKT_UBER.asOf} (after the Q3'26 report). Shares: ${MKT_UBER.sharesSrc}. Enterprise value = market capitalization + total debt − cash, cash equivalents and short-term investments + non-controlling interests${r.invest?' − investments (equity stakes such as Didi, Grab and Aurora, at fair value, and equity method investments)':''}, all at ${r.last.lab}. Restricted cash and restricted investments are left out: they back the insurance reserves. Lease liabilities are left out too (their cost is already in operating income, EBITDA and free cash flow). Gross bookings, revenue, EBITDA, operating income, EPS and free cash flow come from the Model tab (actuals and estimates), so edited Model assumptions flow through here. FCFE = Uber's free cash flow (cash from operations less purchases of property and equipment); it adds back stock-based compensation (about 4% of revenue), so the share count assumption in the Model carries that cost. FCFF adds back after-tax interest expense. The ${r.flows[0].lab} counts only the part of the quarter after the valuation date (${MKT_UBER.asOf}); cash flows are discounted from each period end. EPS: normalized by default (Model: operating income plus net interest, taxed at a normal rate, without revaluations of equity stakes or tax valuation allowance releases), or GAAP. ${r.invest?'With the equity stakes valued apart, they are added to the FCFE equity value too, because normalized EPS leaves out their gains and losses. ':''}Default exit multiples equal today's FY2027E multiples; default pre-tax cost of debt = FY2025 interest expense / average total debt (${r.kdDef.toFixed(2)}%); default tax rate from the Model. Beta, risk-free rate and equity risk premium are assumptions to edit.`;
+  }
+  document.getElementById('ubDcfIn').addEventListener('change', e=>{
+    const k=e.target.dataset.k; if(!k) return;
+    if(k==='exitY' || k==='epsB' || k==='inv'){ st[k]=e.target.value; if(k!=='exitY'){ st.exitPE=null; st.exitEV=null; } save(); render(); return; }
+    const v=parseFloat(e.target.value); st[k]=isNaN(v)?DEF[k]:v; save(); render();
+  });
+  return {render, reset(){ st={...DEF}; save(); render(); }};
+})();
+let ubvtab='model';
+document.querySelectorAll('.ubvtab').forEach(t=>t.addEventListener('click',()=>{
+  ubvtab=t.dataset.ubvtab;
+  document.querySelectorAll('.ubvtab').forEach(x=>x.classList.toggle('active',x===t));
+  document.querySelectorAll('#ub-valuation > .view').forEach(x=>x.classList.toggle('active',x.id==='ubv-'+ubvtab));
+  if(ubvtab==='model') renderUberModel();
+  if(ubvtab==='dcf') UB_DCF.render();
+}));
+
 /* =====================================================================
    BOOT
    ===================================================================== */
@@ -5139,8 +5317,8 @@ const COMPANIES = [
     logo:{src:'Amzn/logo-mark.svg', text:'Amazon', bg:'#FF9900'},
     quote:()=>MKT_AMZN },
   { ticker:'UBER', name:'Uber Technologies, Inc.', exchange:'NYSE', sector:'Mobility · Delivery · Freight',
-    short:'Uber', tint:'84,84,84',
-    logo:{src:null, text:'Uber', bg:'#000000'},
+    short:'Uber', tint:'120,120,120',
+    logo:{src:'Uber/logo-mark.svg', text:'Uber', bg:'#000000'},
     quote:()=>MKT_UBER },
 ];
 const logoHTML = (c,size) => c.logo.src
@@ -5194,7 +5372,7 @@ function showMain(m){
   document.querySelectorAll('.co-pane .mview').forEach(x=>x.classList.toggle('active',x.dataset.main===m));
   try{ localStorage.setItem('pvg-main',m); }catch(e){}
   if(curCo==='AMZN'){ if(m==='valuation' && amvtab==='model') renderAmznModel(); if(m==='valuation' && amvtab==='ave') AM_AVE.render(); if(m==='valuation' && amvtab==='dcf') AM_DCF.render(); if(m==='valuation' && amvtab==='guidance') AM_GR.render(); if(m==='earnings') AM_EARN.render(); if(m==='tesis') AM_TH.render(); return; }
-  if(curCo==='UBER'){ if(m==='valuation') renderUberModel(); return; }
+  if(curCo==='UBER'){ if(m==='valuation' && ubvtab==='model') renderUberModel(); if(m==='valuation' && ubvtab==='dcf') UB_DCF.render(); return; }
   if(m==='earnings') EARN.render();
   if(m==='valuation' && vtab==='model') renderModel();
   if(m==='valuation' && vtab==='ave') AVE.render();
