@@ -933,6 +933,8 @@ html.mobile .xl-wrap{max-height:calc(100vh - 190px)}
     <div class="mview" id="ub-valuation" data-main="valuation">
     <nav class="subtabs" role="tablist">
       <button class="tab ubvtab active" data-ubvtab="model">Model</button>
+      <button class="tab ubvtab" data-ubvtab="ave">Actual vs Estimates</button>
+      <button class="tab ubvtab" data-ubvtab="guidance">Guidance Revisions</button>
       <button class="tab ubvtab" data-ubvtab="dcf">DCF</button>
     </nav>
       <section class="view active" id="ubv-model">
@@ -956,6 +958,25 @@ html.mobile .xl-wrap{max-height:calc(100vh - 190px)}
         </div>
         <div class="src">Source: Fiscal.ai (as-reported statements, segments and KPIs from Uber's 10-Q / 10-K filings, Q1'18–Q3'26, restated where Uber restated; Q3'26 from the 10-Q filed Nov 4, 2026). Q4 = full year − nine months for 2018–2023. Gross bookings, trips and MAPCs from the segment and KPI data; segment operating income is reported from Q1'25 and segment Adjusted EBITDA through Q4'25 (Q3'26 total Adjusted EBITDA from the Q3'26 release). Q4'26E is set on the Q3'26 release outlook: gross bookings $63.25–65.25B. Projections: gross bookings grow at the YoY rate entered, revenue = gross bookings × take rate (Freight: revenue growth), operating income = segment revenue × segment margin less corporate and unallocated costs; the expense lines split total costs with the mix of the same period a year earlier. Edited assumptions are saved in this browser.</div>
       </section>
+      <section class="view" id="ubv-ave">
+        <div class="ave-bar">
+          <div class="stmt-seg" id="ubAveFreq"><button data-v="q" class="on">Quarterly</button><button data-v="y">Annual</button></div>
+          <div class="stmt-seg" id="ubAveBench"><button data-v="g" class="on">Actual vs guidance</button><button data-v="c">Actual vs consensus</button></div>
+          <div class="stmt-seg" id="ubAveGuide"><button data-v="first" class="on">First guide</button><button data-v="last">Last guide</button></div>
+        </div>
+        <div class="card"><div class="card-h"><div><span class="card-t">Scorecard</span><span class="card-sub" id="ubAveSub"></span></div></div>
+          <div class="tbl-wrap" id="ubAveScore"></div></div>
+        <div id="ubAveCards" class="ave-cards"></div>
+        <div class="src" id="ubAveSrc"></div>
+      </section>
+      <section class="view" id="ubv-guidance">
+        <div id="ubGrBody">
+          <div class="ave-bar"><div class="stmt-seg" id="ubGrYear"></div></div>
+          <div class="card"><div class="card-h"><div><span class="card-t" id="ubGrTitle"></span><span class="card-sub">guide captured by Fiscal.ai → actual or model</span></div></div><div class="tbl-wrap" id="ubGrSum"></div></div>
+          <div id="ubGrCards" class="ave-cards"></div>
+        </div>
+        <div class="src" id="ubGrSrc"></div>
+      </section>
       <section class="view" id="ubv-dcf">
         <div class="card"><div class="card-h"><span class="card-t">Trading multiples by year</span><span class="card-sub">at the current price · figures from the Model</span></div><div class="tbl-wrap" id="ubDcfMult"></div></div>
         <div class="dcf-top">
@@ -973,6 +994,7 @@ html.mobile .xl-wrap{max-height:calc(100vh - 190px)}
 </div>
 
 <!-- Fiscal.ai data for the generic company shells (written by build_fx.py) -->
+<script src="Uber/fiscal.js"></script>
 <script src="Nvda/fiscal.js"></script>
 <script src="Spot/fiscal.js"></script>
 <script src="Se/fiscal.js"></script>
@@ -3235,8 +3257,8 @@ const AVE_METRICS = [
 ];
 // One Actual vs Estimates view per company: data {q:{per:{metric:{gLow,gHigh,lLow,lHigh,act,est,actC}}}, y:{…}},
 // element ids prefixed with `id` (…Freq, …Bench, …Guide, …Sub, …Score, …Cards, …Src).
-function aveView({data:AVE_DATA, metrics:AVE_METRICS, key, id, srcText, emptyYG}){
-  const st = {freq:'q', bench:'g', guide:'first'};
+function aveView({data:AVE_DATA, metrics:AVE_METRICS, key, id, srcText, emptyYG, def}){
+  const st = {freq:'q', bench:'g', guide:'first', ...(def||{})};
   try{ Object.assign(st, JSON.parse(localStorage.getItem(key)||'{}')); }catch(e){}
   const save = () => { try{ localStorage.setItem(key, JSON.stringify(st)); }catch(e){} };
   const hasLast = Object.values(AVE_DATA.y||{}).some(p=>Object.values(p).some(d=>isN(d?.lLow)));
@@ -5326,6 +5348,12 @@ const UB_DCF = (() => {
   });
   return {render, reset(){ st={...DEF}; save(); render(); }};
 })();
+// Uber: Actual vs Estimates and Guidance Revisions from Fiscal.ai (Uber/fiscal.js)
+// built on first use: fxAveGr and its constants are defined further down
+let UB_AG_ = undefined;
+const UB_AG = () => UB_AG_ !== undefined ? UB_AG_ : (UB_AG_ = window.FISCAL?.UBER?.ave ? fxAveGr({A:window.FISCAL.UBER.ave, p:'ub', short:'Uber', cur:'USD',
+  modelYs:()=>UBER_MODEL.Y.concat(UBER_MODEL.Q), modelOf:(k,y)=>({revenue:y.sales, ebitda_adjusted:y.adjE, net_income:y.ni, eps_gaap:y.epsD})[k] ?? null,
+  guideNote:'Uber guides gross bookings, Adjusted EBITDA and (from 2026) non-GAAP EPS one quarter ahead. ', ebitda:true}) : null);
 let ubvtab='model';
 document.querySelectorAll('.ubvtab').forEach(t=>t.addEventListener('click',()=>{
   ubvtab=t.dataset.ubvtab;
@@ -5333,6 +5361,8 @@ document.querySelectorAll('.ubvtab').forEach(t=>t.addEventListener('click',()=>{
   document.querySelectorAll('#ub-valuation > .view').forEach(x=>x.classList.toggle('active',x.id==='ubv-'+ubvtab));
   if(ubvtab==='model') renderUberModel();
   if(ubvtab==='dcf') UB_DCF.render();
+  if(ubvtab==='ave' && UB_AG()) UB_AG().ave.render();
+  if(ubvtab==='guidance' && UB_AG() && UB_AG().gr) UB_AG().gr.render();
 }));
 
 /* =====================================================================
@@ -5580,6 +5610,217 @@ function fiscalModel(tk, co){
   const current = (ek, lab) => { const o=Q.concat(Y).find(x=>x.lab===lab); return o ? o[MAP[ek]] : null; };
   return {...SHEET, Q, Y, setOv, reset, edited, current, D};
 }
+// Spot FX (units of each currency per US$1), Nov 10, 2026: MXN and EUR from IBKR (IDEALPRO), TWD from Fiscal.ai's conversion
+// (IBKR does not quote USD.TWD). Used by the generic DCF to show a company either in its reporting currency or in its price currency.
+const FX_SPOT = {USD:1, MXN:18.6016, EUR:1/1.1166, TWD:32.969, asOf:'Nov 10, 2026', src:'MXN and EUR: Interactive Brokers (IDEALPRO); TWD: Fiscal.ai currency conversion'};
+const CUR_SYM = {USD:'US$', MXN:'MXN', EUR:'€', TWD:'TWD'};
+const RF_DEF = {USD:4.25, MXN:9.00, EUR:2.75, TWD:1.60};   // default risk-free rate (10-year government bond) by currency, %
+// ---- Generic DCF: linked to the generic Model (Fiscal.ai actuals and estimates, or your edited estimates) ----
+// Same layout as the Uber and Amazon DCFs. When the company reports in one currency and trades in another (Spotify in EUR,
+// TSMC in TWD, BBB Foods in MXN), every figure can be shown in either one, converted at the spot rate, so the multiples compare.
+function fxDcf(c, M){
+  const p='fx'+c.ticker, D=M.D, MK=D.mkt, rep=D.cur, pxc = c.exchange==='BMV' ? 'MXN' : 'USD';
+  const dual = rep!==pxc && FX_SPOT[rep] && FX_SPOT[pxc];
+  const fxRep = dual ? FX_SPOT[rep]/FX_SPOT[pxc] : 1;   // reporting-currency units per one unit of the price currency
+  const KEY='pvg-fx-'+c.ticker+'-dcf', n0 = v => isN(v) ? v : 0;
+  const DEF = {cur:dual?pxc:rep, price:MK.price, shares:MK.shares, fx:+fxRep.toFixed(4), rf:{}, beta:1.20, erp:5.50, kd:null, tax:null, exitEV:null, exitPE:null, exitY:null, epsB:'gaap'};
+  let st = JSON.parse(JSON.stringify(DEF));
+  try{ const sv=JSON.parse(localStorage.getItem(KEY)||'{}'); if(sv.px!==MK.asOf+MK.time){ delete sv.price; } Object.assign(st, sv); st.rf={...(sv.rf||{})}; }catch(e){}
+  const save = () => { try{ localStorage.setItem(KEY, JSON.stringify({...st, px:MK.asOf+MK.time})); }catch(e){} };
+  const VAL = new Date(MK.asOf);
+  const yrsTo = e => (new Date(e) - VAL)/(365*864e5);
+  const SYM = () => CUR_SYM[st.cur]||st.cur;
+  const kFin = () => st.cur===rep ? 1 : 1/st.fx;    // financials: reporting currency → shown currency
+  const kPx  = () => st.cur===pxc ? 1 : st.fx;      // price: price currency → shown currency
+  const rfOf = () => isN(st.rf[st.cur]) ? st.rf[st.cur] : (RF_DEF[st.cur] ?? 4.25);
+  const m = v => F.m(v), x = v => isN(v)&&v>0 ? v.toFixed(1)+'x' : NM, pc = v => isN(v) ? (v*100).toFixed(1)+'%' : NA;
+  const ps = v => !isN(v) ? NA : (v<0?'(':'')+Math.abs(v).toFixed(2)+(v<0?')':'');
+  const K = {rev:'is.total_revenues', ebitda:'x.ebitda', ebit:'is.operating_profit', ni:'is.net_income_attributable_to_common_shareholders',
+    eps:'is.diluted_eps', epsA:'x.epsAdj', fcf:'x.fcf'};
+  const g_ = (o,k) => o && isN(o[K[k]]) ? o[K[k]] : null;
+  const fin = (o,k) => { const v=g_(o,k); return isN(v) ? v*kFin() : null; };
+  const epsOf = o => { const v = st.epsB==='adj' ? (g_(o,'epsA') ?? g_(o,'eps')) : g_(o,'eps'); return isN(v) ? v*kFin() : null; };
+  function calc(){
+    const Q=M.Q, Y=M.Y;
+    const last = [...Q].reverse().find(q=>!q.proj && isN(q['bs.total_assets']));
+    const fyAct = Y.filter(y=>!y.proj), fyP = Y.filter(y=>y.proj);
+    // the first estimated year may already hold reported quarters: its remaining quarters are the stub
+    const cur = fyP[0], curQ = Q.filter(q=>q.proj && q.fy===cur.fy);
+    const partial = curQ.length>0 && curQ.length<4;
+    const allFut = partial ? fyP.slice(1) : fyP;
+    if(!allFut.some(y=>y.lab===st.exitY)) st.exitY = (allFut[1]||allFut[0]).lab;
+    const xi = allFut.findIndex(y=>y.lab===st.exitY), lastY = allFut[xi];
+    const fut = allFut.slice(0, xi);
+    const kf = kFin(), price = st.price*kPx();
+    const debt = n0(last['x.debt'])*kf, cash = n0(last['bs.total_cash_and_cash_equivalents'] ?? last['bs.cash_and_cash_equivalents'])*kf;
+    const nci = n0(last['bs.minority_interests_and_other'])*kf;
+    const netDebt = debt-cash+nci, mcap = price*st.shares, ev = mcap+netDebt;
+    // default pre-tax cost of debt: last fiscal year's interest expense / average total debt
+    const fyL = fyAct[fyAct.length-1], fyL1 = fyAct[fyAct.length-2];
+    const avgD = fyL && fyL1 && isN(fyL['x.debt']) && isN(fyL1['x.debt']) ? (fyL['x.debt']+fyL1['x.debt'])/2 : null;
+    const kdDef = avgD>0 && isN(fyL['is.interest_expense']) && fyL['is.interest_expense']<0 ? Math.min(-fyL['is.interest_expense']/avgD*100, 12) : 5;   // capped: IFRS interest expense also carries lease interest
+    const kd = isN(st.kd) ? st.kd : +kdDef.toFixed(2);
+    const tr = fyL && fyL['is.income_before_provision_for_income_taxes']>0 ? fyL['is.provision_for_income_taxes']/fyL['is.income_before_provision_for_income_taxes'] : 0.25;
+    const taxDef = +(Math.min(Math.max(tr,0),0.4)*100).toFixed(1);
+    const tax = isN(st.tax) ? st.tax : taxDef, t = tax/100;
+    const rf = rfOf(), ke = (rf + st.beta*st.erp)/100, kdAT = kd/100*(1-t);
+    const wE = mcap/(mcap+debt), wD = debt/(mcap+debt), wacc = wE*ke + wD*kdAT;
+    const ref = allFut[0];
+    const exitEV = isN(st.exitEV) ? st.exitEV : +(ev/fin(ref,'ebitda')).toFixed(1);
+    const exitPE = isN(st.exitPE) ? st.exitPE : +(price/epsOf(ref)).toFixed(1);
+    const intAT = f => debt*kd/100*(1-t)*f;    // after-tax interest on today's debt, for the part of the year counted
+    const flows = [];
+    if(partial) curQ.filter(q=>new Date(q.e)>VAL).forEach((q,i)=>{ const f = i===0 ? Math.max(0, Math.min(1, (new Date(q.e)-VAL)/864e5/91.3)) : 1;
+      flows.push({lab:q.lab+(i===0&&f<1?' (stub)':''), o:q, f, fy:0.25*f, t:yrsTo(q.e)}); });
+    fut.forEach(y=>flows.push({lab:y.lab, o:y, f:1, fy:1, t:yrsTo(y.e)}));
+    flows.forEach(cf=>{ const v=fin(cf.o,'fcf'); cf.fcf = isN(v) ? v*cf.f : null; cf.fcfe=cf.fcf; cf.fcff = isN(cf.fcf) ? cf.fcf+intAT(cf.fy) : null;
+      cf.dfW=1/Math.pow(1+wacc,cf.t); cf.dfE=1/Math.pow(1+ke,cf.t); });
+    const prevY = Y[Y.indexOf(lastY)-1], tT = yrsTo(prevY.e);
+    const tvFF = exitEV*fin(lastY,'ebitda'), tvFE = exitPE*epsOf(lastY)*st.shares;
+    const sum = (k,w) => flows.reduce((s,cf)=>s+n0(cf[k])*(w?cf[w]:1),0);
+    const ff = {pv:sum('fcff','dfW'), cum:sum('fcff'), tv:tvFF, pvTV:tvFF/Math.pow(1+wacc,tT)}; ff.ev=ff.pv+ff.pvTV; ff.eq=ff.ev-netDebt; ff.ps=ff.eq/st.shares;
+    const fe = {pv:sum('fcfe','dfE'), cum:sum('fcfe'), tv:tvFE, pvTV:tvFE/Math.pow(1+ke,tT)}; fe.eq=fe.pv+fe.pvTV; fe.ps=fe.eq/st.shares; fe.ev=fe.eq+netDebt;
+    const years = Y.filter((y,i)=>y.proj || i>=fyAct.length-3);
+    return {last, years, allFut, lastY, prevY, tT, flows, price, debt, cash, nci, netDebt, mcap, ev, kd, kdDef, tax, t, rf, ke, kdAT, wE, wD, wacc, exitEV, exitPE, ff, fe, ref};
+  }
+  function render(){
+    const r = calc(), U = SYM()+'M', S = SYM();
+    // currency switch
+    const bar = document.getElementById(p+'DcfCurBar');
+    bar.style.display = dual ? '' : 'none';
+    if(dual){
+      document.getElementById(p+'DcfCur').innerHTML = [pxc, rep].map(cu=>`<button data-cur="${cu}" class="${st.cur===cu?'on':''}">All in ${CUR_SYM[cu]||cu}</button>`).join('');
+      document.getElementById(p+'DcfFx').textContent = `${c.short} reports in ${rep} and trades in ${pxc} · ${pxc==='USD'?'US$1':'1 '+pxc} = ${st.fx.toFixed(4)} ${rep} (spot, ${FX_SPOT.asOf}; editable below)`;
+    }
+    document.getElementById(p+'DcfMultSub').textContent = `at the current price · ${U} · figures from the Model (Fiscal.ai actuals and estimates)`;
+    document.getElementById(p+'DcfPx').textContent = `${MK.src} · ${MK.asOf}`;
+    const pxNote = st.cur!==pxc ? ` <span class="card-sub">(${CUR_SYM[pxc]||pxc} ${st.price.toFixed(2)} × ${st.fx.toFixed(4)})</span>` : '';
+    document.getElementById(p+'DcfMkt').innerHTML = `<table class="metrics-table dcf-t"><tbody>
+      <tr><td>Share price (${S})</td><td>${r.price.toFixed(2)}${pxNote}</td></tr>
+      <tr><td>× Shares outstanding (M)</td><td>${F.mm1(st.shares)}</td></tr>
+      <tr class="tot"><td>Market capitalization</td><td>${m(r.mcap)}</td></tr>
+      <tr><td>+ Total debt (excl. leases) · ${r.last.lab}</td><td>${m(r.debt)}</td></tr>
+      <tr><td>− Cash, equivalents and short-term investments · ${r.last.lab}</td><td>(${F.m(r.cash)})</td></tr>
+      <tr><td>+ Minority interests · ${r.last.lab}</td><td>${r.nci?m(r.nci):NA}</td></tr>
+      <tr><td>= Net debt (cash) and other claims</td><td>${m(r.netDebt)}</td></tr>
+      <tr class="dk"><td>Enterprise value</td><td>${m(r.ev)}</td></tr></tbody></table>`;
+    const inp = (k,l,v,step) => `<label>${l}<input type="number" step="${step}" data-k="${k}" value="${v}"></label>`;
+    const out = (l,v) => `<label class="calc">${l}<span class="v">${v}</span></label>`;
+    document.getElementById(p+'DcfIn').innerHTML =
+      inp('price',`Share price (${CUR_SYM[pxc]||pxc})`,st.price,0.01) + inp('shares','Shares outstanding (M)',st.shares,1) +
+      (dual ? inp('fx',`${rep} per ${pxc==='USD'?'US$1':'1 '+pxc}`,st.fx,0.0001) : '') +
+      inp('rf',`Risk-free rate, ${st.cur} (%)`,r.rf,0.05) + inp('beta','Beta',st.beta,0.05) + inp('erp','Equity risk premium (%)',st.erp,0.1) +
+      out('Cost of equity (CAPM)', pc(r.ke)) +
+      inp('kd','Pre-tax cost of debt (%)',r.kd,0.05) + inp('tax','Tax rate (%)',r.tax,0.5) + out('After-tax cost of debt', pc(r.kdAT)) +
+      out('Weights equity / debt', `${(r.wE*100).toFixed(0)}% / ${(r.wD*100).toFixed(0)}%`) + out('WACC', pc(r.wacc)) +
+      `<label>EPS basis<select data-k="epsB" class="dcf-sel"><option value="gaap" ${st.epsB!=='adj'?'selected':''}>Diluted (GAAP)</option><option value="adj" ${st.epsB==='adj'?'selected':''}>Adjusted (Fiscal.ai)</option></select></label>` +
+      `<label>Exit year (terminal value)<select data-k="exitY" class="dcf-sel">${r.allFut.map(y=>`<option ${y.lab===st.exitY?'selected':''}>${y.lab}</option>`).join('')}</select></label>` +
+      inp('exitEV','Exit EV/EBITDA (x)',r.exitEV,0.5) + inp('exitPE','Exit P/E (x)',r.exitPE,0.5);
+    // multiples by year
+    const ys = r.years, hd = ys.map(y=>`<th class="${y.proj?'p':''}">${y.lab}</th>`).join('');
+    const row = (l,f,cls='') => `<tr class="${cls}"><td>${l}</td>${ys.map(y=>`<td class="${y.proj?'p':''}">${f(y)}</td>`).join('')}</tr>`;
+    const prev = y => M.Y[M.Y.indexOf(y)-1];
+    const g = (a,b) => isN(a)&&isN(b)&&b>0 ? F.g(a/b-1) : NM;
+    const mg = (a,b) => isN(a)&&b ? pc(a/b) : NA;
+    document.getElementById(p+'DcfMult').innerHTML = `<table class="metrics-table dcf-t"><thead><tr><th>${U}</th>${hd}</tr></thead><tbody>
+      ${row('Revenue', y=>m(fin(y,'rev')), 'tot')}${row('YoY growth', y=>g(g_(y,'rev'), g_(prev(y),'rev')), 'sub')}
+      ${row('EBITDA', y=>m(fin(y,'ebitda')), 'tot')}${row('Margin', y=>mg(g_(y,'ebitda'), g_(y,'rev')), 'sub')}
+      ${row('Operating profit (EBIT)', y=>m(fin(y,'ebit')), 'tot')}${row('Margin', y=>mg(g_(y,'ebit'), g_(y,'rev')), 'sub')}
+      ${row('Net income to common', y=>m(fin(y,'ni')))}
+      ${row(`Diluted EPS (${S})`, y=>ps(isN(g_(y,'eps'))?g_(y,'eps')*kFin():null), st.epsB!=='adj'?'tot':'')}${row(`Adjusted EPS, Fiscal.ai (${S})`, y=>ps(isN(g_(y,'epsA'))?g_(y,'epsA')*kFin():null), st.epsB==='adj'?'tot':'')}${row('YoY growth', y=>g(epsOf(y), epsOf(prev(y))), 'sub')}
+      ${row('Free cash flow (CFO − capex)', y=>m(fin(y,'fcf')), 'tot')}
+      ${row('EV / revenue', y=>x(r.ev/fin(y,'rev')), 'dk')}
+      ${row('EV / EBITDA', y=>x(r.ev/fin(y,'ebitda')), 'dk')}
+      ${row('EV / EBIT', y=>x(r.ev/fin(y,'ebit')), 'dk')}
+      ${row(st.epsB==='adj'?'P / E (adjusted EPS)':'P / E (diluted EPS)', y=>x(r.price/epsOf(y)), 'dk')}
+      ${row('FCF yield (FCF / market cap)', y=>mg(fin(y,'fcf'), r.mcap), 'dk')}
+    </tbody></table>`;
+    // FCFF / FCFE
+    const tbl = (id, kind) => {
+      const fl=r.flows, R_ = kind==='ff' ? r.ff : r.fe, rate = kind==='ff' ? r.wacc : r.ke;
+      const hd = fl.map(cf=>`<th class="p">${cf.lab}</th>`).join('') + `<th class="tv">Terminal at ${r.prevY.end} · ${r.lastY.lab} metric</th>`;
+      const line = (l,f,tv='',cls='') => `<tr class="${cls}"><td>${l}</td>${fl.map(cf=>`<td class="p">${f(cf)}</td>`).join('')}<td class="tv">${tv}</td></tr>`;
+      const head = kind==='ff'
+        ? line('Free cash flow (CFO − capex)', cf=>m(cf.fcf)) + line('+ After-tax interest on total debt', cf=>m(cf.fcff-cf.fcf)) + line('Free cash flow to the firm (FCFF)', cf=>m(cf.fcff), '', 'tot')
+        : line(`${st.epsB==='adj'?'Adjusted':'Diluted'} EPS (${S})`, cf=>cf.f<1?`<span class="card-sub">${ps(epsOf(cf.o))} for the quarter</span>`:ps(epsOf(cf.o))) + line('Free cash flow to equity (FCFE)', cf=>m(cf.fcfe), '', 'tot');
+      const tvRow = kind==='ff'
+        ? line('Terminal value = exit EV/EBITDA × EBITDA', ()=>'', `${r.exitEV.toFixed(1)}x × ${F.m(fin(r.lastY,'ebitda'))} = ${m(R_.tv)}`)
+        : line('Terminal value = exit P/E × EPS × shares', ()=>'', `${r.exitPE.toFixed(1)}x × ${ps(epsOf(r.lastY))} = ${(r.exitPE*epsOf(r.lastY)).toFixed(2)}/share × ${F.mm1(st.shares)}M sh. = ${m(R_.tv)}`);
+      const df = kind==='ff' ? 'dfW' : 'dfE', dT = Math.pow(1+rate, -r.tT);
+      const v = (l,val,cls='') => `<tr class="${cls}"><td>${l}</td><td colspan="${fl.length+1}" style="text-align:left">${val}</td></tr>`;
+      const up = R_.ps/r.price-1;
+      document.getElementById(id).innerHTML = `<table class="metrics-table dcf-t"><thead><tr><th>${U}</th>${hd}</tr></thead><tbody>
+        ${head}${tvRow}
+        ${line('Years from valuation date', cf=>cf.t.toFixed(2), r.tT.toFixed(2), 'sub')}
+        ${line(`Discount factor @ ${pc(rate)}`, cf=>cf[df].toFixed(3), dT.toFixed(3), 'sub')}
+        ${line('Present value', cf=>m(n0(kind==='ff'?cf.fcff:cf.fcfe)*cf[df]), m(R_.pvTV), 'tot')}
+        ${v(`Cash generated to ${r.prevY.end} (undiscounted) + terminal value`, `${m(R_.cum)} + ${m(R_.tv)} = <b>${m(R_.cum+R_.tv)}</b>`)}
+        ${v('PV of cash flows + PV of terminal value', `${m(R_.pv)} + ${m(R_.pvTV)} = <b>${m(R_.pv+R_.pvTV)}</b> &nbsp;<span class="card-sub">(terminal value ${pc(R_.pvTV/(R_.pv+R_.pvTV))} of the total)</span>`)}
+        ${kind==='ff' ? v('Enterprise value − net debt and other claims = equity value', `${m(R_.ev)} − ${m(r.netDebt)} = <b>${m(R_.eq)}</b>`) : ''}
+        ${v('Value per share', `<b>${S} ${R_.ps.toFixed(2)}</b> vs ${S} ${r.price.toFixed(2)} &nbsp;<span class="g ${up>=0?'pos':'neg'}">${up>=0?'+':'−'}${Math.abs(up*100).toFixed(1)}% ${up>=0?'upside':'downside'}</span>`
+          + (st.cur!==pxc ? ` &nbsp;<span class="card-sub">= ${CUR_SYM[pxc]||pxc} ${(R_.ps/st.fx).toFixed(2)} per share</span>` : ''), 'dk')}
+      </tbody></table>`;
+    };
+    tbl(p+'DcfFF','ff'); tbl(p+'DcfFE','fe');
+    const conv = !dual ? '' : st.cur===rep
+      ? `All figures in ${rep}: the share price and market capitalization are converted from ${pxc} at the spot rate (${st.fx.toFixed(4)} ${rep} per ${pxc==='USD'?'US$':pxc}), so they compare with ${c.short}'s reported numbers. `
+      : `All figures in ${pxc==='USD'?'US$':pxc}: revenue, EBITDA, EBIT, EPS, free cash flow, debt and cash are converted from ${rep} at today's spot rate (${st.fx.toFixed(4)} ${rep} per ${pxc==='USD'?'US$':pxc}) for every year, so the multiples move only with the business, not with past exchange rates. `;
+    document.getElementById(p+'DcfSrc').textContent = `Price: ${MK.src}, ${MK.asOf}. Shares: ${MK.sharesSrc}${c.adsNote?' (per BMV share)':''}. ${conv}FX: ${FX_SPOT.src}, ${FX_SPOT.asOf}. `
+      + `Enterprise value = market capitalization + total debt (excl. leases) − cash, cash equivalents and short-term investments + minority interests, at ${r.last.lab}. `
+      + `Revenue, EBITDA, EBIT, EPS and free cash flow come from the Model tab (Fiscal.ai actuals and estimates, or your edited estimates). FCFE = free cash flow (cash from operations less capex); FCFF adds back after-tax interest on today's total debt at the pre-tax cost of debt. `
+      + `${r.flows[0]&&r.flows[0].f<1?'The '+r.flows[0].lab+' counts only the part of the quarter after the valuation date. ':''}Cash flows are discounted from each period end. `
+      + `Default exit multiples equal today's ${r.ref.lab} multiples; default pre-tax cost of debt = last fiscal year's interest expense / average total debt, capped at 12% (${r.kdDef.toFixed(2)}%); default tax rate = last fiscal year's effective rate; the risk-free rate is set per currency (${st.cur}: ${RF_DEF[st.cur] ?? 4.25}% by default). Beta, risk-free rate and equity risk premium are assumptions to edit.`;
+  }
+  const root = document.querySelector(`.co-pane[data-co="${c.ticker}"] [data-fxv="dcf"]`);
+  root.addEventListener('click', e=>{ const b=e.target.closest('[data-cur]'); if(!b) return; st.cur=b.dataset.cur; st.exitEV=null; st.exitPE=null; save(); render(); });
+  root.addEventListener('change', e=>{
+    const k=e.target.dataset.k; if(!k) return;
+    if(k==='exitY' || k==='epsB'){ st[k]=e.target.value; if(k==='epsB') st.exitPE=null; save(); render(); return; }
+    const v=parseFloat(e.target.value);
+    if(k==='rf'){ if(isNaN(v)) delete st.rf[st.cur]; else st.rf[st.cur]=v; }
+    else st[k] = isNaN(v) ? DEF[k] : v;
+    if(k==='fx' || k==='price') { st.exitEV=null; st.exitPE=null; }
+    save(); render();
+  });
+  return {render};
+}
+// ---- Actual vs Estimates and Guidance Revisions from Fiscal.ai (generic shells and Uber) ----
+// D.ave (build_fx.py): per period and metric {act, actC, est, n, gLow, gHigh}: consensus = last Zacks snapshot before the report
+// (EPS split-adjusted), actuals = Fiscal.ai adjusted metrics (US$ for consensus when the company reports in another currency),
+// guidance = the pre-report guide Fiscal.ai captured for the last reported period. D.ave.G = guides Fiscal.ai holds now.
+const ZACKS_CREDIT = 'Data provided by <a href="https://www.zacksdata.com" target="_blank" rel="noopener">Zacks Investment Research, Inc., www.zacksdata.com</a>.';
+const GR_MET = {revenue:['Revenue','m'], gross_profit:['Gross profit','m'], ebit:['Operating income (EBIT)','m'], ebit_adjusted:['Adjusted operating income','m'],
+  eps_gaap:['Diluted EPS (GAAP)','ps'], eps_adjusted:['Adjusted EPS','ps'], net_income:['Net income','m'], net_income_adjusted:['Adjusted net income','m'],
+  ebitda_adjusted:['Adjusted EBITDA','m'], free_cash_flow:['Free cash flow','m'], capex:['Capital expenditures','m']};
+const perSort = l => l.startsWith('FY') ? +l.slice(2)+0.45 : 2000+(+l.slice(3,5))+(+l[1])/10;
+function fxAveGr({A, p, short, cur, modelYs, modelOf, guideNote, ebitda}){
+  const U = cur==='USD' ? 'US$M' : `${cur} M · consensus in US$M`, UP = cur==='USD' ? 'US$' : `${cur} · consensus in US$`, PSF = cur==='USD' ? 'ps' : 'pn';
+  const ave = aveView({data:{q:A.q, y:A.y, sources:[]}, key:'pvg-fx-'+p+'-ave', id:p+'Ave', def:{bench:'c'},
+    metrics:[{k:'rev', l:'Revenue', u:U, fmt:'m'}, {k:'ebit', l:'Operating income (EBIT)', u:U, fmt:'m'}, {k:'eps', l:'EPS', u:UP, fmt:PSF}, ...(ebitda?[{k:'ebitda', l:'Adjusted EBITDA', u:U, fmt:'m'}]:[])],   // generic: Zacks and Fiscal.ai define EBITDA differently
+    emptyYG:`Fiscal.ai holds no full-year guide for ${short} for these years that has already been reported; see the Guidance Revisions tab for the current guides.`,
+    srcText: st => st.bench==='g'
+      ? `Guidance: the guide Fiscal.ai captured before each report (company releases and calls). Fiscal.ai keeps the pre-report guide only for the most recent reported period, so earlier quarters are not shown; the guidance history will be added from the releases. A single guided figure counts as in line within ±1%. ${guideNote||''}Actuals: Fiscal.ai.`
+      : `Consensus: last Zacks consensus before each report (Fiscal.ai consensus history, from 2022), compared with Fiscal.ai's adjusted actuals${cur!=='USD'?' converted to US$ (Zacks reports in US$)':''}; Zacks EPS is ${A.epsBasis||'adjusted'}. EPS consensus made before a stock split is divided by the split ratio. Within ±1% counts as in line (EPS: same cent). ${ZACKS_CREDIT}`});
+  // Guidance Revisions: one step per guide Fiscal.ai holds (it keeps the latest guide for each period, not each revision)
+  const GR = {};
+  (A.G||[]).forEach(g=>{ if(!GR_MET[g.id]) return; const pt = isN(g.filed) ? g.filed : g.mean; if(!isN(pt)) return;
+    const x = ((GR[g.l] ||= {})[g.id] ||= {steps:[], act:null});
+    x.steps.push({d:(g.iss||g.asOf||'').slice(0,10), lo:pt, hi:pt, src:g.url, n:`${FX_SRC[g.src==='guidance'?'g':g.src==='guidance_adjusted'?'ga':'gc']}${g.src==='guidance_adjusted'&&!isN(g.filed)?' (Fiscal.ai adjusted figure; the filed guide is not stored)':''}${g.ex?`: “${g.ex}”`:''}.`});
+    if(isN(g.act)) x.act = g.act; });
+  const keys = Object.keys(GR).sort((a,b)=>perSort(a)-perSort(b));
+  const GRS = Object.fromEntries(keys.map(k=>[k, GR[k]]));
+  let gr = null;
+  if(keys.length){
+    const mets = Object.keys(GR_MET).map(k=>({k, l:GR_MET[k][0], fmt:GR_MET[k][1]==='ps'?PSF:'m', u:GR_MET[k][1]==='ps'?(cur==='USD'?'US$':cur):(cur==='USD'?'US$M':cur+' M')}));
+    gr = grView({data:GRS, key:'pvg-fx-'+p+'-gr', id:p+'Gr', yearDef:keys.find(k=>!Object.values(GRS[k]).some(x=>isN(x.act))) || keys[keys.length-1],
+      modelYs, modelOf, metrics:mets,
+      srcText:`Source: Fiscal.ai estimates (company guidance captured from ${short}'s releases and calls; each step shows Fiscal.ai's source type and, when stored, the excerpt). Fiscal.ai keeps the latest guide for each period, so this tab starts with one step per period; earlier revisions will be added from the releases. Margin guides (e.g. gross or operating margin) are shown as the amounts Fiscal.ai derives from them. For periods not yet reported, the bar shows the Model tab estimate (Fiscal.ai by default).`});
+  } else {
+    document.getElementById(p+'GrBody').innerHTML = `<div class="card"><div class="ave-empty">Fiscal.ai holds no company guidance for ${short}: ${short} gives little or no numeric guidance, or Fiscal.ai has not captured it. Guides will be added from the releases.</div></div>`;
+    document.getElementById(p+'GrSrc').textContent = 'Source: Fiscal.ai estimates.';
+  }
+  return {ave, gr};
+}
 function fxPaneHTML(c){
   const p='fx'+c.ticker;
   return `
@@ -5598,8 +5839,8 @@ function fxPaneHTML(c){
       </section>
     </div>
     <div class="mview" data-main="valuation">
-    <nav class="subtabs" role="tablist"><button class="tab active">Model</button></nav>
-      <section class="view active">
+    <nav class="subtabs" role="tablist"><button class="tab fxvtab active" data-v="model">Model</button><button class="tab fxvtab" data-v="ave">Actual vs Estimates</button><button class="tab fxvtab" data-v="gr">Guidance Revisions</button><button class="tab fxvtab" data-v="dcf">DCF</button></nav>
+      <section class="view active" data-fxv="model">
         <div class="card">
           <div class="card-h">
             <div class="stmt-seg" id="${p}StmtSeg" role="tablist">
@@ -5620,6 +5861,36 @@ function fxPaneHTML(c){
         </div>
         <div class="src" id="${p}Src"></div>
       </section>
+      <section class="view" data-fxv="ave">
+        <div class="ave-bar">
+          <div class="stmt-seg" id="${p}AveFreq"><button data-v="q" class="on">Quarterly</button><button data-v="y">Annual</button></div>
+          <div class="stmt-seg" id="${p}AveBench"><button data-v="g" class="on">Actual vs guidance</button><button data-v="c">Actual vs consensus</button></div>
+          <div class="stmt-seg" id="${p}AveGuide"><button data-v="first" class="on">First guide</button><button data-v="last">Last guide</button></div>
+        </div>
+        <div class="card"><div class="card-h"><div><span class="card-t">Scorecard</span><span class="card-sub" id="${p}AveSub"></span></div></div>
+          <div class="tbl-wrap" id="${p}AveScore"></div></div>
+        <div id="${p}AveCards" class="ave-cards"></div>
+        <div class="src" id="${p}AveSrc"></div>
+      </section>
+      <section class="view" data-fxv="gr">
+        <div id="${p}GrBody">
+          <div class="ave-bar"><div class="stmt-seg" id="${p}GrYear"></div></div>
+          <div class="card"><div class="card-h"><div><span class="card-t" id="${p}GrTitle"></span><span class="card-sub">guide captured by Fiscal.ai → actual or model</span></div></div><div class="tbl-wrap" id="${p}GrSum"></div></div>
+          <div id="${p}GrCards" class="ave-cards"></div>
+        </div>
+        <div class="src" id="${p}GrSrc"></div>
+      </section>
+      <section class="view" data-fxv="dcf">
+        <div class="ave-bar" id="${p}DcfCurBar"><span class="card-sub">Currency</span><div class="stmt-seg" id="${p}DcfCur"></div><span class="card-sub" id="${p}DcfFx"></span></div>
+        <div class="card"><div class="card-h"><span class="card-t">Trading multiples by year</span><span class="card-sub" id="${p}DcfMultSub"></span></div><div class="tbl-wrap" id="${p}DcfMult"></div></div>
+        <div class="dcf-top">
+          <div class="card"><div class="card-h"><span class="card-t">Market value</span><span class="card-sub" id="${p}DcfPx"></span></div><div class="tbl-wrap" id="${p}DcfMkt"></div></div>
+          <div class="card"><div class="card-h"><span class="card-t">Assumptions</span><span class="card-sub">yellow cells are editable</span></div><div class="dcf-in" id="${p}DcfIn"></div></div>
+        </div>
+        <div class="card"><div class="card-h"><span class="card-t">FCFF · exit EV/EBITDA</span><span class="card-sub">discounted at WACC</span></div><div class="tbl-wrap" id="${p}DcfFF"></div></div>
+        <div class="card"><div class="card-h"><span class="card-t">FCFE · exit P/E</span><span class="card-sub">discounted at cost of equity</span></div><div class="tbl-wrap" id="${p}DcfFE"></div></div>
+        <div class="src" id="${p}DcfSrc"></div>
+      </section>
     </div>
     </div>`;
 }
@@ -5633,6 +5904,7 @@ function fxSetup(c){
     val0.querySelector('.card-h').style.display='none'; val0.querySelector('.stmt-head').style.display='none';
     document.getElementById(p+'ModelTable').innerHTML = `<div class="stmt-empty"><b>Model coming next</b>Fiscal.ai does not cover ${c.short} yet: income statement, balance sheet, cash flow and estimates will be built from the company's quarterly reports (BMV).</div>`;
     document.getElementById(p+'Src').textContent = `Price: ${M.D.mkt.src}, ${M.D.mkt.asOf}.`;
+    ['dcf','ave','gr'].forEach(v=>pane0.querySelector(`.fxvtab[data-v="${v}"]`).style.display='none');
     FX[c.ticker] = {render(){}}; return;
   }
   const D = M.D, pane = document.querySelector(`.co-pane[data-co="${c.ticker}"]`);
@@ -5644,7 +5916,22 @@ function fxSetup(c){
     + (!D.est ? `Fiscal.ai has no statements or estimates for ${c.short} yet (segments and KPIs only); they will be added from the company's reports. ` : `Estimates: Fiscal.ai (updated ${upd(D.est.updatedAt||D.est.upd)}) — company guidance where the company gives it, otherwise Fiscal.ai's model or AI estimate; hover a cell to see its source and confidence. Cost of sales and diluted shares in estimate columns are implied (revenue − gross profit; net income / EPS); lines without a Fiscal.ai estimate stay blank. Edited estimates are saved in this browser. `)
     + (!D.zacks ? '' : `Wall Street consensus${D.zacks&&D.zacks.cur&&D.zacks.cur!==D.cur?' (in '+D.zacks.cur+')':''}: Data provided by <a href="https://www.zacksdata.com" target="_blank" rel="noopener">Zacks Investment Research, Inc., www.zacksdata.com</a>.`);
   let shown=false;
-  FX[c.ticker] = { render(){ if(!shown){ M.render(); shown=true; } msg(); } };
+  const hasDcf = !!(D.est && D.is.length && D.mkt.shares);
+  const MAPG = {revenue:'is.total_revenues', gross_profit:'is.gross_profit', ebit:'is.operating_profit', eps_gaap:'is.diluted_eps', eps_adjusted:'x.epsAdj',
+    net_income:'is.net_income_attributable_to_common_shareholders', net_income_adjusted:'x.niAdj', free_cash_flow:'x.fcf', capex:'cf.purchases_of_property_plant_and_equipment'};
+  const AG = D.ave ? fxAveGr({A:D.ave, p, short:c.short, cur:D.cur, modelYs:()=>M.Y.concat(M.Q), modelOf:(k,y)=>MAPG[k] ? y[MAPG[k]] : null}) : null;
+  if(!AG){ pane.querySelector('.fxvtab[data-v="ave"]').style.display='none'; pane.querySelector('.fxvtab[data-v="gr"]').style.display='none'; }
+  const DCF = hasDcf ? fxDcf(c, M) : null;
+  if(!hasDcf) pane.querySelector('.fxvtab[data-v="dcf"]').style.display='none';
+  let vt='model';
+  const showV = () => { pane.querySelectorAll('.fxvtab').forEach(b=>b.classList.toggle('active', b.dataset.v===vt));
+    pane.querySelectorAll('[data-fxv]').forEach(s=>s.classList.toggle('active', s.dataset.fxv===vt));
+    if(vt==='model'){ if(!shown){ M.render(); shown=true; } msg(); }
+    else if(vt==='dcf'){ if(DCF) DCF.render(); }
+    else if(vt==='ave'){ if(AG) AG.ave.render(); }
+    else if(vt==='gr'){ if(AG && AG.gr) AG.gr.render(); } };
+  pane.querySelectorAll('.fxvtab').forEach(b=>b.addEventListener('click', ()=>{ vt=b.dataset.v; showV(); }));
+  FX[c.ticker] = { render: showV };
   pane.addEventListener('click', e=>{
     const t=e.target.closest('[data-fx]');
     if(t){ const a=t.dataset.fx; if(a==='expand') M.expandAll(); if(a==='collapse') M.collapseAll();
@@ -5785,7 +6072,7 @@ function renderGroups(){
     <button class="grp-tab" aria-haspopup="listbox" aria-expanded="false">${g0.name}<span class="grp-n">${grpCount(g0.id)}</span>${GRP_CHEV}</button>
     <div class="grp-menu" role="listbox">${GROUPS.map(g=>`<button class="grp-item${g.id===curGrp?' sel':''}" role="option" aria-selected="${g.id===curGrp}" data-grp="${g.id}"><span class="gi-nm">${g.name}</span><span class="gi-tk">${grpCount(g.id)}</span><span class="gi-ck">${g.id===curGrp?GRP_CHECK:''}</span></button>`).join('')}</div>
   </div>`;
-  const cs = COMPANIES.filter(c=>c.group===curGrp);
+  const cs = COMPANIES.filter(c=>c.group===curGrp).sort((x,y)=>x.ticker.localeCompare(y.ticker,'en'));   // alphabetical by ticker within each group
   document.getElementById('coGrid').innerHTML = cs.length ? cs.map(c=>`
   <button class="co-card gl" data-ticker="${c.ticker}" style="${tintVars(c.tint||'46,117,182').map(([k,v])=>`${k}:${v}`).join(';')}">
     ${c.logo.src?`<span class="glass"><img src="${c.logo.src}" alt="${c.name}"></span>`:logoHTML(c,'lg')}
@@ -5845,7 +6132,8 @@ function showMain(m){
   try{ localStorage.setItem('pvg-main',m); }catch(e){}
   if(curCo==='AMZN'){ if(m==='valuation' && amvtab==='model') renderAmznModel(); if(m==='valuation' && amvtab==='ave') AM_AVE.render(); if(m==='valuation' && amvtab==='dcf') AM_DCF.render(); if(m==='valuation' && amvtab==='guidance') AM_GR.render(); if(m==='earnings') AM_EARN.render(); if(m==='tesis') AM_TH.render(); return; }
   if(FX[curCo]){ if(m==='valuation') FX[curCo].render(); return; }
-  if(curCo==='UBER'){ if(m==='valuation' && ubvtab==='model') renderUberModel(); if(m==='valuation' && ubvtab==='dcf') UB_DCF.render(); return; }
+  if(curCo==='UBER'){ if(m==='valuation' && ubvtab==='model') renderUberModel(); if(m==='valuation' && ubvtab==='dcf') UB_DCF.render();
+    if(m==='valuation' && ubvtab==='ave' && UB_AG()) UB_AG().ave.render(); if(m==='valuation' && ubvtab==='guidance' && UB_AG() && UB_AG().gr) UB_AG().gr.render(); return; }
   if(m==='earnings') EARN.render();
   if(m==='valuation' && vtab==='model') renderModel();
   if(m==='valuation' && vtab==='ave') AVE.render();
