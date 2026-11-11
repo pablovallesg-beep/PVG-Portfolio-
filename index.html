@@ -988,6 +988,8 @@ html.mobile .xl-wrap{max-height:calc(100vh - 190px)}
 <script src="Femsa/fiscal.js"></script>
 <script src="Omab/fiscal.js"></script>
 <script src="Gmexico/fiscal.js"></script>
+<script src="Banorte/fiscal.js"></script>
+<script src="Gentera/fiscal.js"></script>
 <script>
 /* =====================================================================
    DATA — SoFi (US$M unless noted). Sources on each card.
@@ -5733,7 +5735,7 @@ const COMPANIES = [
     thesis:'Revenue by region, operating margin, content spend and free cash flow.' },
 ];
 // Mexico (BMV listings, prices in MXN). Fiscal.ai serves AMX, ASUR, FEMSA and OMA through their US ADRs (per-share data
-// converted to one BMV share in build_fx.py), Walmex and Grupo México with segments and KPIs only, and does not cover Bimbo.
+// converted to one BMV share in build_fx.py), Walmex and Grupo México with segments and KPIs only, and does not cover Bimbo, Banorte or Gentera.
 const ADS_NOTE = (n, what) => `Per-share figures (EPS, book value per share, shares) are per BMV ${what}: Fiscal.ai reports them per US ADS, converted at 1 ADS = ${n}; Wall Street consensus EPS is per ${what} in US$.`;
 COMPANIES.push(
   { ticker:'AMXB', group:'mx', name:'América Móvil, S.A.B. de C.V.', exchange:'BMV', sector:'Telecom · Mobile and fixed (Telcel, Claro, Telmex)', fiscal:1,
@@ -5757,6 +5759,12 @@ COMPANIES.push(
   { ticker:'GMEXICOB', group:'mx', name:'Grupo México, S.A.B. de C.V.', exchange:'BMV', sector:'Mining (Southern Copper) · Railroads · Infrastructure', fiscal:1,
     short:'Grupo México', tint:'215,40,47', logo:{src:'Gmexico/logo-mark.svg', text:'GMéxico', bg:'#D7282F'},
     thesis:'Copper volumes and prices, cash costs, Southern Copper, the railroad (GMXT) and infrastructure.' },
+  { ticker:'GFNORTEO', group:'mx', name:'Grupo Financiero Banorte, S.A.B. de C.V.', exchange:'BMV', sector:'Banking · Insurance and pensions · Mexico', fiscal:1,
+    short:'Banorte', tint:'235,0,41', logo:{src:'Banorte/logo-mark.svg', text:'Banorte', bg:'#EB0029'},
+    thesis:'Loan growth by segment, net interest margin, asset quality, efficiency, ROE and capital, plus insurance and pensions.' },
+  { ticker:'GENTERA', group:'mx', name:'Gentera, S.A.B. de C.V.', exchange:'BMV', sector:'Microfinance (Compartamos Banco) · Mexico and Peru', fiscal:1,
+    short:'Gentera', tint:'0,140,130', logo:{src:'Gentera/logo-mark.svg', text:'Gentera', bg:'#008C82'},
+    thesis:'Clients and loan portfolio at Compartamos Mexico and Peru, yield and net interest margin, NPLs and cost of risk, ROE.' },
 );
 // Fiscal.ai shells: pane, model and quote from <Folder>/fiscal.js
 COMPANIES.filter(c=>c.fiscal).forEach(c=>{ c.quote=()=>window.FISCAL?.[c.ticker]?.mkt; fxSetup(c); });
